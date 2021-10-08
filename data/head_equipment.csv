@@ -1,0 +1,24 @@
+nom,type,arm,pre,esq,mm,rm,int,dex,for,chance,dommage,pm,pv,poids
+bandana,legere,,,6,,,,,,,,,,1
+bandana en soie,legere,,,10,,,,,,,,,,1
+capuche féline,legere,,,4,,,2,,,,,,,1
+capuche de rôdeur,legere,,,4,,,,2,,,,,,1
+capuchon,legere,,2,,,,2,,,,,,,1
+capuchon en soie,legere,,6,,,,2,,,,,,,1
+coiffe,legere,1,,,,,,,,,,,,1
+cabasset,lourde,2,,,,,,,,,,,,1
+chapeau plume,combat,,4,6,,,,,,,,,,1
+cagoule de l'ombre,combat,,8,1,,,,,,,,,,1
+chapeau de nomade,voyage,,,4,,,,,,25,,,,1
+bonnet émeraude,artefact,,,,,,3,,,,,,,1
+casque en mithril,artefact,3,,,,,,,,,,,,1
+diadème,lourde,1,,,,,1,1,1,,,,,1
+coiffe en soie,focus,,,,4,,2,,,,,,,1
+barrette en or,parure,,,,,4,2,,,,,,,1
+casque en bois,parure,1,,4,,,,,,,,,,1
+casque ailé,legere,2,,,,,,,,,,,,2
+bassinet plume,lourde,2,6,,,,,,,,,,,2
+cabasset à cornes,lourde,3,-4,,,,,,,,,,,2
+casque,lourde,3,,,,,,,,,,,,2
+casque noble,lourde,3,,-4,,,,,,,,,,2
+crâne rituel,lourde,1,,,,4,2,,,,2,2,,2
