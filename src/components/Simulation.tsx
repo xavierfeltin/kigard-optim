@@ -13,23 +13,23 @@ export interface SimulationProps {
 }
 
 export function Simulation({configuration, masterData, onHasStarted, onHasStopped, onHasNewIteration}: SimulationProps) {
-  const [worker, setWorker] = useState<Worker | null>(null); 
+  const [worker, setWorker] = useState<Worker | null>(null);
   const [state, setState] = useState<SimuState>({
     isRunning: false,
     bestSolution: {...defaultEquipment},
     population: []
   });
 
-  const handleResponse = useCallback((e: MessageEvent<any>) => {      
+  const handleResponse = useCallback((e: MessageEvent<any>) => {
     const response: MessageOut = e.data as MessageOut;
-    setState(response.state)  
+    setState(response.state)
     console.log("coming out");
     onHasNewIteration(response.state.bestSolution);
   }, []);
 
-  const handleStart = function(): void {    
+  const handleStart = function(): void {
     onHasStarted();
-    const newWorker = new MyWorker();    
+    const newWorker = new MyWorker();
     setWorker(newWorker);
     setState({...state, isRunning: true});
     console.log("Start !");
@@ -47,16 +47,16 @@ export function Simulation({configuration, masterData, onHasStarted, onHasStoppe
         population: []
       });
       setState({...state, isRunning: false});
-      
+
       onHasStopped();
-    }    
+    }
   };
 
   useEffect(() => {
     if (worker) {
       console.log("Add listener to worker");
       worker.addEventListener('message', handleResponse);
-    }    
+    }
   }, [worker, handleResponse]);
 
   useEffect(() => {
@@ -72,8 +72,8 @@ export function Simulation({configuration, masterData, onHasStarted, onHasStoppe
         state: {...state}
     };
 
-    worker.postMessage(message);  
-  }, [worker, state])
+    worker.postMessage(message);
+  }, [worker, state, configuration, masterData])
 
   return (
     <div>

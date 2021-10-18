@@ -1,3 +1,4 @@
+import { Table, Tbody, Td, Th, Thead } from "@chakra-ui/table";
 import { Equipment } from "../common/kigardModels";
 
 export interface SolutionProps {
@@ -7,16 +8,20 @@ export interface SolutionProps {
 export function Solution({data}: SolutionProps) {
 
     return (
-        <div> 
-            <span> Suggestion found: </span>
-            <table>
-                <th>
-                    <td> </td>
-                </th>
-                <tbody>
-
-                </tbody>
-            </table>
+        <div>
+            <span> Suggestions found: </span>
+            <Table id="table-solution">
+                <Thead>
+                    {Object.keys(data).map((name) => (
+                        <Th>name</Th>
+                    ))}
+                </Thead>
+                <Tbody>
+                    {Object.keys(data).map((name) => (
+                        <Td>data[name]</Td>
+                    ))}
+                </Tbody>
+            </Table>
         </div>
     )
 }

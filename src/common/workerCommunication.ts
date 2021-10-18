@@ -1,5 +1,5 @@
 import { Configuration, SimuState } from "./ga";
-import { Attributes, Equipment } from "./kigardModels";
+import { Equipment } from "./kigardModels";
 
 export interface MessageIn {
     configuration: Configuration;
@@ -8,5 +8,5 @@ export interface MessageIn {
 }
 
 export interface MessageOut {
-    state: SimuState    
+    state: SimuState
 }
