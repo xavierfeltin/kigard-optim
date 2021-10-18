@@ -12,7 +12,14 @@ function App() {
   const [masterData, setMasterdata] = useState<Equipment[]>([]);
   const [simuConfiguration, setConfiguration] = useState<Configuration>({
     data: {...defaultAttributes},
-    populationSize: 10
+    populationSize: 20,
+    selectCutoff: 0.1,
+    keepPreviousRatio: 0.1,
+    newIndividualRatio: 0.1,
+    parentSelectionStrategy: "tournament",
+    crossoverStrategy: "",
+    crossoverParentRatio: 0.5,
+    tournamentSize: 5
   });
   const [suggestion, setSuggestion] = useState<Equipment | undefined>(undefined);
 

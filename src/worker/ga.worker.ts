@@ -1,5 +1,5 @@
 import { MessageIn, MessageOut } from "../common/workerCommunication";
-import { Configuration, evaluatePopulation, generatePopulation, Individual, SimuState } from "../common/ga";
+import { Configuration, convertFitnessIntoProbabilities, evaluatePopulation, generateNewGeneration, generatePopulation, Individual, SimuState, sortDescByFitness } from "../common/ga";
 import { Equipment } from "../common/kigardModels";
 
 declare const self: Worker;
@@ -14,25 +14,25 @@ self.addEventListener("message", e => {
 
     if (prevPopulation.length === 0) {
         population = generatePopulation(msg.configuration, msg.masterData);
+        population = evaluatePopulation(population, msg.configuration);
+        population = convertFitnessIntoProbabilities(population);    
     }
     else {
         population = [...prevPopulation];
+        // already evaluated in previous generation
     }
 
-    population = evaluatePopulation(population, msg.configuration);
+    let nextPopulation = generateNewGeneration(population, msg.configuration, msg.masterData);
+    nextPopulation = evaluatePopulation(nextPopulation, msg.configuration);         
+    nextPopulation = convertFitnessIntoProbabilities(nextPopulation);
+    nextPopulation = sortDescByFitness(nextPopulation);
 
-    /*
-    configuration: Configuration;
-    masterData: Equipment[];
-    state: SimuState
-    */
-
-
+    const bestIndividual = nextPopulation[0];
     const response: MessageOut = {
         state: {
             isRunning: msg.state.isRunning,
-            bestSolution: msg.state.bestSolution,
-            population: population
+            bestSolution: bestIndividual,
+            population: nextPopulation
         }
     };
 
