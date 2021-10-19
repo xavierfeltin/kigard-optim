@@ -1,8 +1,9 @@
 import { Table, Tbody, Td, Th, Thead } from "@chakra-ui/table";
+import { Individual } from "../common/ga";
 import { Equipment } from "../common/kigardModels";
 
 export interface SolutionProps {
-    data: Equipment;
+    data: Individual;
 };
 
 export function Solution({data}: SolutionProps) {

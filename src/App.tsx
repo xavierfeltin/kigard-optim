@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import './App.css';
-import { Configuration } from './common/ga';
+import { Configuration, Individual } from './common/ga';
 import { Attributes, defaultAttributes, Equipment, generateEquipmentFromJSON } from './common/kigardModels';
 import { Character } from './components/Character';
 import { Simulation } from './components/Simulation';
@@ -21,7 +21,7 @@ function App() {
     crossoverParentRatio: 0.5,
     tournamentSize: 5
   });
-  const [suggestion, setSuggestion] = useState<Equipment | undefined>(undefined);
+  const [suggestion, setSuggestion] = useState<Individual | undefined>(undefined);
 
   useEffect(() => {
     if (masterData.length === 0) {
@@ -42,8 +42,8 @@ function App() {
 
   }, []);
 
-  const handleSimulationNewIteration = useCallback((equipment: Equipment) => {
-    setSuggestion({...equipment});
+  const handleSimulationNewIteration = useCallback((ind: Individual) => {
+    setSuggestion({...ind});
   }, []);
 
   return (

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Configuration, SimuState } from "../common/ga";
+import { Configuration, createEmptyIndividual, Individual, SimuState } from "../common/ga";
 import { defaultEquipment, Equipment } from "../common/kigardModels";
 import { MessageIn, MessageOut } from "../common/workerCommunication";
 import MyWorker from '../worker/ga.worker';
@@ -9,14 +9,14 @@ export interface SimulationProps {
   masterData: Equipment[];
   onHasStarted: () => void,
   onHasStopped: () => void
-  onHasNewIteration: (equipment: Equipment) => void;
+  onHasNewIteration: (ind: Individual) => void;
 }
 
 export function Simulation({configuration, masterData, onHasStarted, onHasStopped, onHasNewIteration}: SimulationProps) {
   const [worker, setWorker] = useState<Worker | null>(null);
   const [state, setState] = useState<SimuState>({
     isRunning: false,
-    bestSolution: {...defaultEquipment},
+    bestSolution: createEmptyIndividual(),
     population: []
   });
 
@@ -43,7 +43,7 @@ export function Simulation({configuration, masterData, onHasStarted, onHasStoppe
       worker.terminate();
       setState({
         isRunning: false,
-        bestSolution: {...defaultEquipment},
+        bestSolution: createEmptyIndividual(),
         population: []
       });
       setState({...state, isRunning: false});
