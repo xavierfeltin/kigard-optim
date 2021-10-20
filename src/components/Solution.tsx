@@ -10,8 +10,12 @@ export function Solution({data}: SolutionProps) {
 
     const generateHeader = function(): JSX.Element[] {
         const row: JSX.Element[] = [];
-        Object.keys(data.phenotype[0].attributes).forEach((name: string, index: number) => {
-            const id = "th-solution-" + index;
+
+        const th = <Th key="th-solution-name">Nom</Th>
+        row.push(th);
+
+        Object.keys(data.phenotype[0].attributes).forEach((name: string) => {
+            const id = "th-solution-" + name;
             const th = <Th key={id}>{name}</Th>
             row.push(th);
         });
@@ -20,8 +24,12 @@ export function Solution({data}: SolutionProps) {
 
     const generateRow = function(): JSX.Element[] {
         const row: JSX.Element[] = [];
-        Object.keys(data.phenotype[0].attributes).forEach((name: string, index: number) => {
-            const id = "td-solution-" + index;
+
+        const td = <Td key="td-solution-name">{data.phenotype[0].name}</Td>
+        row.push(td);
+
+        Object.keys(data.phenotype[0].attributes).forEach((name: string) => {
+            const id = "td-solution-" + name;
             const td = <Td key={id}>{data.phenotype[0].attributes[name as keyof Attributes]}</Td>
             row.push(td);
         });

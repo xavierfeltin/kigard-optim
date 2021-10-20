@@ -19,6 +19,7 @@ export interface SimuState {
     isRunning: boolean;
     bestSolution: Individual;
     population: Individual[];
+    generation: number;
 }
 export interface Individual {
     id: number;
@@ -40,8 +41,20 @@ export function createEmptyIndividual(): Individual {
     return ind;
 }
 
+export function isEquipmentAllowed(equipment: Equipment, config: Configuration): boolean {
+    // Check carried weight to not go further character allowed weight
+    let carriedWeight = 0;
+    const allowedWeight = Math.floor((config.data.con + config.data.str) / 2);
+    carriedWeight += equipment.weight;
+    return carriedWeight <= allowedWeight;
+}
+
 export function createIndividual(id: number, config: Configuration, masterData: Equipment[]): Individual {
-    const equipmentIdx = Math.floor(Math.random() * masterData.length);
+    let equipmentIdx = Math.floor(Math.random() * masterData.length);
+    while (!isEquipmentAllowed(masterData[equipmentIdx], config)) {
+        equipmentIdx = Math.floor(Math.random() * masterData.length);
+    }
+
     const ind: Individual = {
         id: id,
         genes: [equipmentIdx],
@@ -179,11 +192,53 @@ export function randomNumberInRange(min: number, max: number, isInteger: boolean
 }
 
 export function mutate(ind: Individual, config: Configuration, masterData: Equipment[]): Individual {
-    return {...ind};
+    let mutant = {...ind};
+
+    let delta = randomNumberInRange(-2, 2, true);
+    let newGene = mutant.genes[0] + delta;
+    newGene = Math.min(newGene, masterData.length);
+    newGene = Math.max(newGene, 0);
+    mutant.genes[0] = newGene;
+
+    while(!isEquipmentAllowed(masterData[mutant.genes[0]], config)) {
+        delta = randomNumberInRange(-2, 2, true);
+        newGene = mutant.genes[0] + delta;
+        newGene = Math.min(newGene, masterData.length);
+        newGene = Math.max(newGene, 0);
+        mutant.genes[0] = newGene;
+    }
+
+    mutant.genes.forEach(gene => {
+        mutant.phenotype.push(masterData[gene]);
+    })
+
+    return mutant;
 }
 
-export function crossOver(parentA: Individual, parentB: Individual, config: Configuration): Individual {
-    return {...parentA};
+export function crossOver(a: Individual, b: Individual, config: Configuration, masterData: Equipment[]): Individual {
+    const child: Individual = {
+        genes: [],
+        fitness: 0,
+        probability: 0,
+        id: Date.now(),
+        phenotype: []
+    };
+
+    const primaryGenes = a.fitness > b.fitness ? a.genes : b.genes;
+    const secondaryGenes = a.fitness > b.fitness ? b.genes : a.genes;
+    const splitIndex = Math.floor(primaryGenes.length * config.parameters.crossoverParentRatio);
+    child.genes = child.genes.concat(primaryGenes.slice(0, splitIndex));
+    child.genes = child.genes.concat(secondaryGenes.slice(splitIndex));
+
+    if(!isEquipmentAllowed(masterData[child.genes[0]], config)) {
+        child.genes = [...primaryGenes];
+    }
+
+    child.genes.forEach(gene => {
+        child.phenotype.push(masterData[gene]);
+    })
+
+    return child;
 }
 
 export function generateNewGeneration(population: Individual[], config: Configuration, masterData: Equipment[]): Individual[] {
@@ -221,7 +276,7 @@ export function generateNewGeneration(population: Individual[], config: Configur
                 parentB = pickParent(population);
             }
 
-            let child = crossOver(parentA, parentB, config);
+            let child = crossOver(parentA, parentB, config, masterData);
             child = mutate(child, config, masterData);
             child = evaluateIndividual(child, config);
             nextPopulation.push(child);

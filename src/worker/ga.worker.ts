@@ -31,7 +31,8 @@ self.addEventListener("message", e => {
         state: {
             isRunning: msg.state.isRunning,
             bestSolution: bestIndividual,
-            population: nextPopulation
+            population: nextPopulation,
+            generation: msg.state.generation + 1
         }
     };
 

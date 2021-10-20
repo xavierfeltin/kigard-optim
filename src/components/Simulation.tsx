@@ -18,7 +18,8 @@ export function Simulation({character, parameters, masterData, onHasStarted, onH
   const [state, setState] = useState<SimuState>({
     isRunning: false,
     bestSolution: createEmptyIndividual(),
-    population: []
+    population: [],
+    generation: 0
   });
 
   const handleResponse = useCallback((e: MessageEvent<any>) => {
@@ -45,7 +46,8 @@ export function Simulation({character, parameters, masterData, onHasStarted, onH
       setState({
         isRunning: false,
         bestSolution: createEmptyIndividual(),
-        population: []
+        population: [],
+        generation: 0
       });
       setState({...state, isRunning: false});
 
