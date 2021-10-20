@@ -1,7 +1,6 @@
 import { Attributes, Equipment } from "./kigardModels";
 
-export interface Configuration {
-    data: Attributes;
+export interface GAParameters {
     populationSize: number;
     selectCutoff: number;
     keepPreviousRatio: number;
@@ -10,6 +9,10 @@ export interface Configuration {
     crossoverStrategy: string;
     crossoverParentRatio: number;
     tournamentSize: number;
+}
+export interface Configuration {
+    data: Attributes;
+    parameters: GAParameters;
 }
 
 export interface SimuState {
@@ -52,7 +55,7 @@ export function createIndividual(id: number, config: Configuration, masterData: 
 export function generatePopulation(config: Configuration, masterData: Equipment[]): Individual[] {
     let population: Individual[] = [];
 
-    for(let i = 0; i < config.populationSize; i++) {
+    for(let i = 0; i < config.parameters.populationSize; i++) {
         const ind = createIndividual(i, config, masterData);
         population.push(ind);
     }
@@ -72,10 +75,10 @@ export function evaluatePopulation(population: Individual[], config: Configurati
 
 export function evaluateIndividual(ind: Individual, config: Configuration): Individual {
     let evaluated = {...ind};
-    
+
     // Update configuration with individual
     let modifiedAttributes: Attributes = {...config.data};
-    for (let idx of evaluated.genes) {            
+    for (let idx of evaluated.genes) {
         const equipment: Equipment = evaluated.phenotype[idx];
         Object.keys(equipment.attributes).forEach((attr) => {
             modifiedAttributes[attr as keyof Attributes] = config.data[attr as keyof Attributes] + equipment.attributes[attr as keyof Attributes];
@@ -184,13 +187,13 @@ export function crossOver(parentA: Individual, parentB: Individual, config: Conf
 }
 
 export function generateNewGeneration(population: Individual[], config: Configuration, masterData: Equipment[]): Individual[] {
-    const poolSize = Math.round(population.length * config.selectCutoff);
+    const poolSize = Math.round(population.length * config.parameters.selectCutoff);
     const tournamentPool = generateTournamentPool(population, poolSize);
     const nextPopulation: Individual[] = [];
 
-    for (let i = 0; i < config.populationSize; i++) {
+    for (let i = 0; i < config.parameters.populationSize; i++) {
         const rand = Math.random();
-        if (rand < config.keepPreviousRatio) {
+        if (rand < config.parameters.keepPreviousRatio) {
             // Add an previous individual that may be mutated
             const happySelectInd = pickParent(population);
             let mutant: Individual = mutate(happySelectInd, config, masterData);
@@ -198,7 +201,7 @@ export function generateNewGeneration(population: Individual[], config: Configur
             mutant = evaluateIndividual(mutant, config);
             nextPopulation.push(mutant);
         }
-        else if (rand < (config.keepPreviousRatio + config.newIndividualRatio)) {
+        else if (rand < (config.parameters.keepPreviousRatio + config.parameters.newIndividualRatio)) {
             // Create a new individual
             let ind = createIndividual(i, config, masterData);
             ind = evaluateIndividual(ind, config);
@@ -208,22 +211,22 @@ export function generateNewGeneration(population: Individual[], config: Configur
             // Create a child
             let parentA;
             let parentB;
-            
-            if (config.parentSelectionStrategy === "tournament") {
-                parentA = pickParentFromTournament(tournamentPool, config.tournamentSize);
-                parentB = pickParentFromTournament(tournamentPool, config.tournamentSize);
+
+            if (config.parameters.parentSelectionStrategy === "tournament") {
+                parentA = pickParentFromTournament(tournamentPool, config.parameters.tournamentSize);
+                parentB = pickParentFromTournament(tournamentPool, config.parameters.tournamentSize);
             }
             else {
                 parentA = pickParent(population);
-                parentB = pickParent(population);    
+                parentB = pickParent(population);
             }
-            
+
             let child = crossOver(parentA, parentB, config);
             child = mutate(child, config, masterData);
             child = evaluateIndividual(child, config);
             nextPopulation.push(child);
         }
-    }    
+    }
 
     return nextPopulation;
 }

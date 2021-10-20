@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import './App.css';
-import { Configuration, Individual } from './common/ga';
+import { GAParameters, Individual } from './common/ga';
 import { Attributes, defaultAttributes, Equipment, generateEquipmentFromJSON } from './common/kigardModels';
 import { Character } from './components/Character';
 import { Simulation } from './components/Simulation';
@@ -9,9 +9,9 @@ import equipentJSON from './data/head_equipment.json';
 
 function App() {
 
-  const [masterData, setMasterdata] = useState<Equipment[]>([]);
-  const [simuConfiguration, setConfiguration] = useState<Configuration>({
-    data: {...defaultAttributes},
+  const [masterData, setMasterData] = useState<Equipment[]>([]);
+  const [character, setCharacter] = useState<Attributes>({...defaultAttributes});
+  const [simuParameters, setSimuParameters] = useState<GAParameters>({
     populationSize: 20,
     selectCutoff: 0.1,
     keepPreviousRatio: 0.1,
@@ -26,13 +26,14 @@ function App() {
   useEffect(() => {
     if (masterData.length === 0) {
       const equipments = generateEquipmentFromJSON(equipentJSON);
-      setMasterdata(equipments);
+      setMasterData(equipments);
     }
   }, [masterData]);
 
-  const handleCharacterChange = useCallback((character: Attributes) => {
-    setConfiguration({...simuConfiguration, data: character})
-  }, [simuConfiguration]);
+  const handleCharacterChange = useCallback((updatedCharacter: Attributes) => {
+    console.log("handleCharacterChange");
+    setCharacter({...updatedCharacter});
+  }, []);
 
   const handleSimulationStart = useCallback(() => {
 
@@ -48,8 +49,8 @@ function App() {
 
   return (
     <div>
-      <Character onChange={handleCharacterChange}/>
-      <Simulation configuration={simuConfiguration} masterData={masterData} onHasStarted={handleSimulationStart} onHasStopped={handleSimulationStop} onHasNewIteration={handleSimulationNewIteration}/>
+      <Character onValueChange={handleCharacterChange}/>
+      <Simulation character={character} parameters={simuParameters} masterData={masterData} onHasStarted={handleSimulationStart} onHasStopped={handleSimulationStop} onHasNewIteration={handleSimulationNewIteration}/>
       {suggestion &&
         <Solution data={suggestion}/>
       }

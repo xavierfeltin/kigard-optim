@@ -1,6 +1,5 @@
 import { Table, Tbody, Td, Th, Thead } from "@chakra-ui/table";
 import { Individual } from "../common/ga";
-import { Equipment } from "../common/kigardModels";
 
 export interface SolutionProps {
     data: Individual;
@@ -13,13 +12,13 @@ export function Solution({data}: SolutionProps) {
             <span> Suggestions found: </span>
             <Table id="table-solution">
                 <Thead>
-                    {Object.keys(data).map((name) => (
+                    {Object.keys(data.phenotype[0].attributes).map(name => (
                         <Th>name</Th>
                     ))}
                 </Thead>
                 <Tbody>
-                    {Object.keys(data).map((name) => (
-                        <Td>data[name]</Td>
+                    {Object.keys(data.phenotype[0].attributes).map(name => (
+                        <Td>data.phenotype[0].attributes[name]</Td>
                     ))}
                 </Tbody>
             </Table>

@@ -1,6 +1,5 @@
 import { MessageIn, MessageOut } from "../common/workerCommunication";
-import { Configuration, convertFitnessIntoProbabilities, evaluatePopulation, generateNewGeneration, generatePopulation, Individual, SimuState, sortDescByFitness } from "../common/ga";
-import { Equipment } from "../common/kigardModels";
+import { convertFitnessIntoProbabilities, evaluatePopulation, generateNewGeneration, generatePopulation, Individual, sortDescByFitness } from "../common/ga";
 
 declare const self: Worker;
 export default {} as typeof Worker & { new (): Worker };
@@ -15,7 +14,7 @@ self.addEventListener("message", e => {
     if (prevPopulation.length === 0) {
         population = generatePopulation(msg.configuration, msg.masterData);
         population = evaluatePopulation(population, msg.configuration);
-        population = convertFitnessIntoProbabilities(population);    
+        population = convertFitnessIntoProbabilities(population);
     }
     else {
         population = [...prevPopulation];
@@ -23,7 +22,7 @@ self.addEventListener("message", e => {
     }
 
     let nextPopulation = generateNewGeneration(population, msg.configuration, msg.masterData);
-    nextPopulation = evaluatePopulation(nextPopulation, msg.configuration);         
+    nextPopulation = evaluatePopulation(nextPopulation, msg.configuration);
     nextPopulation = convertFitnessIntoProbabilities(nextPopulation);
     nextPopulation = sortDescByFitness(nextPopulation);
 
