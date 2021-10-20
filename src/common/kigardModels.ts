@@ -19,7 +19,7 @@ export interface Equipment {
     name: string;
     kind: EquipmentClass;
     localization: Localization;
-    weight: number; 
+    weight: number;
     attributes: Attributes;
     quality: Quality;
 }
@@ -34,7 +34,7 @@ export interface Outfit {
 }
 
 export interface Character {
-    attributes: Attributes;    
+    attributes: Attributes;
     outfit: Outfit;
     eqdAttributes: Attributes;
 }
@@ -70,25 +70,26 @@ export enum Quality {
 export function generateEquipmentFromJSON (data: any): Equipment[] {
     let equipments: Equipment[] = [];
     for (const d of data) {
+        console.log(d);
         const equipment: Equipment = {
             name: d.nom,
             kind: getEquipmentClassFromString(d.type),
             localization: getLocalizationFromString("tete"), //TODO : change with more equipment
-            weight: d.poids, 
+            weight: d.poids,
             attributes: {
                 con: 0,
-                str: d.for,
-                dex: d.dex,
-                int: d.int,
-                lck: d.chance,                
-                acc: d.pre,
-                dodge: d.esq,
-                mm: d.mm,
-                mr: d.rm,
-                rpm: d.pm,
-                rpv: d.pv,
-                armor: d.armure,
-                physicalDmg: d.dommage,
+                str: d.for || 0,
+                dex: d.dex || 0,
+                int: d.int || 0,
+                lck: d.chance || 0,
+                acc: d.pre || 0,
+                dodge: d.esq || 0,
+                mm: d.mm || 0,
+                mr: d.rm || 0,
+                rpm: d.pm || 0,
+                rpv: d.pv || 0,
+                armor: d.arm || 0,
+                physicalDmg: d.dommage || 0,
                 magicalDmg: 0
             },
             quality: getQualiyFromString("base") //TODO : change with more equipment
@@ -157,7 +158,7 @@ export const defaultEquipment: Equipment = {
     name: "",
     kind: EquipmentClass.LightArmor,
     localization: Localization.Head,
-    weight: 0, 
+    weight: 0,
     attributes: {...defaultAttributes},
     quality: Quality.Standard
 }

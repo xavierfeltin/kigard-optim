@@ -78,8 +78,8 @@ export function evaluateIndividual(ind: Individual, config: Configuration): Indi
 
     // Update configuration with individual
     let modifiedAttributes: Attributes = {...config.data};
-    for (let idx of evaluated.genes) {
-        const equipment: Equipment = evaluated.phenotype[idx];
+    for (let i = 0; i < evaluated.genes.length; i++) {
+        const equipment: Equipment = evaluated.phenotype[i];
         Object.keys(equipment.attributes).forEach((attr) => {
             modifiedAttributes[attr as keyof Attributes] = config.data[attr as keyof Attributes] + equipment.attributes[attr as keyof Attributes];
         })
