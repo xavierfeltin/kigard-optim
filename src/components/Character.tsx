@@ -23,19 +23,19 @@ export function Character({onValueChange}: CharacterProps) {
         rpv: 0,
         armor: 0,
         physicalDmg: 0,
-        magicalDmg: 0
+        magicalDmg: 0,
+        allowedWeight: 5
     });
 
     useEffect(() => {
-        console.log("change character");
         onValueChange && onValueChange(character);
     }, [character, onValueChange]);
 
     return (
         <div className="sheet">
             <p> Personnage </p>
-            <InputRangeButtons id="ch-con" label="Con" min={5} max={30} defaultVal={character.con} step={1} onChange={v => setCharacter({...character, con: v})}/>
-            <InputRangeButtons id="ch-str" label="For" min={5} max={30} defaultVal={character.str} step={1} onChange={v => setCharacter({...character, str: v})}/>
+            <InputRangeButtons id="ch-con" label="Con" min={5} max={30} defaultVal={character.con} step={1} onChange={v => setCharacter({...character, con: v, allowedWeight: Math.floor((v + character.con) / 2)})}/>
+            <InputRangeButtons id="ch-str" label="For" min={5} max={30} defaultVal={character.str} step={1} onChange={v => setCharacter({...character, str: v, allowedWeight: Math.floor((v + character.con) / 2)})}/>
             <InputRangeButtons id="ch-dex" label="Dex" min={5} max={30} defaultVal={character.dex} step={1} onChange={v => setCharacter({...character, dex: v})}/>
             <InputRangeButtons id="ch-int" label="Int" min={5} max={30} defaultVal={character.int} step={1} onChange={v => setCharacter({...character, int: v})}/>
             <InputRangeButtons id="ch-lck" label="Chance" min={5} max={30} defaultVal={character.lck} step={1} onChange={v => setCharacter({...character, lck: v})}/>

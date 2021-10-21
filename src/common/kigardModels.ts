@@ -13,9 +13,11 @@ export interface Attributes {
     armor: number;
     physicalDmg: number;
     magicalDmg: number;
+    allowedWeight: number;
 }
 
 export interface Equipment {
+    id: number;
     name: string;
     kind: EquipmentClass;
     localization: Localization;
@@ -81,6 +83,7 @@ export function generateEquipmentFromJSON (data: any): Equipment[] {
     for (const d of data) {
         console.log(d);
         const equipment: Equipment = {
+            id: d.id,
             name: d.nom,
             kind: getEquipmentClassFromString(d.type),
             localization: getLocalizationFromString("tete"), //TODO : change with more equipment
@@ -99,7 +102,8 @@ export function generateEquipmentFromJSON (data: any): Equipment[] {
                 rpv: d.pv || 0,
                 armor: d.arm || 0,
                 physicalDmg: d.dommage || 0,
-                magicalDmg: 0
+                magicalDmg: 0,
+                allowedWeight: 0
             },
             quality: getQualiyFromString("base") //TODO : change with more equipment
         };
@@ -160,10 +164,12 @@ export const defaultAttributes: Attributes = {
     rpv: 0,
     armor: 0,
     physicalDmg: 0,
-    magicalDmg: 0
+    magicalDmg: 0,
+    allowedWeight: 0
 };
 
 export const defaultEquipment: Equipment = {
+    id: 0,
     name: "",
     kind: EquipmentClass.LightArmor,
     localization: Localization.Head,

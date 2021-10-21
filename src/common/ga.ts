@@ -26,7 +26,7 @@ export interface Individual {
     genes: number[];
     fitness: number;
     probability: number;
-    phenotype: Equipment[];
+    carriedWeight: number,
 }
 
 export function createEmptyIndividual(): Individual {
@@ -35,7 +35,7 @@ export function createEmptyIndividual(): Individual {
         genes: [],
         fitness: 0,
         probability: 0,
-        phenotype: []
+        carriedWeight: 0
     }
 
     return ind;
@@ -58,23 +58,25 @@ export function createIndividual(id: number, config: Configuration, masterData: 
     const genes: number[] = [];
     const phenotype: Equipment[] = [];
 
-    let isOutfitValid = false;
-    while (!isOutfitValid) {
-        for (let part of outfitParts) {
-            let partMasterData = masterData[part as keyof MasterDataOutfit];
-            let equipmentIdx = Math.floor(Math.random() * partMasterData.length);
-            genes.push(equipmentIdx);
-            phenotype.push(partMasterData[equipmentIdx]);
-        }    
-        isOutfitValid = isOutfitAllowed(phenotype, config);
-    }
-    
+    let carriedWeight = 0;
+    for (let part of outfitParts) {
+        let partMasterData = masterData[part as keyof MasterDataOutfit];
+        let filtered = partMasterData.filter((value, index, array) => {
+            return value.weight <= (config.data.allowedWeight - carriedWeight);
+        });
+        
+        let index = Math.floor(Math.random() * filtered.length);
+        let equipmentID = filtered[index].id; 
+        genes.push(equipmentID);
+        carriedWeight += partMasterData[equipmentID].weight;
+    }    
+
     const ind: Individual = {
         id: id,
         genes: genes,
         fitness: NaN,
         probability: NaN,
-        phenotype: phenotype
+        carriedWeight: carriedWeight
     };
     return ind;
 }
@@ -90,23 +92,25 @@ export function generatePopulation(config: Configuration, masterData: MasterData
     return population;
 }
 
-export function evaluatePopulation(population: Individual[], config: Configuration) {
+export function evaluatePopulation(population: Individual[], config: Configuration, masterData: MasterDataOutfit) {
     let evaluated: Individual[] = [];
     for(let indiv of population) {
 
-        const evalInd = evaluateIndividual(indiv, config);
+        const evalInd = evaluateIndividual(indiv, config, masterData);
         evaluated.push(evalInd);
     }
     return evaluated;
 }
 
-export function evaluateIndividual(ind: Individual, config: Configuration): Individual {
+export function evaluateIndividual(ind: Individual, config: Configuration, masterData: MasterDataOutfit): Individual {
     let evaluated = {...ind};
 
     // Update configuration with individual
     let modifiedAttributes: Attributes = {...config.data};
     for (let i = 0; i < evaluated.genes.length; i++) {
-        const equipment: Equipment = evaluated.phenotype[i];
+        const partOutfit = outfitParts[i];
+        const equipmentID = evaluated.genes[i];        
+        const equipment: Equipment = masterData[partOutfit as keyof MasterDataOutfit][equipmentID];
         Object.keys(equipment.attributes).forEach((attr) => {
             modifiedAttributes[attr as keyof Attributes] = config.data[attr as keyof Attributes] + equipment.attributes[attr as keyof Attributes];
         })
@@ -212,6 +216,9 @@ export function mutate(ind: Individual, config: Configuration, masterData: Maste
     let mutatedGenes = [];
     let mutatedPhenotype = [];
     
+    const localizationIndexToMutate = Math.floor(Math.random() * outfitParts.length);
+    const partOutfit = outfitParts[localizationIndexToMutate];
+
     while (!isOutfitValid) {
         mutatedGenes = [];
         mutatedPhenotype = [];
@@ -239,7 +246,7 @@ export function crossOver(a: Individual, b: Individual, config: Configuration, m
         fitness: 0,
         probability: 0,
         id: Date.now(),
-        phenotype: []
+        carriedWeight: 0
     };
 
     const primaryGenes = a.fitness > b.fitness ? a.genes : b.genes;

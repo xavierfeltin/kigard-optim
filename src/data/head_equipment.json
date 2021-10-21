@@ -1,5 +1,6 @@
 [
  {
+   "id": 1,
    "nom": "bandana",
    "type": "legere",
    "arm": null,
@@ -17,6 +18,7 @@
    "poids": 1
  },
  {
+  "id": 2,
    "nom": "bandana en soie",
    "type": "legere",
    "arm": null,
@@ -34,6 +36,7 @@
    "poids": 1
  },
  {
+   "id": 3,
    "nom": "capuche f�line",
    "type": "legere",
    "arm": null,
@@ -51,6 +54,7 @@
    "poids": 1
  },
  {
+  "id": 4,
    "nom": "capuche de r�deur",
    "type": "legere",
    "arm": null,
@@ -68,6 +72,7 @@
    "poids": 1
  },
  {
+  "id": 5,
    "nom": "capuchon",
    "type": "legere",
    "arm": null,
@@ -85,6 +90,7 @@
    "poids": 1
  },
  {
+  "id": 6,
    "nom": "capuchon en soie",
    "type": "legere",
    "arm": null,
@@ -102,6 +108,7 @@
    "poids": 1
  },
  {
+  "id": 7,
    "nom": "coiffe",
    "type": "legere",
    "arm": 1,
@@ -119,6 +126,7 @@
    "poids": 1
  },
  {
+  "id": 8,
    "nom": "cabasset",
    "type": "lourde",
    "arm": 2,
@@ -136,6 +144,7 @@
    "poids": 1
  },
  {
+  "id": 9,
    "nom": "chapeau plume",
    "type": "combat",
    "arm": null,
@@ -153,6 +162,7 @@
    "poids": 1
  },
  {
+  "id": 10,
    "nom": "cagoule de l'ombre",
    "type": "combat",
    "arm": null,
@@ -170,6 +180,7 @@
    "poids": 1
  },
  {
+  "id": 11,
    "nom": "chapeau de nomade",
    "type": "voyage",
    "arm": null,
@@ -187,6 +198,7 @@
    "poids": 1
  },
  {
+  "id": 12,
    "nom": "bonnet �meraude",
    "type": "artefact",
    "arm": null,
@@ -204,6 +216,7 @@
    "poids": 1
  },
  {
+  "id": 13,
    "nom": "casque en mithril",
    "type": "artefact",
    "arm": 3,
@@ -221,6 +234,7 @@
    "poids": 1
  },
  {
+  "id": 14,
    "nom": "diad�me",
    "type": "lourde",
    "arm": 1,
@@ -238,6 +252,7 @@
    "poids": 1
  },
  {
+  "id": 15,
    "nom": "coiffe en soie",
    "type": "focus",
    "arm": null,
@@ -255,6 +270,7 @@
    "poids": 1
  },
  {
+  "id": 16,
    "nom": "barrette en or",
    "type": "parure",
    "arm": null,
@@ -272,6 +288,7 @@
    "poids": 1
  },
  {
+  "id": 17,
    "nom": "casque en bois",
    "type": "parure",
    "arm": 1,
@@ -289,6 +306,7 @@
    "poids": 1
  },
  {
+  "id": 18,
    "nom": "casque ail�",
    "type": "legere",
    "arm": 2,
@@ -306,6 +324,7 @@
    "poids": 2
  },
  {
+  "id": 19,
    "nom": "bassinet plume",
    "type": "lourde",
    "arm": 2,
@@ -323,6 +342,7 @@
    "poids": 2
  },
  {
+  "id": 20,
    "nom": "cabasset � cornes",
    "type": "lourde",
    "arm": 3,
@@ -340,6 +360,7 @@
    "poids": 2
  },
  {
+  "id": 21,
    "nom": "casque",
    "type": "lourde",
    "arm": 3,
@@ -357,6 +378,7 @@
    "poids": 2
  },
  {
+  "id": 22,
    "nom": "casque noble",
    "type": "lourde",
    "arm": 3,
@@ -374,6 +396,7 @@
    "poids": 2
  },
  {
+  "id": 23,
    "nom": "cr�ne rituel",
    "type": "lourde",
    "arm": 1,

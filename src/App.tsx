@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import { GAParameters, Individual } from './common/ga';
-import { Attributes, defaultAttributes, Equipment, generateEquipmentFromJSON, MasterDataOutfit } from './common/kigardModels';
+import { Attributes, defaultAttributes, defaultEquipment, Equipment, generateEquipmentFromJSON, Localization, MasterDataOutfit } from './common/kigardModels';
 import { Character } from './components/Character';
 import { Simulation } from './components/Simulation';
 import { Solution } from './components/Solution';
@@ -10,7 +10,14 @@ import feetEquipmentJSON from './data/feet_equipment.json';
 
 function App() {
 
-  const [masterData, setMasterData] = useState<MasterDataOutfit>([]);
+  const [masterData, setMasterData] = useState<MasterDataOutfit>({
+    head: [],
+    body: [],
+    leftHand: [],
+    rightHand: [],
+    fetish: [],
+    feet: []
+  });
   const [character, setCharacter] = useState<Attributes>({...defaultAttributes});
   const [simuParameters, setSimuParameters] = useState<GAParameters>({
     populationSize: 20,
@@ -27,13 +34,20 @@ function App() {
   useEffect(() => {   
     const headEquipments = generateEquipmentFromJSON(headEquipmentJSON);
     const feetEquipments = generateEquipmentFromJSON(feetEquipmentJSON);
+
+    const emptyHead = {...defaultEquipment};
+    emptyHead.name = "Casque non porté";
+
+    const emptyFeet = {...defaultEquipment};
+    emptyFeet.name = "Chaussures non portées";
+    emptyFeet.localization = Localization.Feet;
     
     const masterData: MasterDataOutfit = {
-      head: headEquipments,
+      head: [emptyHead, ...headEquipments],
       body: [],
       leftHand: [],
       rightHand: [],
-      feet: feetEquipments,
+      feet: [emptyFeet, ...feetEquipments],
       fetish: []
     }
     setMasterData(masterData); 
