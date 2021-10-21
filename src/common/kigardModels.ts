@@ -24,10 +24,19 @@ export interface Equipment {
     quality: Quality;
 }
 
+export interface MasterDataOutfit {
+    head: Equipment[];
+    body: Equipment[];
+    feet: Equipment[];
+    rightHand: Equipment[];
+    leftHand: Equipment[];
+    fetish: Equipment[];
+}
+
 export interface Outfit {
     head: Equipment;
     body: Equipment;
-    shoes: Equipment;
+    feet: Equipment;
     rightHand: Equipment;
     leftHand: Equipment;
     fetish: Equipment;
@@ -162,3 +171,5 @@ export const defaultEquipment: Equipment = {
     attributes: {...defaultAttributes},
     quality: Quality.Standard
 }
+
+export const outfitParts: string[] = ["head", "feet"];

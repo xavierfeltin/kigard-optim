@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { createEmptyIndividual, GAParameters, Individual, SimuState } from "../common/ga";
-import { Attributes, Equipment } from "../common/kigardModels";
+import { Attributes, MasterDataOutfit } from "../common/kigardModels";
 import { MessageIn, MessageOut } from "../common/workerCommunication";
 import MyWorker from '../worker/ga.worker';
 
 export interface SimulationProps {
   character: Attributes,
   parameters: GAParameters,
-  masterData: Equipment[];
+  masterData: MasterDataOutfit;
   onHasStarted: () => void,
   onHasStopped: () => void
   onHasNewIteration: (ind: Individual) => void;

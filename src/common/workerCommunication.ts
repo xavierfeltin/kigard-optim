@@ -1,9 +1,9 @@
 import { Configuration, SimuState } from "./ga";
-import { Equipment } from "./kigardModels";
+import { Equipment, MasterDataOutfit } from "./kigardModels";
 
 export interface MessageIn {
     configuration: Configuration;
-    masterData: Equipment[];
+    masterData: MasterDataOutfit;
     state: SimuState
 }
 

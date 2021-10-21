@@ -1,15 +1,16 @@
 import { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import { GAParameters, Individual } from './common/ga';
-import { Attributes, defaultAttributes, Equipment, generateEquipmentFromJSON } from './common/kigardModels';
+import { Attributes, defaultAttributes, Equipment, generateEquipmentFromJSON, MasterDataOutfit } from './common/kigardModels';
 import { Character } from './components/Character';
 import { Simulation } from './components/Simulation';
 import { Solution } from './components/Solution';
-import equipentJSON from './data/head_equipment.json';
+import headEquipmentJSON from './data/head_equipment.json';
+import feetEquipmentJSON from './data/feet_equipment.json';
 
 function App() {
 
-  const [masterData, setMasterData] = useState<Equipment[]>([]);
+  const [masterData, setMasterData] = useState<MasterDataOutfit>([]);
   const [character, setCharacter] = useState<Attributes>({...defaultAttributes});
   const [simuParameters, setSimuParameters] = useState<GAParameters>({
     populationSize: 20,
@@ -23,12 +24,20 @@ function App() {
   });
   const [suggestion, setSuggestion] = useState<Individual | undefined>(undefined);
 
-  useEffect(() => {
-    if (masterData.length === 0) {
-      const equipments = generateEquipmentFromJSON(equipentJSON);
-      setMasterData(equipments);
+  useEffect(() => {   
+    const headEquipments = generateEquipmentFromJSON(headEquipmentJSON);
+    const feetEquipments = generateEquipmentFromJSON(feetEquipmentJSON);
+    
+    const masterData: MasterDataOutfit = {
+      head: headEquipments,
+      body: [],
+      leftHand: [],
+      rightHand: [],
+      feet: feetEquipments,
+      fetish: []
     }
-  }, [masterData]);
+    setMasterData(masterData); 
+  }, []);
 
   const handleCharacterChange = useCallback((updatedCharacter: Attributes) => {
     console.log("handleCharacterChange");

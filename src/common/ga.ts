@@ -1,4 +1,4 @@
-import { Attributes, Equipment } from "./kigardModels";
+import { Attributes, Equipment, MasterDataOutfit, outfitParts } from "./kigardModels";
 
 export interface GAParameters {
     populationSize: number;
@@ -41,31 +41,45 @@ export function createEmptyIndividual(): Individual {
     return ind;
 }
 
-export function isEquipmentAllowed(equipment: Equipment, config: Configuration): boolean {
+export function isOutfitAllowed(outfit: Equipment[], config: Configuration): boolean {
     // Check carried weight to not go further character allowed weight
     let carriedWeight = 0;
     const allowedWeight = Math.floor((config.data.con + config.data.str) / 2);
-    carriedWeight += equipment.weight;
+    
+    outfit.forEach(equipment => {
+        carriedWeight += equipment.weight;
+    })
+    
     return carriedWeight <= allowedWeight;
 }
 
-export function createIndividual(id: number, config: Configuration, masterData: Equipment[]): Individual {
-    let equipmentIdx = Math.floor(Math.random() * masterData.length);
-    while (!isEquipmentAllowed(masterData[equipmentIdx], config)) {
-        equipmentIdx = Math.floor(Math.random() * masterData.length);
-    }
+export function createIndividual(id: number, config: Configuration, masterData: MasterDataOutfit): Individual {
 
+    const genes: number[] = [];
+    const phenotype: Equipment[] = [];
+
+    let isOutfitValid = false;
+    while (!isOutfitValid) {
+        for (let part of outfitParts) {
+            let partMasterData = masterData[part as keyof MasterDataOutfit];
+            let equipmentIdx = Math.floor(Math.random() * partMasterData.length);
+            genes.push(equipmentIdx);
+            phenotype.push(partMasterData[equipmentIdx]);
+        }    
+        isOutfitValid = isOutfitAllowed(phenotype, config);
+    }
+    
     const ind: Individual = {
         id: id,
-        genes: [equipmentIdx],
+        genes: genes,
         fitness: NaN,
         probability: NaN,
-        phenotype: [masterData[equipmentIdx]]
+        phenotype: phenotype
     };
     return ind;
 }
 
-export function generatePopulation(config: Configuration, masterData: Equipment[]): Individual[] {
+export function generatePopulation(config: Configuration, masterData: MasterDataOutfit): Individual[] {
     let population: Individual[] = [];
 
     for(let i = 0; i < config.parameters.populationSize; i++) {
@@ -191,31 +205,35 @@ export function randomNumberInRange(min: number, max: number, isInteger: boolean
     return value;
 }
 
-export function mutate(ind: Individual, config: Configuration, masterData: Equipment[]): Individual {
+export function mutate(ind: Individual, config: Configuration, masterData: MasterDataOutfit): Individual {
     let mutant = {...ind};
 
-    let delta = randomNumberInRange(-2, 2, true);
-    let newGene = mutant.genes[0] + delta;
-    newGene = Math.min(newGene, masterData.length);
-    newGene = Math.max(newGene, 0);
-    mutant.genes[0] = newGene;
-
-    while(!isEquipmentAllowed(masterData[mutant.genes[0]], config)) {
-        delta = randomNumberInRange(-2, 2, true);
-        newGene = mutant.genes[0] + delta;
-        newGene = Math.min(newGene, masterData.length);
-        newGene = Math.max(newGene, 0);
-        mutant.genes[0] = newGene;
+    let isOutfitValid = false;
+    let mutatedGenes = [];
+    let mutatedPhenotype = [];
+    
+    while (!isOutfitValid) {
+        mutatedGenes = [];
+        mutatedPhenotype = [];
+        for (let part of outfitParts) {
+            let partMasterData = masterData[part as keyof MasterDataOutfit];
+    
+            let delta = randomNumberInRange(-2, 2, true);
+            let newGene = mutant.genes[0] + delta;
+            newGene = Math.min(newGene, partMasterData.length);
+            newGene = Math.max(newGene, 0);
+            mutatedGenes.push(newGene);
+            mutatedPhenotype.push(partMasterData[mutant.genes[0]]);
+        }
+        isOutfitValid = isOutfitAllowed(mutatedPhenotype, config);
     }
 
-    mutant.genes.forEach(gene => {
-        mutant.phenotype.push(masterData[gene]);
-    })
-
+    mutant.genes = mutatedGenes;
+    mutant.phenotype = mutatedPhenotype;
     return mutant;
 }
 
-export function crossOver(a: Individual, b: Individual, config: Configuration, masterData: Equipment[]): Individual {
+export function crossOver(a: Individual, b: Individual, config: Configuration, masterData: MasterDataOutfit): Individual {
     const child: Individual = {
         genes: [],
         fitness: 0,
@@ -241,7 +259,7 @@ export function crossOver(a: Individual, b: Individual, config: Configuration, m
     return child;
 }
 
-export function generateNewGeneration(population: Individual[], config: Configuration, masterData: Equipment[]): Individual[] {
+export function generateNewGeneration(population: Individual[], config: Configuration, masterData: MasterDataOutfit): Individual[] {
     const poolSize = Math.round(population.length * config.parameters.selectCutoff);
     const tournamentPool = generateTournamentPool(population, poolSize);
     const nextPopulation: Individual[] = [];
