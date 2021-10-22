@@ -1,4 +1,3 @@
-import { isConstructorDeclaration } from "typescript";
 import { Attributes, defaultEquipment, Equipment, MasterDataOutfit, outfitParts } from "./kigardModels";
 
 export interface GAParameters {
@@ -76,8 +75,8 @@ export function createIndividual(id: number, config: Configuration, masterData: 
     const ind: Individual = {
         id: id,
         genes: genes,
-        fitness: NaN,
-        probability: NaN,
+        fitness: 0,
+        probability: 0,
         carriedWeight: carriedWeight
     };
     return ind;
@@ -87,7 +86,7 @@ export function generatePopulation(config: Configuration, masterData: MasterData
     let population: Individual[] = [];
 
     for(let i = 0; i < config.parameters.populationSize; i++) {
-        const ind = createIndividual(i, config, masterData);
+        const ind = createIndividual(Date.now(), config, masterData);
         population.push(ind);
     }
 
@@ -113,12 +112,9 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
         const partOutfit = outfitParts[i];
         const equipmentID = evaluated.genes[i];
         const equipment = masterData[partOutfit as keyof MasterDataOutfit].find(value => value.id === equipmentID) || defaultEquipment;
-        console.log(partOutfit);
-        console.log(equipment);
         Object.keys(equipment.attributes).forEach((attr) => {
             modifiedAttributes[attr as keyof Attributes] = modifiedAttributes[attr as keyof Attributes] + equipment.attributes[attr as keyof Attributes];
-        })
-        console.log(modifiedAttributes);
+        });
     }
 
     // Evaluate the individual
@@ -215,7 +211,13 @@ export function randomNumberInRange(min: number, max: number, isInteger: boolean
 }
 
 export function mutate(ind: Individual, config: Configuration, masterData: MasterDataOutfit): Individual {
-    let mutant = {...ind};
+    let mutant: Individual = {
+        id: Date.now(),
+        genes: [...ind.genes],
+        fitness: 0,
+        probability: 0,
+        carriedWeight: ind.carriedWeight
+    };
 
     const localizationIndexToMutate = Math.floor(Math.random() * outfitParts.length);
     const partOutfitToMutate = outfitParts[localizationIndexToMutate];
@@ -249,7 +251,7 @@ export function crossOver(a: Individual, b: Individual, config: Configuration, m
     const primaryGenes = a.fitness > b.fitness ? a.genes : b.genes;
     const secondaryGenes = a.fitness > b.fitness ? b.genes : a.genes;
     const splitIndex = Math.floor(primaryGenes.length * config.parameters.crossoverParentRatio);
-    child.genes = child.genes.concat(primaryGenes.slice(0, splitIndex));
+    child.genes = primaryGenes.slice(0, splitIndex);
 
     // Get carried weight for the current genes
     let carriedWeight = 0;
@@ -265,11 +267,8 @@ export function crossOver(a: Individual, b: Individual, config: Configuration, m
         let part = outfitParts[i + child.genes.length];
         let partMasterData = masterData[part as keyof MasterDataOutfit];
 
-        let primaryEquipmentID = partMasterData[primaryGenes[i]].id;
-        let secondaryEquipmentID = partMasterData[remainingSecondaryGenes[i]].id;
-
-        const primaryEquipment: Equipment =  partMasterData.find(value => value.id === primaryEquipmentID) || defaultEquipment;
-        const secondaryEquipment: Equipment =  partMasterData.find(value => value.id === secondaryEquipmentID) || defaultEquipment;
+        const primaryEquipment: Equipment =  partMasterData.find(value => value.id === primaryGenes[child.genes.length + i]) || defaultEquipment;
+        const secondaryEquipment: Equipment =  partMasterData.find(value => value.id === remainingSecondaryGenes[i]) || defaultEquipment;
 
         if (secondaryEquipment.weight + carriedWeight <= config.data.allowedWeight) {
             // Get secondary equipment if possible
@@ -278,7 +277,7 @@ export function crossOver(a: Individual, b: Individual, config: Configuration, m
         }
         else if (primaryEquipment.weight + carriedWeight <= config.data.allowedWeight ) {
             // Get primary parent otherwise if possible
-            child.genes.push(primaryGenes[i]);
+            child.genes.push(primaryGenes[child.genes.length + i]);
             carriedWeight += primaryEquipment.weight;
         }
         else {
@@ -301,13 +300,11 @@ export function generateNewGeneration(population: Individual[], config: Configur
             // Add an previous individual that may be mutated
             const happySelectInd = pickParent(population);
             let mutant: Individual = mutate(happySelectInd, config, masterData);
-            mutant = evaluateIndividual(mutant, config, masterData);
             nextPopulation.push(mutant);
         }
         else if (rand < (config.parameters.keepPreviousRatio + config.parameters.newIndividualRatio)) {
             // Create a new individual
-            let ind = createIndividual(i, config, masterData);
-            ind = evaluateIndividual(ind, config, masterData);
+            let ind = createIndividual(Date.now(), config, masterData);
             nextPopulation.push(ind);
         }
         else {
@@ -326,7 +323,6 @@ export function generateNewGeneration(population: Individual[], config: Configur
 
             let child = crossOver(parentA, parentB, config, masterData);
             child = mutate(child, config, masterData);
-            child = evaluateIndividual(child, config, masterData);
             nextPopulation.push(child);
         }
     }

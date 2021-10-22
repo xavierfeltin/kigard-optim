@@ -81,7 +81,6 @@ export enum Quality {
 export function generateEquipmentFromJSON (data: any): Equipment[] {
     let equipments: Equipment[] = [];
     for (const d of data) {
-        console.log(d);
         const equipment: Equipment = {
             id: d.id,
             name: d.nom,

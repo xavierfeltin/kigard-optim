@@ -1,14 +1,15 @@
 import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/table";
 import { ReactElement } from "react";
-import { Individual } from "../common/ga";
-import { Attributes, defaultEquipment, MasterDataOutfit, outfitParts } from "../common/kigardModels";
+import { Configuration, Individual } from "../common/ga";
+import { Attributes, Character, defaultEquipment, MasterDataOutfit, outfitParts } from "../common/kigardModels";
 
 export interface SolutionProps {
     ind: Individual;
     masterData: MasterDataOutfit;
+    character: Attributes;
 };
 
-export function Solution({ind, masterData}: SolutionProps) {
+export function Solution({ind, masterData, character}: SolutionProps) {
 
     const generateHeader = function(): JSX.Element[] {
         const row: JSX.Element[] = [];
@@ -29,7 +30,7 @@ export function Solution({ind, masterData}: SolutionProps) {
         const partOutfit = masterData[partIndex as keyof MasterDataOutfit];
         const equipment = partOutfit.find(value => value.id === equipmentID) || defaultEquipment;
 
-        console.log("part index: " + partIndex);
+        console.log("part index: " + partIndex + ", equipmentID: " + equipmentID);
         console.log(partOutfit);
 
         return (
@@ -44,7 +45,7 @@ export function Solution({ind, masterData}: SolutionProps) {
 
     return (
         <div>
-            <span> Suggestions found: </span>
+            <span> Suggestions found (weight: {ind.carriedWeight} / {character.allowedWeight}): </span>
             <span> Fitness: {ind.fitness.toFixed(4)}</span>
             <Table id="table-solution">
                 <Thead>

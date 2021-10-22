@@ -54,7 +54,6 @@ function App() {
   }, []);
 
   const handleCharacterChange = useCallback((updatedCharacter: Attributes) => {
-    console.log("handleCharacterChange");
     setCharacter({...updatedCharacter});
   }, []);
 
@@ -75,7 +74,7 @@ function App() {
       <Character onValueChange={handleCharacterChange}/>
       <Simulation character={character} parameters={simuParameters} masterData={masterData} onHasStarted={handleSimulationStart} onHasStopped={handleSimulationStop} onHasNewIteration={handleSimulationNewIteration}/>
       {suggestion &&
-        <Solution ind={suggestion} masterData={masterData}/>
+        <Solution ind={suggestion} masterData={masterData} character={character}/>
       }
     </div>
   );
