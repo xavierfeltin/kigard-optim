@@ -1,12 +1,14 @@
 import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/table";
+import { ReactElement } from "react";
 import { Individual } from "../common/ga";
-import { Attributes } from "../common/kigardModels";
+import { Attributes, defaultEquipment, MasterDataOutfit, outfitParts } from "../common/kigardModels";
 
 export interface SolutionProps {
-    data: Individual;
+    ind: Individual;
+    masterData: MasterDataOutfit;
 };
 
-export function Solution({data}: SolutionProps) {
+export function Solution({ind, masterData}: SolutionProps) {
 
     const generateHeader = function(): JSX.Element[] {
         const row: JSX.Element[] = [];
@@ -14,7 +16,7 @@ export function Solution({data}: SolutionProps) {
         const th = <Th key="th-solution-name">Nom</Th>
         row.push(th);
 
-        Object.keys(data.phenotype[0].attributes).forEach((name: string) => {
+        Object.keys(masterData.head[0].attributes).forEach((name: string) => {
             const id = "th-solution-" + name;
             const th = <Th key={id}>{name}</Th>
             row.push(th);
@@ -22,29 +24,36 @@ export function Solution({data}: SolutionProps) {
         return row;
     }
 
-    const generateRow = function(): JSX.Element[] {
-        const row: JSX.Element[] = [];
+    const generateRow = function(equipmentID: number, outfitPartID: number): ReactElement {
+        const partIndex = outfitParts[outfitPartID];
+        const partOutfit = masterData[partIndex as keyof MasterDataOutfit];
+        const equipment = partOutfit.find(value => value.id === equipmentID) || defaultEquipment;
 
-        const td = <Td key="td-solution-name">{data.phenotype[0].name}</Td>
-        row.push(td);
+        console.log("part index: " + partIndex);
+        console.log(partOutfit);
 
-        Object.keys(data.phenotype[0].attributes).forEach((name: string) => {
-            const id = "td-solution-" + name;
-            const td = <Td key={id}>{data.phenotype[0].attributes[name as keyof Attributes]}</Td>
-            row.push(td);
-        });
-        return row;
+        return (
+            <Tr key={"tr-solution-" + outfitPartID}>
+                <Td key="td-solution-name">{equipment.name}</Td>
+                {Object.keys(equipment.attributes).map((name: string) => (
+                    <Td key={"td-solution-" + name}>{equipment.attributes[name as keyof Attributes]}</Td>
+                ))}
+            </Tr>
+        )
     };
 
     return (
         <div>
             <span> Suggestions found: </span>
+            <span> Fitness: {ind.fitness.toFixed(4)}</span>
             <Table id="table-solution">
                 <Thead>
                     <Tr>{generateHeader()}</Tr>
                 </Thead>
                 <Tbody>
-                    <Tr>{generateRow()}</Tr>
+                    {ind.genes.map((equipmentID, index) => {
+                        return generateRow(equipmentID, index);
+                    })}
                 </Tbody>
             </Table>
         </div>

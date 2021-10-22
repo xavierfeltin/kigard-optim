@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import { GAParameters, Individual } from './common/ga';
-import { Attributes, defaultAttributes, defaultEquipment, Equipment, generateEquipmentFromJSON, Localization, MasterDataOutfit } from './common/kigardModels';
+import { Attributes, defaultAttributes, defaultEquipment, generateEquipmentFromJSON, Localization, MasterDataOutfit } from './common/kigardModels';
 import { Character } from './components/Character';
 import { Simulation } from './components/Simulation';
 import { Solution } from './components/Solution';
@@ -31,7 +31,7 @@ function App() {
   });
   const [suggestion, setSuggestion] = useState<Individual | undefined>(undefined);
 
-  useEffect(() => {   
+  useEffect(() => {
     const headEquipments = generateEquipmentFromJSON(headEquipmentJSON);
     const feetEquipments = generateEquipmentFromJSON(feetEquipmentJSON);
 
@@ -41,7 +41,7 @@ function App() {
     const emptyFeet = {...defaultEquipment};
     emptyFeet.name = "Chaussures non portées";
     emptyFeet.localization = Localization.Feet;
-    
+
     const masterData: MasterDataOutfit = {
       head: [emptyHead, ...headEquipments],
       body: [],
@@ -50,7 +50,7 @@ function App() {
       feet: [emptyFeet, ...feetEquipments],
       fetish: []
     }
-    setMasterData(masterData); 
+    setMasterData(masterData);
   }, []);
 
   const handleCharacterChange = useCallback((updatedCharacter: Attributes) => {
@@ -75,7 +75,7 @@ function App() {
       <Character onValueChange={handleCharacterChange}/>
       <Simulation character={character} parameters={simuParameters} masterData={masterData} onHasStarted={handleSimulationStart} onHasStopped={handleSimulationStop} onHasNewIteration={handleSimulationNewIteration}/>
       {suggestion &&
-        <Solution data={suggestion}/>
+        <Solution ind={suggestion} masterData={masterData}/>
       }
     </div>
   );

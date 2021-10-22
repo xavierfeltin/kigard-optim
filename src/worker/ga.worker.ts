@@ -13,7 +13,7 @@ self.addEventListener("message", e => {
 
     if (prevPopulation.length === 0) {
         population = generatePopulation(msg.configuration, msg.masterData);
-        population = evaluatePopulation(population, msg.configuration);
+        population = evaluatePopulation(population, msg.configuration, msg.masterData);
         population = convertFitnessIntoProbabilities(population);
     }
     else {
@@ -21,16 +21,18 @@ self.addEventListener("message", e => {
         // already evaluated in previous generation
     }
 
+    debugger;
+
     let nextPopulation = generateNewGeneration(population, msg.configuration, msg.masterData);
-    nextPopulation = evaluatePopulation(nextPopulation, msg.configuration);
+    nextPopulation = evaluatePopulation(nextPopulation, msg.configuration, msg.masterData);
     nextPopulation = convertFitnessIntoProbabilities(nextPopulation);
     nextPopulation = sortDescByFitness(nextPopulation);
+    console.log(nextPopulation);
 
-    const bestIndividual = nextPopulation[0];
     const response: MessageOut = {
         state: {
             isRunning: msg.state.isRunning,
-            bestSolution: bestIndividual,
+            bestSolution: msg.state.bestSolution.fitness < nextPopulation[0].fitness ? nextPopulation[0] : msg.state.bestSolution,
             population: nextPopulation,
             generation: msg.state.generation + 1
         }
