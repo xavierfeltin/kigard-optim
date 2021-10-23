@@ -7,6 +7,8 @@ import { Simulation } from './components/Simulation';
 import { Solution } from './components/Solution';
 import headEquipmentJSON from './data/head_equipment.json';
 import feetEquipmentJSON from './data/feet_equipment.json';
+import bodyEquipmentJSON from './data/body_equipment.json';
+import leftHandEquipmentJSON from './data/left_hand_equipment.json';
 
 function App() {
 
@@ -34,6 +36,8 @@ function App() {
   useEffect(() => {
     const headEquipments = generateEquipmentFromJSON(headEquipmentJSON);
     const feetEquipments = generateEquipmentFromJSON(feetEquipmentJSON);
+    const bodyEquipments = generateEquipmentFromJSON(bodyEquipmentJSON);
+    const leftHandEquipments = generateEquipmentFromJSON(leftHandEquipmentJSON);
 
     const emptyHead = {...defaultEquipment};
     emptyHead.name = "Casque non porté";
@@ -42,10 +46,18 @@ function App() {
     emptyFeet.name = "Chaussures non portées";
     emptyFeet.localization = Localization.Feet;
 
+    const emptyBody = {...defaultEquipment};
+    emptyBody.name = "Armure non portée";
+    emptyBody.localization = Localization.Body;
+
+    const emptyLeftHand = {...defaultEquipment};
+    emptyLeftHand.name = "Main gauche vide";
+    emptyLeftHand.localization = Localization.Lefthand;
+
     const masterData: MasterDataOutfit = {
       head: [emptyHead, ...headEquipments],
-      body: [],
-      leftHand: [],
+      body: [emptyBody, ...bodyEquipments],
+      leftHand: [emptyLeftHand, ...leftHandEquipments],
       rightHand: [],
       feet: [emptyFeet, ...feetEquipments],
       fetish: []

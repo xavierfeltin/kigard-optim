@@ -11,17 +11,24 @@ export interface SolutionProps {
 
 export function Solution({ind, masterData, character}: SolutionProps) {
 
+    const kigardHeader: string[] = ["armor", "acc", "dodge", "mm", "mr", "dex", "int", "str", "rpm", "rpv"];
+    const kigardHeaderFR: string[] = ["Arm", "Pre", "Esq", "MM", "RM", "Dex", "Int", "For", "PM/Tr", "PV/Tr"];
+
     const generateHeader = function(): JSX.Element[] {
         const row: JSX.Element[] = [];
 
-        const th = <Th key="th-solution-name">Nom</Th>
-        row.push(th);
+        const thName = <Th key="th-solution-name">Nom</Th>
+        row.push(thName);
 
-        Object.keys(masterData.head[0].attributes).forEach((name: string) => {
+        kigardHeaderFR.forEach((name: string) => {
             const id = "th-solution-" + name;
             const th = <Th key={id}>{name}</Th>
             row.push(th);
         });
+
+        const thWeight = <Th key="th-solution-weight">Poids</Th>
+        row.push(thWeight);
+
         return row;
     }
 
@@ -36,9 +43,10 @@ export function Solution({ind, masterData, character}: SolutionProps) {
         return (
             <Tr key={"tr-solution-" + outfitPartID}>
                 <Td key="td-solution-name">{equipment.name}</Td>
-                {Object.keys(equipment.attributes).map((name: string) => (
+                {kigardHeader.map((name: string) => (
                     <Td key={"td-solution-" + name}>{equipment.attributes[name as keyof Attributes]}</Td>
                 ))}
+                <Td key="td-solution-weight">{equipment.weight}</Td>
             </Tr>
         )
     };

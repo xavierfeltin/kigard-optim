@@ -1,0 +1,24 @@
+id;nom;type;arm;pre;esq;mm;rm;int;dex;for;chance;dommage;pm;pv;poids
+1;parchemin;focus;;;;;;;;;;;;;1
+2;bouclier dragon;lourde;4;;-4;;4;;;;;;;;4
+3;bouclier onirique;lourde;4;;-4;4;-4;;;;;;1;;4
+4;bouclier océanique;legere;4;;-4;;;2;;;;;;;4
+5;brassard runique;focus;2;;;6;;;;;;;;;2
+6;grimoire;focus;;;;;;2;;;;;;;1
+7;grimoire astral;focus;;;;8;;;;;;;;;1
+8;livre des morts;focus;;;;;;;;2;;;;;1
+9;ouvrage sylvestre;focus;;;;;;;2;;;;;;1
+10;recueil sacré;focus;2;;;;;;;;;;;;1
+11;testament rituel;focus;;;;;;;;;;;1;;1
+12;tome de cristal;focus;;;;;8;;;;;;;;1
+13;bracelet;combat;;10;6;;;;;;;;;;1
+14;bracelet miroir;artefact;2;;4;;12;;;;;;;;1
+15;cercle cœur;artefact;2;;;;;2;;;;;;4;1
+16;main-gauche;secondaire;;;4;;;;2;;;3;;;2
+17;bouclier ailé;legere;3;;4;;;;;;;;;;2
+18;targe;lourde;2;;2;;;;;;;;;;1
+19;rondache;lourde;3;;;;;;;;;;;;2
+20;bouclier à pointes;lourde;;;;;;;;;;3;;;3
+21;bouclier sacré;lourde;4;;-4;;4;3;;;;;;;4
+22;pavois phénix;lourde;4;;-4;;;;;3;;;;2;4
+23;écu en cuivre;lourde;6;;;;;;;;;;;;4

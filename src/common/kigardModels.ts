@@ -177,4 +177,4 @@ export const defaultEquipment: Equipment = {
     quality: Quality.Standard
 }
 
-export const outfitParts: string[] = ["head", "feet"];
+export const outfitParts: string[] = ["head", "body", "leftHand", "feet"];

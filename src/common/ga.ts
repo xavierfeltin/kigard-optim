@@ -1,4 +1,7 @@
+import { normalize } from "path";
+import { Config } from "pretty-format";
 import { Attributes, defaultEquipment, Equipment, MasterDataOutfit, outfitParts } from "./kigardModels";
+import { map } from "./math";
 
 export interface GAParameters {
     populationSize: number;
@@ -12,6 +15,8 @@ export interface GAParameters {
 }
 export interface Configuration {
     data: Attributes;
+    maxData: Attributes;
+    minData: Attributes;
     parameters: GAParameters;
 }
 
@@ -107,19 +112,29 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
     let evaluated = {...ind};
 
     // Update configuration with individual
-    let modifiedAttributes: Attributes = {...config.data};
+    let modified: Attributes = {...config.data};
     for (let i = 0; i < evaluated.genes.length; i++) {
         const partOutfit = outfitParts[i];
         const equipmentID = evaluated.genes[i];
         const equipment = masterData[partOutfit as keyof MasterDataOutfit].find(value => value.id === equipmentID) || defaultEquipment;
         Object.keys(equipment.attributes).forEach((attr) => {
-            modifiedAttributes[attr as keyof Attributes] = modifiedAttributes[attr as keyof Attributes] + equipment.attributes[attr as keyof Attributes];
+            modified[attr as keyof Attributes] = modified[attr as keyof Attributes] + equipment.attributes[attr as keyof Attributes];
         });
     }
 
+    modified = normalizeAttributes(modified, config);
+    
     // Evaluate the individual
-    evaluated.fitness = modifiedAttributes.int;
+    evaluated.fitness = modified.int * 3 + modified.mm * 4 + modified.rpm * 2 + modified.armor;
     return evaluated;
+}
+
+function normalizeAttributes(attributes: Attributes, config: Configuration): Attributes {
+    let normalized = {...attributes};
+    Object.keys(normalized).forEach((attr) => {
+        normalized[attr as keyof Attributes] = map(normalized[attr as keyof Attributes], config.minData[attr as keyof Attributes], config.maxData[attr as keyof Attributes], 0, 1);
+    });
+    return normalized;
 }
 
 export function convertFitnessIntoProbabilities(population: Individual[]): Individual[] {
@@ -264,7 +279,7 @@ export function crossOver(a: Individual, b: Individual, config: Configuration, m
 
     const remainingSecondaryGenes = secondaryGenes.slice(splitIndex);
     for (let i = 0; i < remainingSecondaryGenes.length; i++) {
-        let part = outfitParts[i + child.genes.length];
+        let part = outfitParts[i + splitIndex];
         let partMasterData = masterData[part as keyof MasterDataOutfit];
 
         const primaryEquipment: Equipment =  partMasterData.find(value => value.id === primaryGenes[child.genes.length + i]) || defaultEquipment;

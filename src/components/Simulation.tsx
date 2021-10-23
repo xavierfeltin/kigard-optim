@@ -49,7 +49,6 @@ export function Simulation({character, parameters, masterData, onHasStarted, onH
         population: [],
         generation: 0
       });
-      setState({...state, isRunning: false});
 
       onHasStopped && onHasStopped();
     }
@@ -72,6 +71,40 @@ export function Simulation({character, parameters, masterData, onHasStarted, onH
     const message: MessageIn = {
         configuration: {
           data: character,
+          maxData: {
+            acc: character.acc + 30,
+            allowedWeight: character.allowedWeight + 5,
+            armor: character.armor + 26,
+            con: character.con + 0,
+            dex: character.dex + 8,
+            dodge: character.dodge + 41,
+            int: character.int + 12,
+            lck: character.lck + 150,
+            magicalDmg: character.magicalDmg,
+            mm: character.mm + 41,
+            mr: character.mr + 45,
+            physicalDmg: character.physicalDmg + 8,
+            rpm: character.rpm + 5,
+            rpv: character.rpv + 4,
+            str: character.str + 11
+          },
+          minData: {
+            acc: character.acc - 8,
+            allowedWeight: character.allowedWeight,
+            armor: 0,
+            con: character.con,
+            dex: character.dex,
+            dodge: character.dodge - 18,
+            int: character.int,
+            lck: character.lck,
+            magicalDmg: character.magicalDmg,
+            mm: character.mm,
+            mr: character.mr - 10,
+            physicalDmg: character.physicalDmg,
+            rpm: character.rpm - 1,
+            rpv: character.rpv,
+            str: character.str
+          },
           parameters: parameters
         },
         masterData: masterData,
