@@ -78,6 +78,37 @@ export enum Quality {
     Master
 }
 
+
+export const defaultAttributes: Attributes = {
+    con: 0,
+    str: 0,
+    dex: 0,
+    int: 0,
+    lck: 0,
+    acc: 0,
+    dodge: 0,
+    mm: 0,
+    mr: 0,
+    rpm: 0,
+    rpv: 0,
+    armor: 0,
+    physicalDmg: 0,
+    magicalDmg: 0,
+    allowedWeight: 0
+};
+
+export const defaultEquipment: Equipment = {
+    id: 0,
+    name: "",
+    kind: EquipmentClass.LightArmor,
+    localization: Localization.Head,
+    weight: 0,
+    attributes: {...defaultAttributes},
+    quality: Quality.Standard
+}
+
+export const outfitParts: string[] = ["head", "body", "leftHand", "feet"];
+
 export function generateEquipmentFromJSON (data: any): Equipment[] {
     let equipments: Equipment[] = [];
     for (const d of data) {
@@ -149,32 +180,14 @@ function getQualiyFromString(name: string): Quality {
     }
 }
 
-export const defaultAttributes: Attributes = {
-    con: 0,
-    str: 0,
-    dex: 0,
-    int: 0,
-    lck: 0,
-    acc: 0,
-    dodge: 0,
-    mm: 0,
-    mr: 0,
-    rpm: 0,
-    rpv: 0,
-    armor: 0,
-    physicalDmg: 0,
-    magicalDmg: 0,
-    allowedWeight: 0
-};
-
-export const defaultEquipment: Equipment = {
-    id: 0,
-    name: "",
-    kind: EquipmentClass.LightArmor,
-    localization: Localization.Head,
-    weight: 0,
-    attributes: {...defaultAttributes},
-    quality: Quality.Standard
+export function getHostileMagicThreshold(mm: number, mr: number): number {
+    return 50 + mr - mm;
 }
 
-export const outfitParts: string[] = ["head", "body", "leftHand", "feet"];
+export function getHealingMagicThreshold(mm: number, mr: number): number {
+    return 100 - mr - mm;
+}
+
+export function getOnselfHealingMagicThreshold(mm: number, mr: number): number {
+    return 100 - mr - (mm + 20);
+}
