@@ -14,10 +14,10 @@ export function expectedValue(probabilities: number[], gain: number[]): number {
 
 export class ProbaTree {
     public root: Branch;
-    public constructor() {
+    public constructor(initialValue: number = 0) {
         this.root = {
             weight: 1,
-            value: 0,
+            value: initialValue,
             parent: undefined,
             branches: []
         };
@@ -58,17 +58,15 @@ export class ProbaTree {
 
     public computeGlobalWeightAndValueForBranch(branch: Branch): Branch {
         let pathWeight = 1;
-        let pathValue = 0;
         let current = branch;
         while (current.parent) {
             pathWeight = pathWeight * current.weight;
-            pathValue = pathValue + current.value;
             current = current.parent;
         }
 
         return {
             weight: pathWeight,
-            value: pathValue,
+            value: this.root.value - branch.value,
             parent: undefined,
             branches: undefined
         };

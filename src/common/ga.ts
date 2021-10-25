@@ -134,7 +134,7 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
     evaluated.fitness = expected * magicRecoveryCoefficient[modified.rpm]; //modified.int * 3 + modified.mm * 4 + modified.rpm * 2 + modified.armor;
     */
 
-    const simulation = buildHostileMagicTurns(5, [10, 10, 10, 10, 10], modified, 15, 5, 5);
+    const simulation = buildHostileMagicTurns(5, [10, 10, 10, 10, 10], modified, 80, 15, 5, 5);
     evaluated.fitness = computeFitness(simulation);
     return evaluated;
 }
