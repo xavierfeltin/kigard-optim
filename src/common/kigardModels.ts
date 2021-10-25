@@ -1,3 +1,5 @@
+import { Branch, ProbaTree } from "./math";
+
 export interface Attributes {
     con: number;
     str: number;
@@ -190,4 +192,45 @@ export function getHealingMagicThreshold(mm: number, mr: number): number {
 
 export function getOnselfHealingMagicThreshold(mm: number, mr: number): number {
     return 100 - mr - (mm + 20);
+}
+
+export function buildHostileMagicTurns(nbTurns: number = 5, paByTurns: number[] = [10, 10, 10, 10, 10], attributes: Attributes, opponentRM: number, spellPMCost: number, spellPACost: number): ProbaTree {
+    debugger;
+    const probaTree = new ProbaTree();
+    let turnPossibilities: Branch[] = [probaTree.root];
+    let pmForTurn = 0;
+    for (let turn = 0; turn < nbTurns; turn++) {
+        let paForTurn = paByTurns[turn];
+        pmForTurn += attributes.rpm;
+
+        while (paForTurn - spellPACost >= 0) {
+
+            const nbPossibilitiesToProcess = turnPossibilities.length;
+            for (let i = 0; i < nbPossibilitiesToProcess; i++) {
+                let currentBranch: Branch | undefined = turnPossibilities.shift();
+                if (currentBranch) {
+
+                    const hittingProba = (100 - getHostileMagicThreshold(attributes.mm, opponentRM)) / 100;
+                    const missingProba = 1 - hittingProba;
+                    const probabilities = [hittingProba, missingProba];
+
+                    let appliedDommages = [0, 0];
+                    if (pmForTurn >= spellPMCost) {
+                        appliedDommages = [attributes.int, Math.floor(attributes.int / 2)];
+                    }
+
+                    // TODO: Add specific branch transformation from parent context here (bleeding, burning, reducing armor, ...)
+                    // May change pobabilities (if mm, pre, dodge, .... are concerned) or may change values (if token are concerned)
+
+                    const newPossibilities = probaTree.addLevel(currentBranch, probabilities, appliedDommages);
+                    turnPossibilities = turnPossibilities.concat(newPossibilities);
+                }
+            }
+
+            paForTurn -= spellPACost;
+            pmForTurn = pmForTurn - spellPMCost >= 0 ? Math.max(0, pmForTurn - spellPMCost) : pmForTurn;
+        }
+    }
+
+    return probaTree;
 }

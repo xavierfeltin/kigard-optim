@@ -22,8 +22,6 @@ self.addEventListener("message", e => {
         // already evaluated in previous generation
     }
 
-    debugger;
-
     let nextPopulation = generateNewGeneration(population, msg.configuration, msg.masterData);
     nextPopulation = evaluatePopulation(nextPopulation, msg.configuration, msg.masterData);
     nextPopulation = convertFitnessIntoProbabilities(nextPopulation);

@@ -1,7 +1,7 @@
 import { normalize } from "path";
 import { Config } from "pretty-format";
-import { Attributes, defaultEquipment, Equipment, getHostileMagicThreshold, MasterDataOutfit, outfitParts } from "./kigardModels";
-import { expectedValue, map } from "./math";
+import { Attributes, buildHostileMagicTurns, defaultEquipment, Equipment, getHostileMagicThreshold, MasterDataOutfit, outfitParts } from "./kigardModels";
+import { Branch, expectedValue, map, ProbaTree } from "./math";
 
 export interface GAParameters {
     populationSize: number;
@@ -123,15 +123,32 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
     }
 
     //modified = normalizeAttributes(modified, config);
-    
+
     // Evaluate the individual
+    /*
     const hittingPercentage = (100 - getHostileMagicThreshold(modified.mm, 15)) / 100;
     const magicRecoveryCoefficient = [0, 1/5, 2/5, 3/5, 4/5, 1, 1]; // for a spell costing 5pm
     const percentages = [1 - hittingPercentage, hittingPercentage];
     const gains = [Math.floor(modified.int / 2), modified.int];
     const expected = expectedValue(percentages, gains);
     evaluated.fitness = expected * magicRecoveryCoefficient[modified.rpm]; //modified.int * 3 + modified.mm * 4 + modified.rpm * 2 + modified.armor;
+    */
+
+    const simulation = buildHostileMagicTurns(5, [10, 10, 10, 10, 10], modified, 15, 5, 5);
+    evaluated.fitness = computeFitness(simulation);
     return evaluated;
+}
+
+function computeFitness(simulation: ProbaTree): number {
+    let finalBranches = simulation.getAllFinalBranches(simulation.root);
+
+    let expectedValue = 0;
+    finalBranches.forEach(branch => {
+        let finalSituation: Branch = simulation.computeGlobalWeightAndValueForBranch(branch);
+        expectedValue += finalSituation.weight * finalSituation.value;
+    });
+
+    return expectedValue;
 }
 
 function normalizeAttributes(attributes: Attributes, config: Configuration): Attributes {
