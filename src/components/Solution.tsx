@@ -1,7 +1,7 @@
 import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/table";
 import { ReactElement } from "react";
-import { Configuration, Individual } from "../common/ga";
-import { Attributes, Character, defaultEquipment, MasterDataOutfit, outfitParts } from "../common/kigardModels";
+import { Individual } from "../common/ga";
+import { Attributes, defaultEquipment, MasterDataOutfit, outfitParts } from "../common/kigardModels";
 
 export interface SolutionProps {
     ind: Individual;
@@ -36,9 +36,6 @@ export function Solution({ind, masterData, character}: SolutionProps) {
         const partIndex = outfitParts[outfitPartID];
         const partOutfit = masterData[partIndex as keyof MasterDataOutfit];
         const equipment = partOutfit.find(value => value.id === equipmentID) || defaultEquipment;
-
-        console.log("part index: " + partIndex + ", equipmentID: " + equipmentID);
-        console.log(partOutfit);
 
         return (
             <Tr key={"tr-solution-" + outfitPartID}>

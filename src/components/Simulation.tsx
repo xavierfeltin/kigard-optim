@@ -86,7 +86,8 @@ export function Simulation({character, parameters, masterData, onHasStarted, onH
             physicalDmg: character.physicalDmg + 8,
             rpm: character.rpm + 5,
             rpv: character.rpv + 4,
-            str: character.str + 11
+            str: character.str + 11,
+            nbSpellAttach: character.nbSpellAttach + 3
           },
           minData: {
             acc: character.acc - 8,
@@ -103,7 +104,8 @@ export function Simulation({character, parameters, masterData, onHasStarted, onH
             physicalDmg: character.physicalDmg,
             rpm: character.rpm - 1,
             rpv: character.rpv,
-            str: character.str
+            str: character.str,
+            nbSpellAttach: 0
           },
           parameters: parameters
         },

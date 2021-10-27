@@ -1,41 +1,41 @@
-id;nom;type;arm;pre;esq;mm;rm;int;dex;for;chance;dommage;pm;pv;poids
-1;ceinture de force;legere;;;;10;;;;3;;;;;1
-2;dérobade en soie;legere;;;8;12;;;;;;;;;1
-3;pelisse lumière;legere;;;;8;;1;1;1;;;;;1
-4;veston;lourde;2;4;;;;;;;;;;;1
-5;gilet;combat;1;6;;;;;;;;;;;1
-6;guenille;voyage;1;;1;;;;;;25;;;;1
-7;bliaut;artefact;;8;6;;6;;;;;;;;1
-8;toge;artefact;2;;2;;2;;;;;;;;1
-9;toge en soie;artefact;2;;4;;4;;;;50;;;;1
-10;cape;focus;1;;;2;2;1;;;;;;;1
-11;houppelande;focus;;;;8;;2;;;;;;;1
-12;manteau de rôdeur;legere;1;;6;;;;3;;;;;;2
-13;tenue améthyste;legere;;;6;;;4;;;;;;;2
-14;armure en cuir;lourde;3;;;;;;;;;;;;2
-15;armure en cuir bouilli;lourde;3;-4;4;;;;;;;;;;2
-16;brigandine;combat;3;4;-4;;;;;;;;;;2
-17;kimono;combat;1;2;2;;;;;1;;;;;2
-18;tunique de l'ombre;combat;;8;12;;;;;;;;;;2
-19;fourrure;lourde;2;;;;8;;;;;;1;;2
-20;pélerine;artefact;1;;8;;4;;;;;;;;2
-21;pélerine en soie;artefact;1;;14;;6;;;;;;;;2
-22;tunique en soie;parure;;;10;;6;2;;;;;;;2
-23;plastron terrifiant;lourde;3;;;;;;;3;;;;;3
-24;plastron;lourde;5;;;;;;;;;;;;3
-25;manteau de nomade;voyage;2;;10;;;;;;50;;;;3
-26;brigandine en mithril;artefact;5;6;;;;;;;;;;;3
-27;cotte de mailles en mithril;artefact;6;;;;;;;;;;;;3
-28;plastron noble;artefact;;;-4;;4;2;;;;;;;3
-29;harlequine;focus;4;;;8;;;;;;;;;3
-30;cotte de mailles;lourde;6;;;;;;;;;;;;4
-31;brigandine en fer;combat;5;6;-2;;;;;;;;;;4
-32;plastron miroir;parure;4;;-6;;20;;;;;;;;4
-33;armure astrale;lourde;6;4;-4;;;;3;;;;;;5
-34;armure fantôme;combat;5;6;6;;-6;;;;;;;;5
-35;cuirasse sacrée;lourde;6;;-4;;4;3;;;;;;;5
-36;plastron dragon;lourde;6;;-4;8;8;;;;;;;;5
-37;cafetan de sorcier;lourde;3;;;20;;3;;;;;-1;;5
-38;cuirasse;lourde;8;;-6;;;;;;;2;;;5
-39;armure de démon;lourde;8;;-6;;-6;;;4;;;;;6
-40;armure de plates;lourde;10;;-6;;;;;;;;;;6
+id;nom;type;arm;pre;esq;mm;rm;int;dex;for;chance;dommage;pm;pv;poids;emplacement
+1;ceinture de force;legere;;;;10;;;;3;;;;;1;0
+2;dérobade en soie;legere;;;8;12;;;;;;;;;1;0
+3;pelisse lumière;legere;;;;8;;1;1;1;;;;;1;0
+4;veston;lourde;2;4;;;;;;;;;;;1;0
+5;gilet;combat;1;6;;;;;;;;;;;1;0
+6;guenille;voyage;1;;1;;;;;;25;;;;1;0
+7;bliaut;artefact;;8;6;;6;;;;;;;;1;0
+8;toge;artefact;2;;2;;2;;;;;;;;1;0
+9;toge en soie;artefact;2;;4;;4;;;;50;;;;1;0
+10;cape;focus;1;;;2;2;1;;;;;;;1;0
+11;houppelande;focus;;;;8;;2;;;;;;;1;0
+12;manteau de rôdeur;legere;1;;6;;;;3;;;;;;2;0
+13;tenue améthyste;legere;;;6;;;4;;;;;;;2;0
+14;armure en cuir;lourde;3;;;;;;;;;;;;2;0
+15;armure en cuir bouilli;lourde;3;-4;4;;;;;;;;;;2;0
+16;brigandine;combat;3;4;-4;;;;;;;;;;2;0
+17;kimono;combat;1;2;2;;;;;1;;;;;2;0
+18;tunique de l'ombre;combat;;8;12;;;;;;;;;;2;0
+19;fourrure;lourde;2;;;;8;;;;;;1;;2;0
+20;pélerine;artefact;1;;8;;4;;;;;;;;2;0
+21;pélerine en soie;artefact;1;;14;;6;;;;;;;;2;0
+22;tunique en soie;parure;;;10;;6;2;;;;;;;2;0
+23;plastron terrifiant;lourde;3;;;;;;;3;;;;;3;0
+24;plastron;lourde;5;;;;;;;;;;;;3;0
+25;manteau de nomade;voyage;2;;10;;;;;;50;;;;3;0
+26;brigandine en mithril;artefact;5;6;;;;;;;;;;;3;0
+27;cotte de mailles en mithril;artefact;6;;;;;;;;;;;;3;0
+28;plastron noble;artefact;;;-4;;4;2;;;;;;;3;0
+29;harlequine;focus;4;;;8;;;;;;;;;3;0
+30;cotte de mailles;lourde;6;;;;;;;;;;;;4;0
+31;brigandine en fer;combat;5;6;-2;;;;;;;;;;4;0
+32;plastron miroir;parure;4;;-6;;20;;;;;;;;4;0
+33;armure astrale;lourde;6;4;-4;;;;3;;;;;;5;0
+34;armure fantôme;combat;5;6;6;;-6;;;;;;;;5;0
+35;cuirasse sacrée;lourde;6;;-4;;4;3;;;;;;;5;0
+36;plastron dragon;lourde;6;;-4;8;8;;;;;;;;5;0
+37;cafetan de sorcier;lourde;3;;;20;;3;;;;;-1;;5;0
+38;cuirasse;lourde;8;;-6;;;;;;;2;;;5;0
+39;armure de démon;lourde;8;;-6;;-6;;;4;;;;;6;0
+40;armure de plates;lourde;10;;-6;;;;;;;;;;6;0

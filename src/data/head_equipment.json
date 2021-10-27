@@ -15,7 +15,8 @@
     "dommage": null,
     "pm": null,
     "pv": "",
-    "poids": 1
+    "poids": 1,
+    "emplacement": 0
   },
   {
     "id": 2,
@@ -33,7 +34,8 @@
     "dommage": null,
     "pm": null,
     "pv": "",
-    "poids": 1
+    "poids": 1,
+    "emplacement": 0
   },
   {
     "id": 3,
@@ -51,7 +53,8 @@
     "dommage": null,
     "pm": null,
     "pv": "",
-    "poids": 1
+    "poids": 1,
+    "emplacement": 0
   },
   {
     "id": 4,
@@ -69,7 +72,8 @@
     "dommage": null,
     "pm": null,
     "pv": "",
-    "poids": 1
+    "poids": 1,
+    "emplacement": 0
   },
   {
     "id": 5,
@@ -87,7 +91,8 @@
     "dommage": null,
     "pm": null,
     "pv": "",
-    "poids": 1
+    "poids": 1,
+    "emplacement": 0
   },
   {
     "id": 6,
@@ -105,7 +110,8 @@
     "dommage": null,
     "pm": null,
     "pv": "",
-    "poids": 1
+    "poids": 1,
+    "emplacement": 0
   },
   {
     "id": 7,
@@ -123,7 +129,8 @@
     "dommage": null,
     "pm": null,
     "pv": "",
-    "poids": 1
+    "poids": 1,
+    "emplacement": 0
   },
   {
     "id": 8,
@@ -141,7 +148,8 @@
     "dommage": null,
     "pm": null,
     "pv": "",
-    "poids": 1
+    "poids": 1,
+    "emplacement": 0
   },
   {
     "id": 9,
@@ -159,7 +167,8 @@
     "dommage": null,
     "pm": null,
     "pv": "",
-    "poids": 1
+    "poids": 1,
+    "emplacement": 0
   },
   {
     "id": 10,
@@ -177,7 +186,8 @@
     "dommage": null,
     "pm": null,
     "pv": "",
-    "poids": 1
+    "poids": 1,
+    "emplacement": 0
   },
   {
     "id": 11,
@@ -195,7 +205,8 @@
     "dommage": null,
     "pm": null,
     "pv": "",
-    "poids": 1
+    "poids": 1,
+    "emplacement": 0
   },
   {
     "id": 12,
@@ -213,7 +224,8 @@
     "dommage": null,
     "pm": null,
     "pv": "",
-    "poids": 1
+    "poids": 1,
+    "emplacement": 0
   },
   {
     "id": 13,
@@ -231,7 +243,8 @@
     "dommage": null,
     "pm": null,
     "pv": "",
-    "poids": 1
+    "poids": 1,
+    "emplacement": 0
   },
   {
     "id": 14,
@@ -249,7 +262,8 @@
     "dommage": null,
     "pm": null,
     "pv": "",
-    "poids": 1
+    "poids": 1,
+    "emplacement": 0
   },
   {
     "id": 15,
@@ -267,7 +281,8 @@
     "dommage": null,
     "pm": null,
     "pv": "",
-    "poids": 1
+    "poids": 1,
+    "emplacement": 0
   },
   {
     "id": 16,
@@ -285,7 +300,8 @@
     "dommage": null,
     "pm": null,
     "pv": "",
-    "poids": 1
+    "poids": 1,
+    "emplacement": 0
   },
   {
     "id": 17,
@@ -303,7 +319,8 @@
     "dommage": null,
     "pm": null,
     "pv": "",
-    "poids": 1
+    "poids": 1,
+    "emplacement": 0
   },
   {
     "id": 18,
@@ -321,7 +338,8 @@
     "dommage": null,
     "pm": null,
     "pv": "",
-    "poids": 2
+    "poids": 2,
+    "emplacement": 0
   },
   {
     "id": 19,
@@ -339,7 +357,8 @@
     "dommage": null,
     "pm": null,
     "pv": "",
-    "poids": 2
+    "poids": 2,
+    "emplacement": 0
   },
   {
     "id": 20,
@@ -357,7 +376,8 @@
     "dommage": null,
     "pm": null,
     "pv": "",
-    "poids": 2
+    "poids": 2,
+    "emplacement": 0
   },
   {
     "id": 21,
@@ -375,7 +395,8 @@
     "dommage": null,
     "pm": null,
     "pv": "",
-    "poids": 2
+    "poids": 2,
+    "emplacement": 0
   },
   {
     "id": 22,
@@ -393,7 +414,8 @@
     "dommage": null,
     "pm": null,
     "pv": "",
-    "poids": 2
+    "poids": 2,
+    "emplacement": 0
   },
   {
     "id": 23,
@@ -411,7 +433,8 @@
     "dommage": 2,
     "pm": 2,
     "pv": "",
-    "poids": 2
+    "poids": 2,
+    "emplacement": 0
   },
   {
     "id": 24,
@@ -429,7 +452,8 @@
     "dommage": null,
     "pm": null,
     "pv": "",
-    "poids": 3
+    "poids": 3,
+    "emplacement": 0
   },
   {
     "id": 25,
@@ -447,7 +471,8 @@
     "dommage": null,
     "pm": null,
     "pv": "",
-    "poids": 3
+    "poids": 3,
+    "emplacement": 0
   },
   {
     "id": 26,
@@ -465,7 +490,8 @@
     "dommage": null,
     "pm": null,
     "pv": "",
-    "poids": 3
+    "poids": 3,
+    "emplacement": 0
   },
   {
     "id": 27,
@@ -483,6 +509,7 @@
     "dommage": null,
     "pm": null,
     "pv": "",
-    "poids": 3
+    "poids": 3,
+    "emplacement": 0
   }
  ]

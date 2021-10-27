@@ -27,10 +27,7 @@ self.addEventListener("message", e => {
     nextPopulation = convertFitnessIntoProbabilities(nextPopulation);
     nextPopulation = sortDescByFitness(nextPopulation);
 
-    console.log(nextPopulation);
     let bestSolution = msg.state.bestSolution;
-    console.log("prev best solution: ");
-    console.log(msg.state.bestSolution);
 
     let names = "";
     msg.state.bestSolution.genes.forEach((equipmentID, outfitPartID) => {
@@ -39,7 +36,6 @@ self.addEventListener("message", e => {
         const equipment = partOutfit.find(value => value.id === equipmentID) || defaultEquipment;
         names = names + ", " + equipment.name;
     });
-    console.log(names)
 
     if (msg.state.bestSolution.fitness < nextPopulation[0].fitness) {
         bestSolution = nextPopulation[0];
@@ -53,7 +49,6 @@ self.addEventListener("message", e => {
             const equipment = partOutfit.find(value => value.id === equipmentID) || defaultEquipment;
             names = names + ", " + equipment.name;
         });
-        console.log(names)
     }
 
     const response: MessageOut = {

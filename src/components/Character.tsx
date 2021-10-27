@@ -24,7 +24,8 @@ export function Character({onValueChange}: CharacterProps) {
         armor: 0,
         physicalDmg: 0,
         magicalDmg: 0,
-        allowedWeight: 5
+        allowedWeight: 5,
+        nbSpellAttach: 0
     });
 
     useEffect(() => {

@@ -16,6 +16,7 @@ export interface Attributes {
     physicalDmg: number;
     magicalDmg: number;
     allowedWeight: number;
+    nbSpellAttach: number;
 }
 
 export interface Equipment {
@@ -96,7 +97,8 @@ export const defaultAttributes: Attributes = {
     armor: 0,
     physicalDmg: 0,
     magicalDmg: 0,
-    allowedWeight: 0
+    allowedWeight: 0,
+    nbSpellAttach: 0
 };
 
 export const defaultEquipment: Equipment = {
@@ -135,7 +137,8 @@ export function generateEquipmentFromJSON (data: any): Equipment[] {
                 armor: d.arm || 0,
                 physicalDmg: d.dommage || 0,
                 magicalDmg: 0,
-                allowedWeight: 0
+                allowedWeight: 0,
+                nbSpellAttach: d.emplacement
             },
             quality: getQualiyFromString("base") //TODO : change with more equipment
         };
@@ -195,7 +198,6 @@ export function getOnselfHealingMagicThreshold(mm: number, mr: number): number {
 }
 
 export function buildHostileMagicTurns(nbTurns: number = 5, paByTurns: number[] = [10, 10, 10, 10, 10], attributes: Attributes, opponentPV: number, opponentRM: number, spellPMCost: number, spellPACost: number): ProbaTree {
-    debugger;
     const probaTree = new ProbaTree(opponentPV);
     let turnPossibilities: Branch[] = [probaTree.root];
     let pmForTurn = 25;
@@ -210,6 +212,7 @@ export function buildHostileMagicTurns(nbTurns: number = 5, paByTurns: number[] 
                 let currentBranch: Branch | undefined = turnPossibilities.shift();
                 if (currentBranch && currentBranch.value !== 0) {
 
+                    // MM: 15, RM: 30 => threshold = 50 + 30 - 15 = 75 => hitting Proba = 25% / missing Proba = 75%
                     const hittingProba = (100 - getHostileMagicThreshold(attributes.mm, opponentRM)) / 100;
                     const missingProba = 1 - hittingProba;
                     const probabilities = [hittingProba, missingProba];
