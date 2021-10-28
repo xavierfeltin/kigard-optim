@@ -1,4 +1,4 @@
-import { Attributes, buildHostileMagicTurns, defaultEquipment, Equipment, Localization, MasterDataOutfit, outfitParts, Profile } from "./kigardModels";
+import { Attributes, buildMagicTurns, defaultEquipment, Equipment, Localization, MasterDataOutfit, outfitParts, Profile } from "./kigardModels";
 import { Branch, ProbaTree, shuffle } from "./math";
 
 export interface GAParameters {
@@ -142,7 +142,7 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
     // Update configuration with individual
     let modified: Attributes = getPhenotype(ind, config, masterData);
 
-    let monster = {
+    let otherCharacter = {
         pv: 80,
         mr: 30
     };
@@ -154,7 +154,7 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
                 pa: 6,
                 pm: 6
             };
-            simulation = buildHostileMagicTurns(5, [10, 10, 10, 10, 10], modified, monster.pv, monster.mr, launchFireball.pm, launchFireball.pa);
+            simulation = buildMagicTurns(5, [10, 10, 10, 10, 10], modified, otherCharacter.pv, otherCharacter.mr, launchFireball.pm, launchFireball.pa, false);
            break; 
         }
         case Profile.healer: {
@@ -162,24 +162,36 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
                 pa: 6,
                 pm: 6
             };
-            simulation = buildHealingMagicTurns(5, [10, 10, 10, 10, 10], modified, monster.pv, monster.mr, launchHealing.pm, launchHealing.pa);
+            simulation = buildMagicTurns(5, [10, 10, 10, 10, 10], modified, otherCharacter.pv, otherCharacter.mr, launchHealing.pm, launchHealing.pa, true);
             break;
         }
         case Profile.archer: {
+            /*
             let fireArrow = {
-                pa: 6
+                pa: 6,
+                pm: 0
             };
-            simulation = buildFightTurns(5, [10, 10, 10, 10, 10], modified, monster.pv, monster.mr, launchHealing.pm, launchHealing.pa);
+            simulation = buildFightTurns(5, [10, 10, 10, 10, 10], modified, monster.pv, monster.mr, fireArrow.pm, fireArrow.pa);
+            */
             break;
         }
         case Profile.tank: {
+            /*
             let attack = {
                 pa: 6
             };
             simulation = buildDamageTurns(5, [10, 10, 10, 10, 10], modified, monster.pv, monster.mr, attack.pm, attack.pa);
+            */
             break;
         }
         case Profile.warrior: {
+            /*
+            let hitWeapon = {
+                pa: 6,
+                pm: 0
+            };
+            simulation = buildFightTurns(5, [10, 10, 10, 10, 10], modified, monster.pv, monster.mr, hitWeapon.pm, hitWeapon.pa);
+            */
             break;
         }
         default: throw Error("optimization profile " + config.parameters.optimProfile + " not defined");

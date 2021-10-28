@@ -1,3 +1,4 @@
+import { cpuUsage } from "process";
 import { Branch, ProbaTree } from "./math";
 
 export interface Attributes {
@@ -205,7 +206,17 @@ export function getOnselfHealingMagicThreshold(mm: number, mr: number): number {
     return 100 - mr - (mm + 20);
 }
 
-export function buildHostileMagicTurns(nbTurns: number = 5, paByTurns: number[] = [10, 10, 10, 10, 10], attributes: Attributes, opponentPV: number, opponentRM: number, spellPMCost: number, spellPACost: number): ProbaTree {
+export function getFightingthreshold(acc: number, dodge: number): {hit: number, critical: number} {
+    let thresholds = {
+        hit: 10 + dodge - acc,
+        critical: 90 + dodge - acc
+    }; 
+    
+    return thresholds;
+}
+
+// Healing magic is computed by removing health point as the agressive magic, but the threshold are computed differently
+export function buildMagicTurns(nbTurns: number = 5, paByTurns: number[] = [10, 10, 10, 10, 10], attributes: Attributes, opponentPV: number, opponentRM: number, spellPMCost: number, spellPACost: number, isHealing: boolean): ProbaTree {
     const probaTree = new ProbaTree(opponentPV);
     let turnPossibilities: Branch[] = [probaTree.root];
     let pmForTurn = 25;
@@ -221,7 +232,8 @@ export function buildHostileMagicTurns(nbTurns: number = 5, paByTurns: number[] 
                 if (currentBranch && currentBranch.value !== 0) {
 
                     // MM: 15, RM: 30 => threshold = 50 + 30 - 15 = 75 => hitting Proba = 25% / missing Proba = 75%
-                    const hittingProba = (100 - getHostileMagicThreshold(attributes.mm, opponentRM)) / 100;
+                    const threshold: number = isHealing ? getHealingMagicThreshold(attributes.mm, opponentRM) : getHostileMagicThreshold(attributes.mm, opponentRM);
+                    const hittingProba = (100 - threshold) / 100;
                     const missingProba = 1 - hittingProba;
                     const probabilities = [hittingProba, missingProba];
 
