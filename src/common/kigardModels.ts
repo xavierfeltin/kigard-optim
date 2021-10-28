@@ -53,6 +53,14 @@ export interface Character {
     eqdAttributes: Attributes;
 }
 
+export enum Profile {
+    mage,
+    healer,
+    warrior,
+    tank,
+    archer
+}
+
 export enum Localization {
     Head,
     Body,

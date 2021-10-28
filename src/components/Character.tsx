@@ -2,6 +2,7 @@ import './Character.css';
 import { useEffect, useState } from "react";
 import { Attributes } from '../common/kigardModels';
 import { InputRangeButtons } from "./InputRangeButtons";
+import { Select } from '@chakra-ui/select';
 
 export interface CharacterProps {
     onValueChange: (attributes: Attributes) => void

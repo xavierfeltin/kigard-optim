@@ -1,7 +1,8 @@
-import { Attributes, buildHostileMagicTurns, defaultEquipment, Equipment, Localization, MasterDataOutfit, outfitParts } from "./kigardModels";
+import { Attributes, buildHostileMagicTurns, defaultEquipment, Equipment, Localization, MasterDataOutfit, outfitParts, Profile } from "./kigardModels";
 import { Branch, ProbaTree, shuffle } from "./math";
 
 export interface GAParameters {
+    optimProfile: Profile;
     populationSize: number;
     selectCutoff: number;
     keepPreviousRatio: number;
@@ -132,30 +133,54 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
         });
     }
 
-    //modified = normalizeAttributes(modified, config);
-
-    // Evaluate the individual
-    /*
-    const hittingPercentage = (100 - getHostileMagicThreshold(modified.mm, 15)) / 100;
-    const magicRecoveryCoefficient = [0, 1/5, 2/5, 3/5, 4/5, 1, 1]; // for a spell costing 5pm
-    const percentages = [1 - hittingPercentage, hittingPercentage];
-    const gains = [Math.floor(modified.int / 2), modified.int];
-    const expected = expectedValue(percentages, gains);
-    evaluated.fitness = expected * magicRecoveryCoefficient[modified.rpm]; //modified.int * 3 + modified.mm * 4 + modified.rpm * 2 + modified.armor;
-    */
-
     let monster = {
         pv: 80,
         mr: 30
     };
 
-    let action = {
-        pa: 5,
-        pm: 5
-    };
+    let simulation: ProbaTree | null = null;
+    switch(config.parameters.optimProfile) {
+        case Profile.mage: {
+            let launchFireball = {
+                pa: 6,
+                pm: 6
+            };
+            simulation = buildHostileMagicTurns(5, [10, 10, 10, 10, 10], modified, monster.pv, monster.mr, launchFireball.pm, launchFireball.pa);
+           break; 
+        }
+        case Profile.healer: {
+            let launchHealing = {
+                pa: 6,
+                pm: 6
+            };
+            simulation = buildHealingMagicTurns(5, [10, 10, 10, 10, 10], modified, monster.pv, monster.mr, launchHealing.pm, launchHealing.pa);
+            break;
+        }
+        case Profile.archer: {
+            let fireArrow = {
+                pa: 6
+            };
+            simulation = buildFightTurns(5, [10, 10, 10, 10, 10], modified, monster.pv, monster.mr, launchHealing.pm, launchHealing.pa);
+            break;
+        }
+        case Profile.tank: {
+            let attack = {
+                pa: 6
+            };
+            simulation = buildDamageTurns(5, [10, 10, 10, 10, 10], modified, monster.pv, monster.mr, attack.pm, attack.pa);
+            break;
+        }
+        case Profile.warrior: {
+            break;
+        }
+        default: throw Error("optimization profile " + config.parameters.optimProfile + " not defined");
 
-    const simulation = buildHostileMagicTurns(5, [10, 10, 10, 10, 10], modified, monster.pv, monster.mr, action.pm, action.pa);
-    evaluated.fitness = computeFitness(simulation);
+    }
+    
+    if (simulation) {
+        evaluated.fitness = computeFitness(simulation);
+    }
+    
     return evaluated;
 }
 

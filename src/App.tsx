@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import { GAParameters, Individual } from './common/ga';
-import { Attributes, defaultAttributes, defaultEquipment, generateEquipmentFromJSON, Localization, MasterDataOutfit } from './common/kigardModels';
+import { Attributes, defaultAttributes, defaultEquipment, generateEquipmentFromJSON, Localization, MasterDataOutfit, Profile } from './common/kigardModels';
 import { Character } from './components/Character';
 import { Simulation } from './components/Simulation';
 import { Solution } from './components/Solution';
@@ -9,6 +9,7 @@ import headEquipmentJSON from './data/head_equipment.json';
 import feetEquipmentJSON from './data/feet_equipment.json';
 import bodyEquipmentJSON from './data/body_equipment.json';
 import leftHandEquipmentJSON from './data/left_hand_equipment.json';
+import { GAConfiguration } from './components/GAConfiguration';
 
 function App() {
 
@@ -29,7 +30,8 @@ function App() {
     parentSelectionStrategy: "tournament",
     crossoverStrategy: "",
     crossoverParentRatio: 0.5,
-    tournamentSize: 5
+    tournamentSize: 5,
+    optimProfile: Profile.mage
   });
   const [suggestion, setSuggestion] = useState<Individual | undefined>(undefined);
 
@@ -69,6 +71,10 @@ function App() {
     setCharacter({...updatedCharacter});
   }, []);
 
+  const handleGAConfigurationChange = useCallback((updatedConfiguration: GAParameters) => {
+    setSimuParameters({...updatedConfiguration});
+  }, []);
+
   const handleSimulationStart = useCallback(() => {
 
   }, []);
@@ -84,6 +90,7 @@ function App() {
   return (
     <div>
       <Character onValueChange={handleCharacterChange}/>
+      <GAConfiguration onValueChange={handleGAConfigurationChange}/>
       <Simulation character={character} parameters={simuParameters} masterData={masterData} onHasStarted={handleSimulationStart} onHasStopped={handleSimulationStop} onHasNewIteration={handleSimulationNewIteration}/>
       {suggestion &&
         <Solution ind={suggestion} masterData={masterData} character={character}/>
