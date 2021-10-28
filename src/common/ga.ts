@@ -61,12 +61,13 @@ export function createIndividual(id: number, config: Configuration, masterData: 
     const genes: number[] = Array.from({length: outfitParts.length}, (_, i) => 0);
 
     let carriedWeight = 0;
+    let allowedWeight = config.data.allowedWeight;
     let sequence = Array.from(Array(outfitParts.length).keys());
     sequence = shuffle(sequence);
     for (let idx of sequence) {
         let part = outfitParts[idx];
         let partMasterData = masterData[part as keyof MasterDataOutfit];
-        const maxAuthorizedWeight = config.data.allowedWeight - carriedWeight;
+        const maxAuthorizedWeight = allowedWeight - carriedWeight;
         let filtered = partMasterData.filter(value => {
             let magicFilter = true;
             if(part.toLowerCase() === Localization[Localization.Lefthand].toLowerCase()) {
@@ -85,6 +86,9 @@ export function createIndividual(id: number, config: Configuration, masterData: 
         genes[idx] = equipmentID;
         const equipment: Equipment =  partMasterData.find(value => value.id === equipmentID) || defaultEquipment;
         carriedWeight += equipment.weight;
+
+        //Recompute the allowedWeight if the equipment is increasing the strength
+        allowedWeight = Math.floor((config.data.con + (config.data.str + equipment.attributes.str)) / 2);
     }
 
     const ind: Individual = {
@@ -118,19 +122,24 @@ export function evaluatePopulation(population: Individual[], config: Configurati
     return evaluated;
 }
 
-export function evaluateIndividual(ind: Individual, config: Configuration, masterData: MasterDataOutfit): Individual {
-    let evaluated = {...ind};
-
-    // Update configuration with individual
+export function getPhenotype(ind: Individual, config: Configuration, masterData: MasterDataOutfit): Attributes {
     let modified: Attributes = {...config.data};
-    for (let i = 0; i < evaluated.genes.length; i++) {
+    for (let i = 0; i < ind.genes.length; i++) {
         const partOutfit = outfitParts[i];
-        const equipmentID = evaluated.genes[i];
+        const equipmentID = ind.genes[i];
         const equipment = masterData[partOutfit as keyof MasterDataOutfit].find(value => value.id === equipmentID) || defaultEquipment;
         Object.keys(equipment.attributes).forEach((attr) => {
             modified[attr as keyof Attributes] = modified[attr as keyof Attributes] + equipment.attributes[attr as keyof Attributes];
         });
     }
+    return modified;
+}
+
+export function evaluateIndividual(ind: Individual, config: Configuration, masterData: MasterDataOutfit): Individual {
+    let evaluated = {...ind};
+
+    // Update configuration with individual
+    let modified: Attributes = getPhenotype(ind, config, masterData);
 
     //modified = normalizeAttributes(modified, config);
 
@@ -278,31 +287,39 @@ export function mutate(ind: Individual, config: Configuration, masterData: Maste
         carriedWeight: ind.carriedWeight
     };
 
+    const phenotype: Attributes = getPhenotype(ind, config, masterData);
+    let maxAuthorizedWeight = Math.floor((phenotype.con + phenotype.str) / 2);
+
     const localizationIndexToMutate = Math.floor(Math.random() * outfitParts.length);
     const partOutfitToMutate = outfitParts[localizationIndexToMutate];
     let partMasterData = masterData[partOutfitToMutate as keyof MasterDataOutfit];
 
     const previousEquipment: Equipment = partMasterData.find(value => value.id === mutant.genes[localizationIndexToMutate]) || defaultEquipment;
     let carriedWeight = mutant.carriedWeight - previousEquipment.weight; // remove previous equipment since we are replacing it
+    maxAuthorizedWeight = Math.floor((phenotype.con + phenotype.str - previousEquipment.attributes.str) / 2);
 
-    let filtered = partMasterData.filter(value => {
-        let magicFilter = true;
-        if(partOutfitToMutate.toLowerCase() === Localization[Localization.Lefthand].toLowerCase()) {
-            magicFilter = value.attributes.nbSpellAttach > 0;
+    //Could happen if the str bonus is greater than the armor weight
+    if (carriedWeight <= maxAuthorizedWeight) {
+        let filtered = partMasterData.filter(value => {
+            let magicFilter = true;
+            if(partOutfitToMutate.toLowerCase() === Localization[Localization.Lefthand].toLowerCase()) {
+                magicFilter = value.attributes.nbSpellAttach > 0;
+            }
+            return value.weight <= (config.data.allowedWeight - carriedWeight) && magicFilter;
+        });
+
+        let index = 0;
+        let equipmentID = 0;
+        if (filtered.length > 0) {
+            index = Math.floor(Math.random() * filtered.length);
+            equipmentID = filtered[index].id;
         }
-        return value.weight <= (config.data.allowedWeight - carriedWeight) && magicFilter;
-    });
 
-    let index = 0;
-    let equipmentID = 0;
-    if (filtered.length > 0) {
-        index = Math.floor(Math.random() * filtered.length);
-        equipmentID = filtered[index].id;
+        mutant.genes[localizationIndexToMutate] = equipmentID;
+        const newEquipment: Equipment =  partMasterData.find(value => value.id === equipmentID) || defaultEquipment;
+        mutant.carriedWeight = carriedWeight + newEquipment.weight ;
     }
-
-    mutant.genes[localizationIndexToMutate] = equipmentID;
-    const newEquipment: Equipment =  partMasterData.find(value => value.id === equipmentID) || defaultEquipment;
-    mutant.carriedWeight = carriedWeight + newEquipment.weight ;
+    // else do not modify the individual
 
     return mutant;
 }
