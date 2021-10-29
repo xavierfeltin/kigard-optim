@@ -1,4 +1,4 @@
-import { Attributes, buildMagicTurns, defaultEquipment, Equipment, Localization, MasterDataOutfit, outfitParts, Profile } from "./kigardModels";
+import { Action, Attributes, buildMagicTurns, defaultAttributes, defaultEquipment, Equipment, Localization, MasterDataOutfit, outfitParts, Profile } from "./kigardModels";
 import { Branch, ProbaTree, shuffle } from "./math";
 
 export interface GAParameters {
@@ -142,36 +142,56 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
     // Update configuration with individual
     let modified: Attributes = getPhenotype(ind, config, masterData);
 
-    let otherCharacter = {
-        pv: 80,
-        mr: 30
-    };
+    let otherCharacter: Attributes = {...defaultAttributes};
+    otherCharacter.pv = 80;
+    otherCharacter.mr = 30;
+    otherCharacter.dodge = 30;
 
     let simulation: ProbaTree | null = null;
     switch(config.parameters.optimProfile) {
         case Profile.mage: {
-            let launchFireball = {
+            let action: Action = {
+                name: "fireball",
                 pa: 6,
-                pm: 6
+                pm: 6,
+                magicSuccess: modified.int,
+                magicResisted: Math.floor(modified.int / 2),
+                physicalDamageSuccess: 0,
+                criticalBonus: 0,
+                isMagic: true,
+                burning: 2,
+                regeneration: 0,
+                isHealing: false
             };
-            simulation = buildMagicTurns(5, [10, 10, 10, 10, 10], modified, otherCharacter.pv, otherCharacter.mr, launchFireball.pm, launchFireball.pa, false);
-           break; 
+
+            simulation = buildMagicTurns(5, [10, 10, 10, 10, 10], modified, otherCharacter, action);
+           break;
         }
         case Profile.healer: {
-            let launchHealing = {
+            let action: Action = {
+                name: "healing",
                 pa: 6,
-                pm: 6
+                pm: 6,
+                magicSuccess: modified.int,
+                magicResisted: Math.floor(modified.int / 2),
+                physicalDamageSuccess: 0,
+                criticalBonus: 0,
+                isMagic: true,
+                burning: 0,
+                regeneration: 3,
+                isHealing: true
             };
-            simulation = buildMagicTurns(5, [10, 10, 10, 10, 10], modified, otherCharacter.pv, otherCharacter.mr, launchHealing.pm, launchHealing.pa, true);
+
+            simulation = buildMagicTurns(5, [10, 10, 10, 10, 10], modified, otherCharacter, action);
             break;
         }
         case Profile.archer: {
+            //Based on sylvanus arc, 6-10
             /*
-            let fireArrow = {
-                pa: 6,
-                pm: 0
+            let attack = {
+                pa: 6
             };
-            simulation = buildFightTurns(5, [10, 10, 10, 10, 10], modified, monster.pv, monster.mr, fireArrow.pm, fireArrow.pa);
+            simulation = buildDamageTurns(5, [10, 10, 10, 10, 10], modified, monster.pv, monster.mr, attack.pm, attack.pa);
             */
             break;
         }
@@ -185,23 +205,32 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
             break;
         }
         case Profile.warrior: {
-            /*
-            let hitWeapon = {
+            //Based on long sword, 5-7
+            let action: Action = {
+                name: "hit",
                 pa: 6,
-                pm: 0
+                pm: 0,
+                magicSuccess: 0,
+                magicResisted: 0,
+                physicalDamageSuccess: modified.str + 6,
+                criticalBonus: modified.dex,
+                isMagic: false,
+                burning: 0,
+                regeneration: 0,
+                isHealing: false
             };
-            simulation = buildFightTurns(5, [10, 10, 10, 10, 10], modified, monster.pv, monster.mr, hitWeapon.pm, hitWeapon.pa);
-            */
+
+            simulation = buildMagicTurns(5, [10, 10, 10, 10, 10], modified, otherCharacter, action);
             break;
         }
         default: throw Error("optimization profile " + config.parameters.optimProfile + " not defined");
 
     }
-    
+
     if (simulation) {
         evaluated.fitness = computeFitness(simulation);
     }
-    
+
     return evaluated;
 }
 

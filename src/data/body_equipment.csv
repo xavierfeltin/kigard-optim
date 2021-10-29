@@ -1,5 +1,5 @@
 id;nom;type;arm;pre;esq;mm;rm;int;dex;for;chance;dommage;pm;pv;poids;emplacement
-1;ceinture de force;legere;;;;10;;;;3;;;;;1;0
+1;ceinture de force;legere;;;10;;;;;3;;;;;1;0
 2;dérobade en soie;legere;;;8;12;;;;;;;;;1;0
 3;pelisse lumière;legere;;;;8;;1;1;1;;;;;1;0
 4;veston;lourde;2;4;;;;;;;;;;;1;0

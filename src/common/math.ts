@@ -1,3 +1,5 @@
+import { KigardToken } from "./kigardModels";
+
 export function map(val: number, minOrig: number, maxOrig: number, minDest: number, maxDest: number): number {
     const slope = (maxDest - minDest) / (maxOrig - minOrig);
     const mapped = minDest + slope * ( val - minOrig);
@@ -38,17 +40,22 @@ export class ProbaTree {
         this.root = {
             weight: 1,
             value: initialValue,
+            token: {
+                burning: 0,
+                regeneration: 0
+            },
             parent: undefined,
             branches: []
         };
     }
 
-    public addLevel(currentBranch: Branch, weights: number[], values: number[]): Branch[] {
+    public addLevel(currentBranch: Branch, weights: number[], values: number[], tokens: KigardToken[]): Branch[] {
         const newBranches: Branch[] = [];
         for(let i = 0; i < weights.length; i++) {
             const newBranch: Branch = {
                 weight: weights[i],
                 value: values[i],
+                token: {...tokens[i]},
                 parent: currentBranch,
                 branches: undefined
             }
@@ -87,6 +94,7 @@ export class ProbaTree {
         return {
             weight: pathWeight,
             value: this.root.value - branch.value,
+            token: {...branch.token},
             parent: undefined,
             branches: undefined
         };
@@ -96,6 +104,7 @@ export class ProbaTree {
 export interface Branch {
     weight: number;
     value: number;
+    token: KigardToken;
     parent: Branch | undefined;
     branches: Branch[] | undefined; //undefined for final node
 }
