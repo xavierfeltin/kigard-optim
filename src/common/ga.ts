@@ -1,4 +1,4 @@
-import { Action, Attributes, buildMagicTurns, defaultAttributes, defaultEquipment, Equipment, Localization, MasterDataOutfit, outfitParts, Profile } from "./kigardModels";
+import { Action, Attributes, buildTurns, defaultAttributes, defaultEquipment, Equipment, Localization, MasterDataOutfit, outfitParts, Profile } from "./kigardModels";
 import { Branch, ProbaTree, shuffle } from "./math";
 
 export interface GAParameters {
@@ -14,8 +14,6 @@ export interface GAParameters {
 }
 export interface Configuration {
     data: Attributes;
-    maxData: Attributes;
-    minData: Attributes;
     parameters: GAParameters;
 }
 
@@ -63,6 +61,25 @@ export function createIndividual(id: number, config: Configuration, masterData: 
 
     let carriedWeight = 0;
     let allowedWeight = config.data.allowedWeight;
+
+    /*
+    let mandatoryPart: string = "";
+    switch(config.parameters.optimProfile) {
+        case Profile.mage: {
+            mandatoryPart = "leftHand";
+            break;
+        }
+        case Profile.healer: {
+            mandatoryPart = "leftHand";
+            break;
+        }
+        case Profile.archer: {
+            mandatoryPart = "rightHand";
+            break;
+        }
+    }
+    */
+
     let sequence = Array.from(Array(outfitParts.length).keys());
     sequence = shuffle(sequence);
     for (let idx of sequence) {
@@ -146,11 +163,30 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
     otherCharacter.pv = 80;
     otherCharacter.mr = 30;
     otherCharacter.dodge = 30;
+    otherCharacter.armor = 5;
+    
+    //Warrior offense profile
+    otherCharacter.acc = 35;
+    otherCharacter.str = 12;
+    otherCharacter.dex = 6;
 
-    let simulation: ProbaTree | null = null;
+    //Mage offense profile
+    otherCharacter.int = 18;
+    otherCharacter.rpm = 3;
+    otherCharacter.mm = 45;
+
+    let offensiveSimulation: ProbaTree | null = null;
+    let defensePhysicalSimulation: ProbaTree | null = null;
+    let defenseMagicalSimulation: ProbaTree | null = null;
+    let action: Action;
+    let coefficients = {
+        offensive: 0,
+        defensivePhysical: 0,
+        defensiveMagical: 0
+    };
     switch(config.parameters.optimProfile) {
         case Profile.mage: {
-            let action: Action = {
+            action = {
                 name: "fireball",
                 pa: 6,
                 pm: 6,
@@ -159,16 +195,19 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
                 physicalDamageSuccess: 0,
                 criticalBonus: 0,
                 isMagic: true,
+                isThrowing: false,
                 burning: 2,
                 regeneration: 0,
                 isHealing: false
             };
 
-            simulation = buildMagicTurns(5, [10, 10, 10, 10, 10], modified, otherCharacter, action);
+            coefficients.offensive = 3;
+            coefficients.defensiveMagical = 0;
+            coefficients.defensivePhysical = 0;
            break;
         }
         case Profile.healer: {
-            let action: Action = {
+            action = {
                 name: "healing",
                 pa: 6,
                 pm: 6,
@@ -177,36 +216,42 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
                 physicalDamageSuccess: 0,
                 criticalBonus: 0,
                 isMagic: true,
+                isThrowing: false,
                 burning: 0,
                 regeneration: 3,
                 isHealing: true
             };
 
-            simulation = buildMagicTurns(5, [10, 10, 10, 10, 10], modified, otherCharacter, action);
+            coefficients.offensive = 3;
+            coefficients.defensiveMagical = 0;
+            coefficients.defensivePhysical = 0;
             break;
         }
         case Profile.archer: {
             //Based on sylvanus arc, 6-10
-            /*
-            let attack = {
-                pa: 6
+            action = {
+                name: "shoot",
+                pa: 6,
+                pm: 0,
+                magicSuccess: 0,
+                magicResisted: 0,
+                physicalDamageSuccess: modified.dex + 8,
+                criticalBonus: Math.floor(modified.dex / 2),
+                isMagic: false,
+                isThrowing: true,
+                burning: 0,
+                regeneration: 0,
+                isHealing: false
             };
-            simulation = buildDamageTurns(5, [10, 10, 10, 10, 10], modified, monster.pv, monster.mr, attack.pm, attack.pa);
-            */
+
+            coefficients.offensive = 3;
+            coefficients.defensiveMagical = 0;
+            coefficients.defensivePhysical = 0;
             break;
         }
         case Profile.tank: {
-            /*
-            let attack = {
-                pa: 6
-            };
-            simulation = buildDamageTurns(5, [10, 10, 10, 10, 10], modified, monster.pv, monster.mr, attack.pm, attack.pa);
-            */
-            break;
-        }
-        case Profile.warrior: {
             //Based on long sword, 5-7
-            let action: Action = {
+            action = {
                 name: "hit",
                 pa: 6,
                 pm: 0,
@@ -215,22 +260,82 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
                 physicalDamageSuccess: modified.str + 6,
                 criticalBonus: modified.dex,
                 isMagic: false,
+                isThrowing: false,
                 burning: 0,
                 regeneration: 0,
                 isHealing: false
             };
 
-            simulation = buildMagicTurns(5, [10, 10, 10, 10, 10], modified, otherCharacter, action);
+            coefficients.offensive = 1;
+            coefficients.defensiveMagical = 1;
+            coefficients.defensivePhysical = 1;
+            break;
+        }
+        case Profile.warrior: {
+            //Based on long sword, 5-7
+            action = {
+                name: "hit",
+                pa: 6,
+                pm: 0,
+                magicSuccess: 0,
+                magicResisted: 0,
+                physicalDamageSuccess: modified.str + 6,
+                criticalBonus: modified.dex,
+                isMagic: false,
+                isThrowing: false,
+                burning: 0,
+                regeneration: 0,
+                isHealing: false
+            };
+
+            coefficients.offensive = 3;
+            coefficients.defensiveMagical = 1;
+            coefficients.defensivePhysical = 1;
             break;
         }
         default: throw Error("optimization profile " + config.parameters.optimProfile + " not defined");
-
     }
 
-    if (simulation) {
-        evaluated.fitness = computeFitness(simulation);
-    }
+    offensiveSimulation = buildTurns(5, [10, 10, 10, 10, 10], modified, otherCharacter, action);
 
+    //Based on long sword, 5-7
+    let physicalAction: Action = {
+        name: "hit",
+        pa: 6,
+        pm: 0,
+        magicSuccess: 0,
+        magicResisted: 0,
+        physicalDamageSuccess: modified.str + 6,
+        criticalBonus: modified.dex,
+        isMagic: false,
+        isThrowing: false,
+        burning: 0,
+        regeneration: 0,
+        isHealing: false
+    };
+    defensePhysicalSimulation = buildTurns(5, [10, 10, 10, 10, 10], otherCharacter, modified, physicalAction);
+
+    let magicAction: Action = {
+        name: "fireball",
+        pa: 6,
+        pm: 6,
+        magicSuccess: modified.int,
+        magicResisted: Math.floor(modified.int / 2),
+        physicalDamageSuccess: 0,
+        criticalBonus: 0,
+        isMagic: true,
+        isThrowing: false,
+        burning: 2,
+        regeneration: 0,
+        isHealing: false
+    };
+    defenseMagicalSimulation = buildTurns(5, [10, 10, 10, 10, 10], otherCharacter, modified, magicAction);
+
+    evaluated.fitness = 0;
+    evaluated.fitness += coefficients.offensive * computeFitness(offensiveSimulation);
+    evaluated.fitness += coefficients.defensivePhysical * (modified.pv - computeFitness(defensePhysicalSimulation));
+    evaluated.fitness += coefficients.defensiveMagical * (modified.pv - computeFitness(defenseMagicalSimulation));
+    
     return evaluated;
 }
 
@@ -245,16 +350,6 @@ function computeFitness(simulation: ProbaTree): number {
 
     return expectedValue;
 }
-
-/*
-function normalizeAttributes(attributes: Attributes, config: Configuration): Attributes {
-    let normalized = {...attributes};
-    Object.keys(normalized).forEach((attr) => {
-        normalized[attr as keyof Attributes] = map(normalized[attr as keyof Attributes], config.minData[attr as keyof Attributes], config.maxData[attr as keyof Attributes], 0, 1);
-    });
-    return normalized;
-}
-*/
 
 export function convertFitnessIntoProbabilities(population: Individual[]): Individual[] {
     let sumFit = 0.0;

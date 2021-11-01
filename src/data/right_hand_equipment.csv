@@ -1,0 +1,68 @@
+id;nom;type;pa;dgt_min;dgt_max;arm;pre;esq;mm;rm;int;dex;for;chance;pm;pv;poids;emplacement;capacite;mains;arc;fusil;brulure;poison;saignement;assome;faille;terreur;necrose;portee_min;portee_max
+1;couteau de chasse;armeLegere;6;0;1;;;;;;;;;;;;1;;;1;;;;;;;;;;;
+2;coutelas;armeLegere;6;0;2;;7;;;;;;;;;;1;;;1;;;;;;;;;;;
+3;dague;armeLegere;6;2;3;;5;;;;;;;;;;1;;;1;;;;;;;;;;;
+4;kandjar;armeLegere;6;0;4;;28;;;;;;;;;;1;;;1;;;;;;;;;;;
+5;poignard;armeLegere;6;0;4;;20;;;;;;;;;;1;;;1;;;;;;;1;;;;
+6;griffes;armeExotique;6;1;4;1;20;4;;;;;;;;;1;;;1;;;;;;;;;;;
+7;griffes larges;armeExotique;6;2;5;1;12;12;;;;;;;;;1;;;1;;;;;;;;;;;
+8;badelaire ardent;armeIntermediaire;6;4;8;;;;;;;;;;;;2;;;1;;;2;;;;;;;;
+9;�p�e courte;armeIntermediaire;6;3;5;;4;;;;;;;;;;2;;;1;;;;;;;;;;;
+10;glaive;armeIntermediaire;6;4;6;;;;;;;;;;;;2;;;1;;;;;;;;;;;
+11;lame;armeIntermediaire;7;6;8;;6;;;;;;;;;;2;;;1;;;;;;;;;;;
+12;hachoir;armeLourde;7;5;7;;4;;;;;;;;;;2;;;1;;;;;;;;;;;
+13;lame solaire;armeLourde;7;4;8;;;;;;2;2;2;;;;2;;;1;;;;;;;;;;;
+14;�p�e psionique;armeRunique;6;4;6;;;;10;4;;;;;;;2;;;1;;;;;;;;1;;;
+15;langue d�mon;armeRunique;6;2;6;;;;4;;;;2;;;;2;;;1;;;;;;;;;1;;
+16;lance;armeIntermediaire;8;6;10;;25;5;;;;;;;;;2;;;1;;;;;;;1;;;;
+17;croc de fer;armeExotique;8;3;7;;20;5;;;;;;;;;2;;;1;;;;;;;1;;;;
+18;trident;armeExotique;8;5;9;;20;12;;;;;;;;;2;;;1;;;;;;;1;;;;
+19;crosse tellurique;armeParade;7;4;5;1;;4;;;4;;;;;;2;;;1;;;;;;;;;;;
+20;orbe angelique;armeMagique;8;;;;;;;8;5;;2;;-1;;2;;;1;;;;;;;;;;;
+21;orbe d�mon;armeMagique;8;;;;;;8;;2;;5;;-1;;2;;;1;;;;;;;;;;;
+22;sceptre;armeMagique;6;1;3;;;;;;1;;;;1;;2;;;1;;;;;;;;;;;
+23;sceptre c�ur;armeMagique;6;3;4;;;;;;3;;;;;2;2;;;1;;;;;;;;;;;
+24;sceptre �mraude;armeMagique;6;3;4;;;;;;3;;;;1;;2;;;1;;;;;;;;;;;
+25;sceptre glace;armeMagique;6;3;4;;;;12;;;;;;1;;2;;;1;;;;;;;;;;;
+26;sceptre foudre;armeRunique;6;2;4;;8;;;;2;2;;;1;;2;;;1;;;;;;;;;;;
+27;sceptre lumi�re;armeParade;6;3;4;;;4;;;2;;;;1;;2;;;1;;;;;;;;;;;
+28;sceptre en mithril;armeMagique;5;2;4;;;;8;;;;;;1;;2;;;1;;;;;;;;;;;
+29;sceptre noble;armeRunique;6;2;3;;;;4;;2;;2;;1;;2;;;1;;;;;;;;;;;
+30;b�ton;armeParade;7;1;5;;;10;;;2;;;50;;;2;;;1;;;;;;1;;;;;
+31;gantelet;armeParade;6;2;4;3;;;;;;;;;;;2;;;1;;;;;;1;;;;;
+32;masse;armeIntermediaire;6;4;8;;4;;;;;;;;;;2;;;1;;;;;;1;;;;;
+33;tonfa;armeExotique;6;3;4;;;6;;;;;;;;;2;;;1;;;;;;1;;;;;
+34;kuri;armeLegere;7;4;6;;16;;;;;;;;;;2;;;1;;;;;1;;;;;;
+35;tomahawk;armeIntermediaire;6;2;10;;;;;;;;;;;;2;;;1;;;;;1;;;;;;
+36;�p�e longue;armeLourde;6;5;7;;6;6;;;;;;;;;3;;;1;;;;;;;;;;;
+37;�p�e noble;armeLourde;6;5;7;;4;;;;2;;;;;;3;;;1;;;;;;;;;;;
+38;falchion;armeLourde;7;8;12;;;;;;;;;;;;3;;;1;;;;;;;;;;;
+39;fl�au d'armes;armeIntermediaire;6;5;10;;6;-4;;;;;;;;;3;;;1;;;;;;1;;;;;
+40;gourdin clout�;armeLourde;7;5;6;;;-4;;;;;;;;;3;;;1;;;;;;1;;;;;
+41;masse purificatrice;armeLourde;7;6;8;;;-4;;4;3;;;;;;3;;;1;;;;;;1;;;;;
+42;barong;armeLourde;7;2;8;;;;;;;;3;;;;3;;;1;;;;;2;;;;;;
+43;hache;armeLourde;6;3;8;;-4;;;;;;;;;;3;;;1;;;;;1;;;;;;
+44;hache de guerre;armeLourde;6;4;12;;;;;;;;;;;;4;;;1;;;;;3;;;;;;
+45;hache double;armeLourde;6;8;16;;-8;;;;;;;;;;4;;;1;;;;;1;;;;;;
+46;katana;armeIntermediaire;7;4;8;;40;;;;;;;;;;2;;;2;;;;;;;;;;;
+47;�p�e large;armeLourde;7;6;12;;-4;;;;;;;;;;4;;;2;;;;;;;;;;;
+48;claymore;armeIntermediaire;7;10;16;;12;;;;;;;;;;6;;;2;;;;;;;;;;;
+49;�p�e g�ante;armeLourde;8;15;25;;-10;-10;;;;;;;;;6;;;2;;;;;3;;;;;;
+50;flamberge;armeLourde;7;14;20;;-4;;;;;;;;;;6;;;2;;;;;;;;;;;
+51;masse g�ante;armeLourde;8;10;30;;-20;;;;;;;;;;6;;;2;;;;;;3;;;;;
+52;guillotineuse;armeParade;7;10;20;;;4;;;;;;;;;6;;;2;;;;;;;;;;;
+53;fouet;armeLegere;6;0;2;;12;;;;;;;;;;1;;;1;;;;;;;;;;1;2
+54;fouet lame;armeIntermediaire;6;2;4;;16;;;;;;;;;;2;;;1;;;;;;;;;;1;2
+55;magifouet;armeIntermediaire;6;1;3;;12;;;;2;;;;;;2;;;1;;;;;;;;;;1;2
+56;arc court;armeLegere;7;3;6;;4;;;;;;;;;;1;;;2;1;;;;;;;;;2;3
+57;arc sylvain;armeLegere;8;6;10;;16;;;;;;;;;;2;;;2;1;;;;;;;;;2;4
+58;arc de chasseur;armeIntermediaire;6;2;4;;;;;;;;;;;;1;;;2;1;;;;;;;;;2;3
+59;arc d'�lite;armeIntermediaire;7;6;10;;4;;;;;;;;;;2;;;2;1;;;;;;1;;;2;3
+60;arc de guerre;armeIntermediaire;7;4;8;;12;;;;;;;;;;2;;;2;1;;;;1;;;;;2;3
+61;arc b�ni;armeLourde;7;7;9;;;;;4;3;;;;;;2;;;2;1;;;;;;;;;2;3
+62;arc long;armeLourde;8;10;14;;;;;;;;;;;;2;;;2;1;;;;;;;;;2;4
+63;arc de r�deur;armeParade;6;2;6;;;4;;;;3;;;;;2;;;2;1;;;;;;;;;2;3
+64;arquebuse;armeParade;6;6;12;;;8;;;;;;;;;4;;;2;;1;;;;1;;;;1;3
+65;carabine harpie;armeLegere;6;4;6;;12;;;;;;;;;;3;;;2;;1;;;;;;;;1;5
+66;fusile;armeIntermediaire;6;3;6;1;;4;;;;;;;;;3;;;2;;1;;;;1;;;;1;3
+67;tromblon;armeLourde;6;10;16;3;-12;-4;;;;;;;;;4;;;2;;1;;;;1;;;;1;2

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import { GAParameters, Individual } from './common/ga';
-import { Attributes, defaultAttributes, defaultEquipment, generateEquipmentFromJSON, Localization, MasterDataOutfit, Profile } from './common/kigardModels';
+import { Attributes, defaultAttributes, defaultEquipment, EquipmentClass, generateEquipmentFromJSON, Localization, MasterDataOutfit, Profile } from './common/kigardModels';
 import { Character } from './components/Character';
 import { Simulation } from './components/Simulation';
 import { Solution } from './components/Solution';
@@ -9,6 +9,8 @@ import headEquipmentJSON from './data/head_equipment.json';
 import feetEquipmentJSON from './data/feet_equipment.json';
 import bodyEquipmentJSON from './data/body_equipment.json';
 import leftHandEquipmentJSON from './data/left_hand_equipment.json';
+import rightHandEquipmentJSON from './data/right_hand_equipment.json';
+import containerEquipmentJSON from './data/container_equipment.json';
 import { GAConfiguration } from './components/GAConfiguration';
 
 function App() {
@@ -19,7 +21,8 @@ function App() {
     leftHand: [],
     rightHand: [],
     fetish: [],
-    feet: []
+    feet: [],
+    container: []
   });
   const [character, setCharacter] = useState<Attributes>({...defaultAttributes});
   const [simuParameters, setSimuParameters] = useState<GAParameters>({
@@ -40,6 +43,8 @@ function App() {
     const feetEquipments = generateEquipmentFromJSON(feetEquipmentJSON);
     const bodyEquipments = generateEquipmentFromJSON(bodyEquipmentJSON);
     const leftHandEquipments = generateEquipmentFromJSON(leftHandEquipmentJSON);
+    const rightHandEquipments = generateEquipmentFromJSON(rightHandEquipmentJSON);
+    const containerEquipments = generateEquipmentFromJSON(containerEquipmentJSON);
 
     const emptyHead = {...defaultEquipment};
     emptyHead.name = "Casque non porté";
@@ -56,13 +61,24 @@ function App() {
     emptyLeftHand.name = "Main gauche vide";
     emptyLeftHand.localization = Localization.Lefthand;
 
+    const emptyRightHand = {...defaultEquipment};
+    emptyRightHand.name = "Sans arme";
+    emptyRightHand.localization = Localization.RightHand;
+
+    const emptyContainer = {...defaultEquipment};
+    emptyContainer.name = "Pas de conteneur";
+    emptyContainer.localization = Localization.Container;
+    emptyContainer.kind = EquipmentClass.Container;
+    emptyContainer.attributes.nbProjectiles = 6;
+
     const masterData: MasterDataOutfit = {
       head: [emptyHead, ...headEquipments],
       body: [emptyBody, ...bodyEquipments],
       leftHand: [emptyLeftHand, ...leftHandEquipments],
-      rightHand: [],
+      rightHand: [emptyRightHand, ...rightHandEquipments],
       feet: [emptyFeet, ...feetEquipments],
-      fetish: []
+      fetish: [],
+      container: [emptyContainer, ...containerEquipments]
     }
     setMasterData(masterData);
   }, []);

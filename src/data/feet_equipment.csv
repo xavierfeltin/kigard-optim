@@ -1,16 +1,16 @@
-﻿id;nom;type;arm;pre;esq;mm;rm;int;dex;for;chance;dommage;pm;pv;poids;emplacement
-1;botillons ailés;legere;1;;6;;;;;;;;;;1;0
-2;bottes;legere;1;;;;;;;;;;;;1;0
-3;brodequins;lourde;2;;;;;;;;;;;;1;0
-4;mocassins;lourde;1;;;;;1;;;;;;;1;0
-5;bottines;combat;2;2;;;;;;;;;;;1;0
-6;bottines sylvaines;combat;1;6;;;;;;;;;;;1;0
-7;godillots;combat;1;;;;;;;;;;;;1;0
-8;chaussons;artefact;;;4;;;;;;;;;;1;0
-9;chaussons en soie;artefact;;;6;;4;;;;;;;;1;0
-10;bottes runiques;focus;2;;;2;;;;;;;;;1;0
-11;souliers;focus;;;;4;;1;;;;;;;1;0
-12;jambières en mithril;artefact;3;;;;;;;;;;;;1;0
-13;jambieres en cuivre;lourde;4;;-4;;;;;;;;;;2;0
-14;jambieres;lourde;3;;;;;;;;;;;;2;0
-15;bottes du nomades;voyage;1;;4;;;;;;50;;;;2;0
+﻿id;nom;type;arm;pre;esq;mm;rm;int;dex;for;chance;dommage;pm;pv;poids;emplacement;capacite
+1;botillons ailés;legere;1;;6;;;;;;;;;;1;0;0
+2;bottes;legere;1;;;;;;;;;;;;1;0;0
+3;brodequins;lourde;2;;;;;;;;;;;;1;0;0
+4;mocassins;lourde;1;;;;;1;;;;;;;1;0;0
+5;bottines;combat;2;2;;;;;;;;;;;1;0;0
+6;bottines sylvaines;combat;1;6;;;;;;;;;;;1;0;0
+7;godillots;combat;1;;;;;;;;;;;;1;0;0
+8;chaussons;artefact;;;4;;;;;;;;;;1;0;0
+9;chaussons en soie;artefact;;;6;;4;;;;;;;;1;0;0
+10;bottes runiques;focus;2;;;2;;;;;;;;;1;0;0
+11;souliers;focus;;;;4;;1;;;;;;;1;0;0
+12;jambières en mithril;artefact;3;;;;;;;;;;;;1;0;0
+13;jambieres en cuivre;lourde;4;;-4;;;;;;;;;;2;0;0
+14;jambieres;lourde;3;;;;;;;;;;;;2;0;0
+15;bottes du nomades;voyage;1;;4;;;;;;50;;;;2;0;0

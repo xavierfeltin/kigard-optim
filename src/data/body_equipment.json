@@ -16,11 +16,12 @@
     "pm": null,
     "pv": "",
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 2,
-    "nom": "dérobade en soie",
+    "nom": "d�robade en soie",
     "type": "legere",
     "arm": null,
     "pre": null,
@@ -35,11 +36,12 @@
     "pm": null,
     "pv": "",
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 3,
-    "nom": "pelisse lumière",
+    "nom": "pelisse lumi�re",
     "type": "legere",
     "arm": null,
     "pre": null,
@@ -54,7 +56,8 @@
     "pm": null,
     "pv": "",
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 4,
@@ -73,7 +76,8 @@
     "pm": null,
     "pv": "",
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 5,
@@ -92,7 +96,8 @@
     "pm": null,
     "pv": "",
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 6,
@@ -111,7 +116,8 @@
     "pm": null,
     "pv": "",
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 7,
@@ -130,7 +136,8 @@
     "pm": null,
     "pv": "",
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 8,
@@ -149,7 +156,8 @@
     "pm": null,
     "pv": "",
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 9,
@@ -168,7 +176,8 @@
     "pm": null,
     "pv": "",
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 10,
@@ -187,7 +196,8 @@
     "pm": null,
     "pv": "",
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 11,
@@ -206,11 +216,12 @@
     "pm": null,
     "pv": "",
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 12,
-    "nom": "manteau de rôdeur",
+    "nom": "manteau de r�deur",
     "type": "legere",
     "arm": 1,
     "pre": null,
@@ -225,11 +236,12 @@
     "pm": null,
     "pv": "",
     "poids": 2,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 13,
-    "nom": "tenue améthyste",
+    "nom": "tenue am�thyste",
     "type": "legere",
     "arm": null,
     "pre": null,
@@ -244,7 +256,8 @@
     "pm": null,
     "pv": "",
     "poids": 2,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 14,
@@ -263,7 +276,8 @@
     "pm": null,
     "pv": "",
     "poids": 2,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 15,
@@ -282,7 +296,8 @@
     "pm": null,
     "pv": "",
     "poids": 2,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 16,
@@ -301,7 +316,8 @@
     "pm": null,
     "pv": "",
     "poids": 2,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 17,
@@ -320,7 +336,8 @@
     "pm": null,
     "pv": "",
     "poids": 2,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 18,
@@ -339,7 +356,8 @@
     "pm": null,
     "pv": "",
     "poids": 2,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 19,
@@ -358,11 +376,12 @@
     "pm": 1,
     "pv": "",
     "poids": 2,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 20,
-    "nom": "pélerine",
+    "nom": "p�lerine",
     "type": "artefact",
     "arm": 1,
     "pre": null,
@@ -377,11 +396,12 @@
     "pm": null,
     "pv": "",
     "poids": 2,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 21,
-    "nom": "pélerine en soie",
+    "nom": "p�lerine en soie",
     "type": "artefact",
     "arm": 1,
     "pre": null,
@@ -396,7 +416,8 @@
     "pm": null,
     "pv": "",
     "poids": 2,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 22,
@@ -415,7 +436,8 @@
     "pm": null,
     "pv": "",
     "poids": 2,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 23,
@@ -434,7 +456,8 @@
     "pm": null,
     "pv": "",
     "poids": 3,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 24,
@@ -453,7 +476,8 @@
     "pm": null,
     "pv": "",
     "poids": 3,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 25,
@@ -472,7 +496,8 @@
     "pm": null,
     "pv": "",
     "poids": 3,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 26,
@@ -491,7 +516,8 @@
     "pm": null,
     "pv": "",
     "poids": 3,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 27,
@@ -510,7 +536,8 @@
     "pm": null,
     "pv": "",
     "poids": 3,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 28,
@@ -529,7 +556,8 @@
     "pm": null,
     "pv": "",
     "poids": 3,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 29,
@@ -548,7 +576,8 @@
     "pm": null,
     "pv": "",
     "poids": 3,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 30,
@@ -567,7 +596,8 @@
     "pm": null,
     "pv": "",
     "poids": 4,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 31,
@@ -586,7 +616,8 @@
     "pm": null,
     "pv": "",
     "poids": 4,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 32,
@@ -605,7 +636,8 @@
     "pm": null,
     "pv": "",
     "poids": 4,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 33,
@@ -624,11 +656,12 @@
     "pm": null,
     "pv": "",
     "poids": 5,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 34,
-    "nom": "armure fantôme",
+    "nom": "armure fant�me",
     "type": "combat",
     "arm": 5,
     "pre": 6,
@@ -643,11 +676,12 @@
     "pm": null,
     "pv": "",
     "poids": 5,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 35,
-    "nom": "cuirasse sacrée",
+    "nom": "cuirasse sacr�e",
     "type": "lourde",
     "arm": 6,
     "pre": null,
@@ -662,7 +696,8 @@
     "pm": null,
     "pv": "",
     "poids": 5,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 36,
@@ -681,7 +716,8 @@
     "pm": null,
     "pv": "",
     "poids": 5,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 37,
@@ -700,7 +736,8 @@
     "pm": -1,
     "pv": "",
     "poids": 5,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 38,
@@ -719,11 +756,12 @@
     "pm": null,
     "pv": "",
     "poids": 5,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 39,
-    "nom": "armure de démon",
+    "nom": "armure de d�mon",
     "type": "lourde",
     "arm": 8,
     "pre": null,
@@ -738,7 +776,8 @@
     "pm": null,
     "pv": "",
     "poids": 6,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 40,
@@ -757,6 +796,7 @@
     "pm": null,
     "pv": "",
     "poids": 6,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   }
  ]

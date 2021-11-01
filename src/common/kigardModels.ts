@@ -1,5 +1,4 @@
-import { cpuUsage } from "process";
-import { act } from "react-dom/test-utils";
+import { others } from "@chakra-ui/styled-system";
 import { Branch, ProbaTree } from "./math";
 
 export interface Attributes {
@@ -15,14 +14,26 @@ export interface Attributes {
     rpm: number;
     rpv: number;
     armor: number;
-    physicalDmg: number;
-    magicalDmg: number;
+    minDamage: number;
+    maxDamage: number;
+    minRange: number;
+    maxRange: number;
     allowedWeight: number;
     pv: number;
     mp: number;
     nbSpellAttach: number;
+    nbProjectiles: number;
+    isBow: number;
+    isRifle: number;
+    hands: number;
     burning: number;
-    regeneration: number;
+    regeneration: number;    
+    poison: number;
+    bleeding: number;
+    knockedOut: number;
+    breach: number;
+    terror: number;
+    necrosis: number;    
 }
 
 export interface KigardToken {
@@ -47,6 +58,7 @@ export interface MasterDataOutfit {
     rightHand: Equipment[];
     leftHand: Equipment[];
     fetish: Equipment[];
+    container: Equipment[];
 }
 
 export interface Outfit {
@@ -56,6 +68,7 @@ export interface Outfit {
     rightHand: Equipment;
     leftHand: Equipment;
     fetish: Equipment;
+    container: Equipment;
 }
 
 export interface Character {
@@ -73,6 +86,7 @@ export interface Action {
     physicalDamageSuccess: number;
     criticalBonus: number;
     isMagic: boolean;
+    isThrowing: boolean;
     isHealing: boolean;
     burning: number;
     regeneration: number;
@@ -92,7 +106,8 @@ export enum Localization {
     RightHand,
     Lefthand,
     Feet,
-    Fetish
+    Fetish,
+    Container
 }
 
 export enum EquipmentClass {
@@ -105,7 +120,17 @@ export enum EquipmentClass {
     Focus,
     Set,
     SecondaryWeapon,
-    Container
+    Container,
+    BowContainer,
+    GunContainer,
+    LightWeapon,
+    IntermediaryWeapon,
+    HeavyWeapon,
+    MagicalWeapon,
+    ExoticWeapon,
+    ParadeWeapon,
+    RunicWeapon,
+    MagicFocus
 }
 
 export enum Quality {
@@ -128,14 +153,26 @@ export const defaultAttributes: Attributes = {
     rpm: 0,
     rpv: 0,
     armor: 0,
-    physicalDmg: 0,
-    magicalDmg: 0,
+    minDamage: 0,
+    maxDamage: 0,
+    minRange: 0,
+    maxRange: 0,
     allowedWeight: 0,
     nbSpellAttach: 0,
+    nbProjectiles: 0,
+    isBow: 0,
+    isRifle: 0,
+    hands: 0,
     pv: 0,
     mp: 0,
     burning: 0,
-    regeneration: 0
+    regeneration: 0,
+    poison: 0,
+    bleeding: 0,
+    knockedOut: 0,
+    breach: 0,
+    terror: 0,
+    necrosis: 0
 };
 
 export const defaultEquipment: Equipment = {
@@ -148,7 +185,7 @@ export const defaultEquipment: Equipment = {
     quality: Quality.Standard
 }
 
-export const outfitParts: string[] = ["head", "body", "leftHand", "feet"];
+export const outfitParts: string[] = ["head", "body", "leftHand", "rightHand", "feet", "container"];
 
 export function generateEquipmentFromJSON (data: any): Equipment[] {
     let equipments: Equipment[] = [];
@@ -172,14 +209,26 @@ export function generateEquipmentFromJSON (data: any): Equipment[] {
                 rpm: d.pm || 0,
                 rpv: d.pv || 0,
                 armor: d.arm || 0,
-                physicalDmg: d.dommage || 0,
-                magicalDmg: 0,
+                minDamage: d.dgt_min || 0,
+                maxDamage: d.dgt_max || 0,
+                minRange: d.portee_min || 0,
+                maxRange: d.portee_max || 0,
                 allowedWeight: 0,
                 pv: 0,
                 mp: 0,
                 nbSpellAttach: d.emplacement,
-                burning: 0,
-                regeneration: 0
+                nbProjectiles: d.capacite,
+                isBow: d.arc || 0,
+                isRifle: d.fusile || 0,
+                hands: d.mains || 0,
+                burning: d.brulure || 0,
+                regeneration: 0,
+                poison: d.poison || 0,
+                bleeding: d.saignement || 0,
+                knockedOut: d.assome || 0,
+                breach: d.faille || 0,
+                terror: d.terreur || 0,
+                necrosis: d.necrose || 0
             },
             quality: getQualiyFromString("base") //TODO : change with more equipment
         };
@@ -200,7 +249,15 @@ function getEquipmentClassFromString(name: string): EquipmentClass {
         case "focus": return EquipmentClass.Focus;
         case "parure": return EquipmentClass.Set;
         case "secondaire": return EquipmentClass.SecondaryWeapon;
-        case "contenant": return EquipmentClass.Container;
+        case "arc": return EquipmentClass.BowContainer;
+        case "fusil": return EquipmentClass.GunContainer;
+        case "armeLegere": return EquipmentClass.LightWeapon;
+        case "armeIntermediaire": return EquipmentClass.IntermediaryWeapon;
+        case "armeLourde" : return EquipmentClass.HeavyWeapon;
+        case "armeMagique": return EquipmentClass.MagicalWeapon;
+        case "armeExotique": return EquipmentClass.ExoticWeapon;
+        case "armeParade": return EquipmentClass.ParadeWeapon;
+        case "armeRunique": return EquipmentClass.RunicWeapon;
         default: throw Error("equiment class " + name + " not defined");
     }
 }
@@ -248,11 +305,12 @@ export function getFightingthreshold(acc: number, dodge: number): {dodge: number
 }
 
 // Healing magic is computed by removing health point as the agressive magic, but the threshold are computed differently
-export function buildMagicTurns(nbTurns: number = 5, paByTurns: number[] = [10, 10, 10, 10, 10], attributes: Attributes, opponent: Attributes, action: Action): ProbaTree {
+export function buildTurns(nbTurns: number = 5, paByTurns: number[] = [10, 10, 10, 10, 10], attributes: Attributes, opponent: Attributes, action: Action): ProbaTree {
     debugger;
     const probaTree = new ProbaTree(opponent.pv);
     let turnPossibilities: Branch[] = [probaTree.root];
     let pmForTurn = 25;
+    let projectileForTurn = attributes.nbProjectiles;
     let attr = {...attributes};
 
     for (let turn = 0; turn < nbTurns; turn++) {
@@ -323,9 +381,17 @@ export function buildMagicTurns(nbTurns: number = 5, paByTurns: number[] = [10, 
                         }
                     }
                     else {
-                        remainingLife = [remainingLife[0] - (action.physicalDamageSuccess + action.criticalBonus),
-                                        remainingLife[1] - action.physicalDamageSuccess,
-                                        remainingLife[2]]; // no damage when dodging
+                        if ((action.isThrowing && projectileForTurn > 0) || !action.isThrowing) {
+                            remainingLife = [remainingLife[0] - (action.physicalDamageSuccess + action.criticalBonus) + opponent.armor,
+                            remainingLife[1] - action.physicalDamageSuccess + opponent.armor,
+                            remainingLife[2]]; // no damage when dodging
+
+                            projectileForTurn--;
+                        }
+                        else if (action.isThrowing && projectileForTurn === 0) {
+                            //Reload for shooting next turn
+                            projectileForTurn = attributes.nbProjectiles;
+                        }
                     }
 
                     // TODO: Add specific branch transformation from parent context here (bleeding, burning, reducing armor, ...)

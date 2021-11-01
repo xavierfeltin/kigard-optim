@@ -16,7 +16,8 @@
     "pm": null,
     "pv": "",
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 2,
@@ -35,7 +36,8 @@
     "pm": null,
     "pv": "",
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 3,
@@ -54,7 +56,8 @@
     "pm": null,
     "pv": "",
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 4,
@@ -73,7 +76,8 @@
     "pm": null,
     "pv": "",
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 5,
@@ -92,7 +96,8 @@
     "pm": null,
     "pv": "",
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 6,
@@ -111,7 +116,8 @@
     "pm": null,
     "pv": "",
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 7,
@@ -130,7 +136,8 @@
     "pm": null,
     "pv": "",
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 8,
@@ -149,7 +156,8 @@
     "pm": null,
     "pv": "",
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 9,
@@ -168,7 +176,8 @@
     "pm": null,
     "pv": "",
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 10,
@@ -187,7 +196,8 @@
     "pm": null,
     "pv": "",
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 11,
@@ -206,7 +216,8 @@
     "pm": null,
     "pv": "",
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 12,
@@ -225,7 +236,8 @@
     "pm": null,
     "pv": "",
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 13,
@@ -244,7 +256,8 @@
     "pm": null,
     "pv": "",
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 14,
@@ -263,7 +276,8 @@
     "pm": null,
     "pv": "",
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 15,
@@ -282,7 +296,8 @@
     "pm": null,
     "pv": "",
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 16,
@@ -301,7 +316,8 @@
     "pm": null,
     "pv": "",
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 17,
@@ -320,7 +336,8 @@
     "pm": null,
     "pv": "",
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 18,
@@ -339,7 +356,8 @@
     "pm": null,
     "pv": "",
     "poids": 2,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 19,
@@ -358,7 +376,8 @@
     "pm": null,
     "pv": "",
     "poids": 2,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 20,
@@ -377,7 +396,8 @@
     "pm": null,
     "pv": "",
     "poids": 2,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 21,
@@ -396,7 +416,8 @@
     "pm": null,
     "pv": "",
     "poids": 2,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 22,
@@ -415,7 +436,8 @@
     "pm": null,
     "pv": "",
     "poids": 2,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 23,
@@ -434,7 +456,8 @@
     "pm": 2,
     "pv": "",
     "poids": 2,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 24,
@@ -453,7 +476,8 @@
     "pm": null,
     "pv": "",
     "poids": 3,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 25,
@@ -472,7 +496,8 @@
     "pm": null,
     "pv": "",
     "poids": 3,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 26,
@@ -491,7 +516,8 @@
     "pm": null,
     "pv": "",
     "poids": 3,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 27,
@@ -510,6 +536,7 @@
     "pm": null,
     "pv": "",
     "poids": 3,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   }
  ]

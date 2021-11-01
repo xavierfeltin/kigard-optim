@@ -16,7 +16,8 @@
     "pm": null,
     "pv": null,
     "poids": 1,
-    "emplacement": 1
+    "emplacement": 1,
+    "capacite": 0
   },
   {
     "id": 2,
@@ -35,7 +36,8 @@
     "pm": null,
     "pv": null,
     "poids": 4,
-    "emplacement": 1
+    "emplacement": 1,
+    "capacite": 0
   },
   {
     "id": 3,
@@ -54,11 +56,12 @@
     "pm": 1,
     "pv": null,
     "poids": 4,
-    "emplacement": 1
+    "emplacement": 1,
+    "capacite": 0
   },
   {
     "id": 4,
-    "nom": "bouclier océanique",
+    "nom": "bouclier oc�anique",
     "type": "legere",
     "arm": 4,
     "pre": null,
@@ -73,7 +76,8 @@
     "pm": null,
     "pv": null,
     "poids": 4,
-    "emplacement": 1
+    "emplacement": 1,
+    "capacite": 0
   },
   {
     "id": 5,
@@ -92,7 +96,8 @@
     "pm": null,
     "pv": null,
     "poids": 2,
-    "emplacement": 1
+    "emplacement": 1,
+    "capacite": 0
   },
   {
     "id": 6,
@@ -111,7 +116,8 @@
     "pm": null,
     "pv": null,
     "poids": 1,
-    "emplacement": 3
+    "emplacement": 3,
+    "capacite": 0
   },
   {
     "id": 7,
@@ -130,7 +136,8 @@
     "pm": null,
     "pv": null,
     "poids": 1,
-    "emplacement": 3
+    "emplacement": 3,
+    "capacite": 0
   },
   {
     "id": 8,
@@ -149,7 +156,8 @@
     "pm": null,
     "pv": null,
     "poids": 1,
-    "emplacement": 3
+    "emplacement": 3,
+    "capacite": 0
   },
   {
     "id": 9,
@@ -168,11 +176,12 @@
     "pm": null,
     "pv": null,
     "poids": 1,
-    "emplacement": 3
+    "emplacement": 3,
+    "capacite": 0
   },
   {
     "id": 10,
-    "nom": "recueil sacré",
+    "nom": "recueil sacr�",
     "type": "focus",
     "arm": 2,
     "pre": null,
@@ -187,7 +196,8 @@
     "pm": null,
     "pv": null,
     "poids": 1,
-    "emplacement": 3
+    "emplacement": 3,
+    "capacite": 0
   },
   {
     "id": 11,
@@ -206,7 +216,8 @@
     "pm": 1,
     "pv": null,
     "poids": 1,
-    "emplacement": 3
+    "emplacement": 3,
+    "capacite": 0
   },
   {
     "id": 12,
@@ -225,7 +236,8 @@
     "pm": null,
     "pv": null,
     "poids": 1,
-    "emplacement": 3
+    "emplacement": 3,
+    "capacite": 0
   },
   {
     "id": 13,
@@ -244,7 +256,8 @@
     "pm": null,
     "pv": null,
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 14,
@@ -263,11 +276,12 @@
     "pm": null,
     "pv": null,
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 15,
-    "nom": "cercle cœur",
+    "nom": "cercle c�ur",
     "type": "artefact",
     "arm": 2,
     "pre": null,
@@ -282,7 +296,8 @@
     "pm": null,
     "pv": 4,
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 16,
@@ -301,11 +316,12 @@
     "pm": null,
     "pv": null,
     "poids": 2,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 17,
-    "nom": "bouclier ailé",
+    "nom": "bouclier ail�",
     "type": "legere",
     "arm": 3,
     "pre": null,
@@ -320,7 +336,8 @@
     "pm": null,
     "pv": null,
     "poids": 2,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 18,
@@ -339,7 +356,8 @@
     "pm": null,
     "pv": null,
     "poids": 1,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 19,
@@ -358,11 +376,12 @@
     "pm": null,
     "pv": null,
     "poids": 2,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 20,
-    "nom": "bouclier à pointes",
+    "nom": "bouclier � pointes",
     "type": "lourde",
     "arm": null,
     "pre": null,
@@ -377,11 +396,12 @@
     "pm": null,
     "pv": null,
     "poids": 3,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 21,
-    "nom": "bouclier sacré",
+    "nom": "bouclier sacr�",
     "type": "lourde",
     "arm": 4,
     "pre": null,
@@ -396,11 +416,12 @@
     "pm": null,
     "pv": null,
     "poids": 4,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 22,
-    "nom": "pavois phénix",
+    "nom": "pavois ph�nix",
     "type": "lourde",
     "arm": 4,
     "pre": null,
@@ -415,11 +436,12 @@
     "pm": null,
     "pv": 2,
     "poids": 4,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   },
   {
     "id": 23,
-    "nom": "écu en cuivre",
+    "nom": "�cu en cuivre",
     "type": "lourde",
     "arm": 6,
     "pre": null,
@@ -434,6 +456,7 @@
     "pm": null,
     "pv": null,
     "poids": 4,
-    "emplacement": 0
+    "emplacement": 0,
+    "capacite": 0
   }
  ]

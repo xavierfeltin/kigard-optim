@@ -1,24 +1,24 @@
-id;nom;type;arm;pre;esq;mm;rm;int;dex;for;chance;dommage;pm;pv;poids;emplacement
-1;parchemin;focus;;;;;;;;;;;;;1;1
-2;bouclier dragon;lourde;4;;-4;;4;;;;;;;;4;1
-3;bouclier onirique;lourde;4;;-4;4;-4;;;;;;1;;4;1
-4;bouclier océanique;legere;4;;-4;;;2;;;;;;;4;1
-5;brassard runique;focus;2;;;6;;;;;;;;;2;1
-6;grimoire;focus;;;;;;2;;;;;;;1;3
-7;grimoire astral;focus;;;;8;;;;;;;;;1;3
-8;livre des morts;focus;;;;;;;;2;;;;;1;3
-9;ouvrage sylvestre;focus;;;;;;;2;;;;;;1;3
-10;recueil sacré;focus;2;;;;;;;;;;;;1;3
-11;testament rituel;focus;;;;;;;;;;;1;;1;3
-12;tome de cristal;focus;;;;;8;;;;;;;;1;3
-13;bracelet;combat;;10;6;;;;;;;;;;1;0
-14;bracelet miroir;artefact;2;;4;;12;;;;;;;;1;0
-15;cercle cœur;artefact;2;;;;;2;;;;;;4;1;0
-16;main-gauche;secondaire;;;4;;;;2;;;3;;;2;0
-17;bouclier ailé;legere;3;;4;;;;;;;;;;2;0
-18;targe;lourde;2;;2;;;;;;;;;;1;0
-19;rondache;lourde;3;;;;;;;;;;;;2;0
-20;bouclier à pointes;lourde;;;;;;;;;;3;;;3;0
-21;bouclier sacré;lourde;4;;-4;;4;3;;;;;;;4;0
-22;pavois phénix;lourde;4;;-4;;;;;3;;;;2;4;0
-23;écu en cuivre;lourde;6;;;;;;;;;;;;4;0
+id;nom;type;arm;pre;esq;mm;rm;int;dex;for;chance;dommage;pm;pv;poids;emplacement;capacite
+1;parchemin;focus;;;;;;;;;;;;;1;1;0
+2;bouclier dragon;lourde;4;;-4;;4;;;;;;;;4;1;0
+3;bouclier onirique;lourde;4;;-4;4;-4;;;;;;1;;4;1;0
+4;bouclier ocï¿½anique;legere;4;;-4;;;2;;;;;;;4;1;0
+5;brassard runique;focus;2;;;6;;;;;;;;;2;1;0
+6;grimoire;focus;;;;;;2;;;;;;;1;3;0
+7;grimoire astral;focus;;;;8;;;;;;;;;1;3;0
+8;livre des morts;focus;;;;;;;;2;;;;;1;3;0
+9;ouvrage sylvestre;focus;;;;;;;2;;;;;;1;3;0
+10;recueil sacrï¿½;focus;2;;;;;;;;;;;;1;3;0
+11;testament rituel;focus;;;;;;;;;;;1;;1;3;0
+12;tome de cristal;focus;;;;;8;;;;;;;;1;3;0
+13;bracelet;combat;;10;6;;;;;;;;;;1;0;0
+14;bracelet miroir;artefact;2;;4;;12;;;;;;;;1;0;0
+15;cercle cï¿½ur;artefact;2;;;;;2;;;;;;4;1;0;0
+16;main-gauche;secondaire;;;4;;;;2;;;3;;;2;0;0
+17;bouclier ailï¿½;legere;3;;4;;;;;;;;;;2;0;0
+18;targe;lourde;2;;2;;;;;;;;;;1;0;0
+19;rondache;lourde;3;;;;;;;;;;;;2;0;0
+20;bouclier ï¿½ pointes;lourde;;;;;;;;;;3;;;3;0;0
+21;bouclier sacrï¿½;lourde;4;;-4;;4;3;;;;;;;4;0;0
+22;pavois phï¿½nix;lourde;4;;-4;;;;;3;;;;2;4;0;0
+23;ï¿½cu en cuivre;lourde;6;;;;;;;;;;;;4;0;0
