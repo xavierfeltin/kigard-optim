@@ -18,8 +18,8 @@ function App() {
   const [masterData, setMasterData] = useState<MasterDataOutfit>({
     head: [],
     body: [],
-    leftHand: [],
-    rightHand: [],
+    lefthand: [],
+    righthand: [],
     fetish: [],
     feet: [],
     container: []
@@ -69,13 +69,13 @@ function App() {
     emptyContainer.name = "Pas de conteneur";
     emptyContainer.localization = Localization.Container;
     emptyContainer.kind = EquipmentClass.Container;
-    emptyContainer.attributes.nbProjectiles = 6;
+    emptyContainer.attributes.nbProjectiles = 1;
 
     const masterData: MasterDataOutfit = {
       head: [emptyHead, ...headEquipments],
       body: [emptyBody, ...bodyEquipments],
-      leftHand: [emptyLeftHand, ...leftHandEquipments],
-      rightHand: [emptyRightHand, ...rightHandEquipments],
+      lefthand: [emptyLeftHand, ...leftHandEquipments],
+      righthand: [emptyRightHand, ...rightHandEquipments],
       feet: [emptyFeet, ...feetEquipments],
       fetish: [],
       container: [emptyContainer, ...containerEquipments]

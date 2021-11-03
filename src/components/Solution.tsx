@@ -33,7 +33,7 @@ export function Solution({ind, masterData, character}: SolutionProps) {
     }
 
     const generateRow = function(equipmentID: number, outfitPartID: number): ReactElement {
-        const partIndex = outfitParts[outfitPartID];
+        const partIndex = outfitParts[outfitPartID].toLowerCase();
         const partOutfit = masterData[partIndex as keyof MasterDataOutfit];
         const equipment = partOutfit.find(value => value.id === equipmentID) || defaultEquipment;
 

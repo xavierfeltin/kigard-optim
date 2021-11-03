@@ -29,6 +29,7 @@ export interface Individual {
     fitness: number;
     probability: number;
     carriedWeight: number,
+    hands: number;
 }
 
 export function createEmptyIndividual(): Individual {
@@ -37,7 +38,8 @@ export function createEmptyIndividual(): Individual {
         genes: [],
         fitness: 0,
         probability: 0,
-        carriedWeight: 0
+        carriedWeight: 0,
+        hands: 0
     }
 
     return ind;
@@ -61,24 +63,8 @@ export function createIndividual(id: number, config: Configuration, masterData: 
 
     let carriedWeight = 0;
     let allowedWeight = config.data.allowedWeight;
-
-    /*
-    let mandatoryPart: string = "";
-    switch(config.parameters.optimProfile) {
-        case Profile.mage: {
-            mandatoryPart = "leftHand";
-            break;
-        }
-        case Profile.healer: {
-            mandatoryPart = "leftHand";
-            break;
-        }
-        case Profile.archer: {
-            mandatoryPart = "rightHand";
-            break;
-        }
-    }
-    */
+    let busyHands = 0;
+    let selectedWeapon: Equipment = {...defaultEquipment};
 
     // Organize data depending of the profile
     let sequence = Array.from(Array(outfitParts.length).keys());
@@ -89,30 +75,30 @@ export function createIndividual(id: number, config: Configuration, masterData: 
         case Profile.healer: {
             // Require a left hand with at least one attach for a spell
             let leftHandIdx = outfitParts.findIndex(value => value === "leftHand");
-            if (sequence[0] != leftHandIdx) {
+            if (sequence[0] !== leftHandIdx) {
                 let sequenceLeftHandIdx = sequence.findIndex(value => value === leftHandIdx);
                 let tmp = sequence[0];
                 sequence[0] = leftHandIdx;
-                sequence[sequenceLeftHandIdx] = tmp; 
+                sequence[sequenceLeftHandIdx] = tmp;
             }
-            
+
             break;
         }
         case Profile.archer: {
             // Require a right hand as an arc or a rifle
             let rightHandIdx = outfitParts.findIndex(value => value === "rightHand");
-            if (sequence[0] != rightHandIdx) {
+            if (sequence[0] !== rightHandIdx) {
                 let sequencerightHandIdx = sequence.findIndex(value => value === rightHandIdx);
                 let tmp = sequence[0];
                 sequence[0] = rightHandIdx;
-                sequence[sequencerightHandIdx] = tmp; 
+                sequence[sequencerightHandIdx] = tmp;
             }
             break;
         }
     }
-    
+
     for (let idx of sequence) {
-        let part = outfitParts[idx];
+        let part = outfitParts[idx].toLowerCase();
         let partMasterData = masterData[part as keyof MasterDataOutfit];
         const maxAuthorizedWeight = allowedWeight - carriedWeight;
 
@@ -121,37 +107,60 @@ export function createIndividual(id: number, config: Configuration, masterData: 
             return value.weight <= maxAuthorizedWeight;
         });
 
-        // Filter on two hands right hand to avoid additional left hand (and other way around)
-        // TODO
+        // Filter on hands
+        let hands = busyHands;
+        filtered = filtered.filter(value => {
+            return value.hands <= 2 - hands;
+        });
 
         switch(config.parameters.optimProfile) {
             case Profile.mage:
             case Profile.healer: {
                 // Require a left hand with at least one attach for a spell
-                filtered = partMasterData.filter(value => {
+                filtered = filtered.filter(value => {
                     let magicFilter = true;
                     if(part.toLowerCase() === Localization[Localization.Lefthand].toLowerCase()) {
                         magicFilter = value.attributes.nbSpellAttach > 0;
                     }
                     return magicFilter;
                 });
-                
+
                 break;
             }
             case Profile.archer: {
                 // Require a right hand as an arc or a rifle
-                filtered = partMasterData.filter(value => {
+                filtered = filtered.filter(value => {
                     let isArcOrRifle = true;
                     if(part.toLowerCase() === Localization[Localization.RightHand].toLowerCase()) {
                         isArcOrRifle = value.attributes.isBow === 1 || value.attributes.isRifle === 1;
                     }
                     return isArcOrRifle;
                 });
+
+                if (selectedWeapon.attributes.isBow) {
+                    filtered = filtered.filter(value => {
+                        let isContainerForWeapon = true;
+                        if(part.toLowerCase() === Localization[Localization.Container].toLowerCase()) {
+                            isContainerForWeapon = value.attributes.isBow === 1;
+                        }
+                        return isContainerForWeapon;
+                    });
+                }
+                else { //rifle
+                    filtered = filtered.filter(value => {
+                        let isContainerForWeapon = true;
+                        if(part.toLowerCase() === Localization[Localization.Container].toLowerCase()) {
+                            isContainerForWeapon = value.attributes.isRifle === 1;
+                        }
+                        return isContainerForWeapon;
+                    });
+                }
+
                 break;
             }
             case Profile.warrior: {
                 // Exclude distant weapon
-                filtered = partMasterData.filter(value => {
+                filtered = filtered.filter(value => {
                     let isNotDistantWeapon = true;
                     if(part.toLowerCase() === Localization[Localization.RightHand].toLowerCase()) {
                         isNotDistantWeapon = value.attributes.maxRange === 0;
@@ -162,7 +171,7 @@ export function createIndividual(id: number, config: Configuration, masterData: 
             }
             case Profile.tank: {
                 // Exclude distant weapon
-                filtered = partMasterData.filter(value => {
+                filtered = filtered.filter(value => {
                     let isNotDistantWeapon = true;
                     if(part.toLowerCase() === Localization[Localization.RightHand].toLowerCase()) {
                         isNotDistantWeapon = value.attributes.maxRange === 0;
@@ -182,7 +191,13 @@ export function createIndividual(id: number, config: Configuration, masterData: 
 
         genes[idx] = equipmentID;
         const equipment: Equipment =  partMasterData.find(value => value.id === equipmentID) || defaultEquipment;
+
+        if (part.toLowerCase() === Localization[Localization.RightHand].toLowerCase()) {
+            selectedWeapon =  equipment;
+        }
+
         carriedWeight += equipment.weight;
+        busyHands += equipment.hands;
 
         //Recompute the allowedWeight if the equipment is increasing the strength
         allowedWeight = Math.floor((config.data.con + (config.data.str + equipment.attributes.str)) / 2);
@@ -193,7 +208,8 @@ export function createIndividual(id: number, config: Configuration, masterData: 
         genes: genes,
         fitness: 0,
         probability: 0,
-        carriedWeight: carriedWeight
+        carriedWeight: carriedWeight,
+        hands: busyHands
     };
     return ind;
 }
@@ -222,7 +238,7 @@ export function evaluatePopulation(population: Individual[], config: Configurati
 export function getPhenotype(ind: Individual, config: Configuration, masterData: MasterDataOutfit): Attributes {
     let modified: Attributes = {...config.data};
     for (let i = 0; i < ind.genes.length; i++) {
-        const partOutfit = outfitParts[i];
+        const partOutfit = outfitParts[i].toLowerCase();
         const equipmentID = ind.genes[i];
         const equipment = masterData[partOutfit as keyof MasterDataOutfit].find(value => value.id === equipmentID) || defaultEquipment;
         Object.keys(equipment.attributes).forEach((attr) => {
@@ -243,7 +259,7 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
     otherCharacter.mr = 30;
     otherCharacter.dodge = 30;
     otherCharacter.armor = 5;
-    
+
     //Warrior offense profile
     otherCharacter.acc = 35;
     otherCharacter.str = 12;
@@ -414,7 +430,7 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
     evaluated.fitness += coefficients.offensive * computeFitness(offensiveSimulation);
     evaluated.fitness += coefficients.defensivePhysical * (modified.pv - computeFitness(defensePhysicalSimulation));
     evaluated.fitness += coefficients.defensiveMagical * (modified.pv - computeFitness(defenseMagicalSimulation));
-    
+
     return evaluated;
 }
 
@@ -524,14 +540,15 @@ export function mutate(ind: Individual, config: Configuration, masterData: Maste
         genes: [...ind.genes],
         fitness: 0,
         probability: 0,
-        carriedWeight: ind.carriedWeight
+        carriedWeight: ind.carriedWeight,
+        hands: ind.hands
     };
 
     const phenotype: Attributes = getPhenotype(ind, config, masterData);
     let maxAuthorizedWeight = Math.floor((phenotype.con + phenotype.str) / 2);
 
     const localizationIndexToMutate = Math.floor(Math.random() * outfitParts.length);
-    const partOutfitToMutate = outfitParts[localizationIndexToMutate];
+    const partOutfitToMutate = outfitParts[localizationIndexToMutate].toLowerCase();
     let partMasterData = masterData[partOutfitToMutate as keyof MasterDataOutfit];
 
     const previousEquipment: Equipment = partMasterData.find(value => value.id === mutant.genes[localizationIndexToMutate]) || defaultEquipment;
@@ -540,13 +557,80 @@ export function mutate(ind: Individual, config: Configuration, masterData: Maste
 
     //Could happen if the str bonus is greater than the armor weight
     if (carriedWeight <= maxAuthorizedWeight) {
+
+        // Filter on weight
         let filtered = partMasterData.filter(value => {
-            let magicFilter = true;
-            if(partOutfitToMutate.toLowerCase() === Localization[Localization.Lefthand].toLowerCase()) {
-                magicFilter = value.attributes.nbSpellAttach > 0;
-            }
-            return value.weight <= (config.data.allowedWeight - carriedWeight) && magicFilter;
+            return value.weight <= (config.data.allowedWeight - carriedWeight);
         });
+
+        // Filter on hands
+        let busyHands = mutant.hands - previousEquipment.hands; // remove previous equipment since we are replacing it
+        filtered = filtered.filter(value => {
+            return value.hands <= 2 - busyHands;
+        });
+
+        switch(config.parameters.optimProfile) {
+            case Profile.mage:
+            case Profile.healer: {
+                // Require a left hand with at least one attach for a spell
+                filtered = filtered.filter(value => {
+                    let magicFilter = true;
+                    if(partOutfitToMutate.toLowerCase() === Localization[Localization.Lefthand].toLowerCase()) {
+                        magicFilter = value.attributes.nbSpellAttach > 0;
+                    }
+                    return magicFilter;
+                });
+
+                break;
+            }
+            case Profile.archer: {
+                filtered = filtered.filter(value => {
+                    let isSelected = true;
+                    if(partOutfitToMutate.toLowerCase() === Localization[Localization.RightHand].toLowerCase()) {
+                        // Require a right hand as an arc or a rifle
+                        isSelected = value.attributes.isBow === 1 || value.attributes.isRifle === 1;
+                    }
+                    else if (partOutfitToMutate.toLowerCase() === Localization[Localization.Container].toLowerCase()) {
+                        // Filter containers depending of the selected weapon
+                        const indexRightHand = outfitParts.findIndex(value => value.toLowerCase() === Localization[Localization.RightHand].toLowerCase());
+                        const rightHandID = mutant.genes[indexRightHand];
+                        const rightHandKey = Localization[Localization.RightHand].toLowerCase() as keyof MasterDataOutfit;
+                        const selectRightHand: Equipment | undefined = masterData[rightHandKey].find(value => value.id === rightHandID);
+
+                        if (selectRightHand && selectRightHand.attributes.isBow) {
+                            isSelected = value.attributes.isBow === 1;
+                        }
+                        else if (selectRightHand && selectRightHand.attributes.isRifle) { //rifle
+                            isSelected = value.attributes.isRifle === 1;
+                        }
+                    }
+                    return isSelected;
+                });
+                break;
+            }
+            case Profile.warrior: {
+                // Exclude distant weapon
+                filtered = filtered.filter(value => {
+                    let isNotDistantWeapon = true;
+                    if(partOutfitToMutate.toLowerCase() === Localization[Localization.RightHand].toLowerCase()) {
+                        isNotDistantWeapon = value.attributes.maxRange === 0;
+                    }
+                    return isNotDistantWeapon;
+                });
+                break;
+            }
+            case Profile.tank: {
+                // Exclude distant weapon
+                filtered = filtered.filter(value => {
+                    let isNotDistantWeapon = true;
+                    if(partOutfitToMutate.toLowerCase() === Localization[Localization.RightHand].toLowerCase()) {
+                        isNotDistantWeapon = value.attributes.maxRange === 0;
+                    }
+                    return isNotDistantWeapon;
+                });
+                break;
+            }
+        }
 
         let index = 0;
         let equipmentID = 0;
@@ -558,6 +642,7 @@ export function mutate(ind: Individual, config: Configuration, masterData: Maste
         mutant.genes[localizationIndexToMutate] = equipmentID;
         const newEquipment: Equipment =  partMasterData.find(value => value.id === equipmentID) || defaultEquipment;
         mutant.carriedWeight = carriedWeight + newEquipment.weight ;
+        mutant.hands = busyHands + newEquipment.hands;
     }
     // else do not modify the individual
 
@@ -570,7 +655,8 @@ export function crossOver(a: Individual, b: Individual, config: Configuration, m
         fitness: 0,
         probability: 0,
         id: Date.now(),
-        carriedWeight: 0
+        carriedWeight: 0,
+        hands: 0
     };
 
     const primaryGenes = a.fitness > b.fitness ? a.genes : b.genes;
@@ -580,30 +666,36 @@ export function crossOver(a: Individual, b: Individual, config: Configuration, m
 
     // Get carried weight for the current genes
     let carriedWeight = 0;
+    let busyHands = 0;
     for (let i = 0; i < child.genes.length; i++) {
-        let part = outfitParts[i];
+        let part = outfitParts[i].toLowerCase();
         let partMasterData = masterData[part as keyof MasterDataOutfit];
         const equipment: Equipment =  partMasterData.find(value => value.id === child.genes[i]) || defaultEquipment;
         carriedWeight += equipment.weight;
+        busyHands += equipment.hands;
     }
 
     const remainingSecondaryGenes = secondaryGenes.slice(splitIndex);
     for (let i = 0; i < remainingSecondaryGenes.length; i++) {
-        let part = outfitParts[i + splitIndex];
+        let part = outfitParts[i + splitIndex].toLowerCase();
         let partMasterData = masterData[part as keyof MasterDataOutfit];
 
         const primaryEquipment: Equipment =  partMasterData.find(value => value.id === primaryGenes[child.genes.length + i]) || defaultEquipment;
         const secondaryEquipment: Equipment =  partMasterData.find(value => value.id === remainingSecondaryGenes[i]) || defaultEquipment;
 
-        if (secondaryEquipment.weight + carriedWeight <= config.data.allowedWeight) {
+        if (secondaryEquipment.weight + carriedWeight <= config.data.allowedWeight
+            && secondaryEquipment.hands + busyHands <= 2) {
             // Get secondary equipment if possible
             child.genes.push(remainingSecondaryGenes[i]);
             carriedWeight += secondaryEquipment.weight;
+            busyHands += secondaryEquipment.hands;
         }
-        else if (primaryEquipment.weight + carriedWeight <= config.data.allowedWeight ) {
+        else if (primaryEquipment.weight + carriedWeight <= config.data.allowedWeight
+            && primaryEquipment.hands + busyHands <= 2) {
             // Get primary parent otherwise if possible
             child.genes.push(primaryGenes[child.genes.length + i]);
             carriedWeight += primaryEquipment.weight;
+            busyHands += primaryEquipment.hands;
         }
         else {
             // No equipment for this localization

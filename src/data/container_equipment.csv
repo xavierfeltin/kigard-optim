@@ -1,3 +1,3 @@
 id;nom;type;arm;pre;esq;mm;rm;int;dex;for;chance;dgt_min;dgt_max;pm;pv;poids;emplacement;capacite;mains;arc;fusil;brulure;poison;saignement;assome;faille;terreur;necrose;portee_min;portee_max
-1;carquois;arc;;;;;;;;;;;;;;1;0;6;;;;;;;;;;;;
-2;giberne;fusil;;;;;;;;;;;;;;1;0;6;;;;;;;;;;;;
+1;carquois;arc;;;;;;;;;;;;;;1;0;6;;1;;;;;;;;;;
+2;giberne;fusil;;;;;;;;;;;;;;1;0;6;;;1;;;;;;;;;

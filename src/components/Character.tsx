@@ -33,7 +33,6 @@ export function Character({onValueChange}: CharacterProps) {
         nbProjectiles: 0,
         isBow: 0,
         isRifle: 0,
-        hands: 0,
         burning: 0,
         regeneration: 0,
         poison: 0,

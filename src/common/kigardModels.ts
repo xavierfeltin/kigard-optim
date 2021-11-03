@@ -25,15 +25,14 @@ export interface Attributes {
     nbProjectiles: number;
     isBow: number;
     isRifle: number;
-    hands: number;
     burning: number;
-    regeneration: number;    
+    regeneration: number;
     poison: number;
     bleeding: number;
     knockedOut: number;
     breach: number;
     terror: number;
-    necrosis: number;    
+    necrosis: number;
 }
 
 export interface KigardToken {
@@ -47,6 +46,7 @@ export interface Equipment {
     kind: EquipmentClass;
     localization: Localization;
     weight: number;
+    hands: number;
     attributes: Attributes;
     quality: Quality;
 }
@@ -55,8 +55,8 @@ export interface MasterDataOutfit {
     head: Equipment[];
     body: Equipment[];
     feet: Equipment[];
-    rightHand: Equipment[];
-    leftHand: Equipment[];
+    righthand: Equipment[];
+    lefthand: Equipment[];
     fetish: Equipment[];
     container: Equipment[];
 }
@@ -160,9 +160,8 @@ export const defaultAttributes: Attributes = {
     allowedWeight: 0,
     nbSpellAttach: 0,
     nbProjectiles: 0,
-    isBow: 0,
-    isRifle: 0,
-    hands: 0,
+    isBow: 1,
+    isRifle: 1,
     pv: 0,
     mp: 0,
     burning: 0,
@@ -181,6 +180,7 @@ export const defaultEquipment: Equipment = {
     kind: EquipmentClass.LightArmor,
     localization: Localization.Head,
     weight: 0,
+    hands: 0,
     attributes: {...defaultAttributes},
     quality: Quality.Standard
 }
@@ -195,7 +195,8 @@ export function generateEquipmentFromJSON (data: any): Equipment[] {
             name: d.nom,
             kind: getEquipmentClassFromString(d.type),
             localization: getLocalizationFromString("tete"), //TODO : change with more equipment
-            weight: d.poids,
+            weight: d.poids || 0,
+            hands: d.mains || 0,
             attributes: {
                 con: 0,
                 str: d.for || 0,
@@ -216,11 +217,10 @@ export function generateEquipmentFromJSON (data: any): Equipment[] {
                 allowedWeight: 0,
                 pv: 0,
                 mp: 0,
-                nbSpellAttach: d.emplacement,
-                nbProjectiles: d.capacite,
+                nbSpellAttach: d.emplacement || 0,
+                nbProjectiles: d.capacite || 0,
                 isBow: d.arc || 0,
                 isRifle: d.fusile || 0,
-                hands: d.mains || 0,
                 burning: d.brulure || 0,
                 regeneration: 0,
                 poison: d.poison || 0,
@@ -306,7 +306,6 @@ export function getFightingthreshold(acc: number, dodge: number): {dodge: number
 
 // Healing magic is computed by removing health point as the agressive magic, but the threshold are computed differently
 export function buildTurns(nbTurns: number = 5, paByTurns: number[] = [10, 10, 10, 10, 10], attributes: Attributes, opponent: Attributes, action: Action): ProbaTree {
-    debugger;
     const probaTree = new ProbaTree(opponent.pv);
     let turnPossibilities: Branch[] = [probaTree.root];
     let pmForTurn = 25;

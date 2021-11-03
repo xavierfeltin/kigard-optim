@@ -31,7 +31,7 @@ self.addEventListener("message", e => {
 
     let names = "";
     msg.state.bestSolution.genes.forEach((equipmentID, outfitPartID) => {
-        const partIndex = outfitParts[outfitPartID];
+        const partIndex = outfitParts[outfitPartID].toLowerCase();
         const partOutfit = msg.masterData[partIndex as keyof MasterDataOutfit];
         const equipment = partOutfit.find(value => value.id === equipmentID) || defaultEquipment;
         names = names + ", " + equipment.name;
@@ -44,7 +44,7 @@ self.addEventListener("message", e => {
 
         let names = "";
         msg.state.bestSolution.genes.forEach((equipmentID, outfitPartID) => {
-            const partIndex = outfitParts[outfitPartID];
+            const partIndex = outfitParts[outfitPartID].toLowerCase();
             const partOutfit = msg.masterData[partIndex as keyof MasterDataOutfit];
             const equipment = partOutfit.find(value => value.id === equipmentID) || defaultEquipment;
             names = names + ", " + equipment.name;
