@@ -211,6 +211,7 @@ export function createIndividual(id: number, config: Configuration, masterData: 
         carriedWeight: carriedWeight,
         hands: busyHands
     };
+
     return ind;
 }
 
@@ -651,7 +652,7 @@ export function mutate(ind: Individual, config: Configuration, masterData: Maste
 
 export function crossOver(a: Individual, b: Individual, config: Configuration, masterData: MasterDataOutfit): Individual {
     const child: Individual = {
-        genes: [],
+        genes: Array.from({length: outfitParts.length}, (_, i) => 0),
         fitness: 0,
         probability: 0,
         id: Date.now(),
@@ -661,8 +662,40 @@ export function crossOver(a: Individual, b: Individual, config: Configuration, m
 
     const primaryGenes = a.fitness > b.fitness ? a.genes : b.genes;
     const secondaryGenes = a.fitness > b.fitness ? b.genes : a.genes;
-    const splitIndex = Math.floor(primaryGenes.length * config.parameters.crossoverParentRatio);
-    child.genes = primaryGenes.slice(0, splitIndex);
+
+    // Organize data depending of the profile
+    let sequence = Array.from(Array(outfitParts.length).keys());
+    switch(config.parameters.optimProfile) {
+        case Profile.mage:
+        case Profile.healer: {
+            // Require a left hand with at least one attach for a spell
+            let leftHandIdx = outfitParts.findIndex(value => value === "leftHand");
+            if (sequence[0] !== leftHandIdx) {
+                let sequenceLeftHandIdx = sequence.findIndex(value => value === leftHandIdx);
+                let tmp = sequence[0];
+                sequence[0] = leftHandIdx;
+                sequence[sequenceLeftHandIdx] = tmp;
+            }
+            break;
+        }
+        case Profile.archer: {
+            // Require a right hand as an arc or a rifle
+            let rightHandIdx = outfitParts.findIndex(value => value === "rightHand");
+            if (sequence[0] !== rightHandIdx) {
+                let sequencerightHandIdx = sequence.findIndex(value => value === rightHandIdx);
+                let tmp = sequence[0];
+                sequence[0] = rightHandIdx;
+                sequence[sequencerightHandIdx] = tmp;
+            }
+            break;
+        }
+    }
+
+    const splitIndex = Math.floor(sequence.length * config.parameters.crossoverParentRatio);
+    for (let i = 0; i < splitIndex; i++) {
+        const idx = sequence[i];
+        child.genes[idx] = primaryGenes[idx];     
+    }
 
     // Get carried weight for the current genes
     let carriedWeight = 0;
@@ -675,34 +708,36 @@ export function crossOver(a: Individual, b: Individual, config: Configuration, m
         busyHands += equipment.hands;
     }
 
-    const remainingSecondaryGenes = secondaryGenes.slice(splitIndex);
-    for (let i = 0; i < remainingSecondaryGenes.length; i++) {
-        let part = outfitParts[i + splitIndex].toLowerCase();
+    //const remainingSecondaryGenes = secondaryGenes.slice(splitIndex);
+    for (let i = splitIndex; i < sequence.length; i++) {
+        const idx = sequence[i];
+        let part = outfitParts[idx].toLowerCase();
         let partMasterData = masterData[part as keyof MasterDataOutfit];
 
-        const primaryEquipment: Equipment =  partMasterData.find(value => value.id === primaryGenes[child.genes.length + i]) || defaultEquipment;
-        const secondaryEquipment: Equipment =  partMasterData.find(value => value.id === remainingSecondaryGenes[i]) || defaultEquipment;
+        const primaryEquipment: Equipment =  partMasterData.find(value => value.id === primaryGenes[idx]) || defaultEquipment;
+        const secondaryEquipment: Equipment =  partMasterData.find(value => value.id === secondaryGenes[idx]) || defaultEquipment;
 
         if (secondaryEquipment.weight + carriedWeight <= config.data.allowedWeight
             && secondaryEquipment.hands + busyHands <= 2) {
             // Get secondary equipment if possible
-            child.genes.push(remainingSecondaryGenes[i]);
+            child.genes[idx] = secondaryGenes[idx];
             carriedWeight += secondaryEquipment.weight;
             busyHands += secondaryEquipment.hands;
         }
         else if (primaryEquipment.weight + carriedWeight <= config.data.allowedWeight
             && primaryEquipment.hands + busyHands <= 2) {
             // Get primary parent otherwise if possible
-            child.genes.push(primaryGenes[child.genes.length + i]);
+            child.genes[idx] = primaryGenes[idx];
             carriedWeight += primaryEquipment.weight;
             busyHands += primaryEquipment.hands;
         }
         else {
             // No equipment for this localization
-            child.genes.push(0);
+            child.genes[idx] = 0;
         }
     }
     child.carriedWeight = carriedWeight;
+    child.hands = busyHands;
     return child;
 }
 
