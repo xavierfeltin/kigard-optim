@@ -80,19 +80,98 @@ export function createIndividual(id: number, config: Configuration, masterData: 
     }
     */
 
+    // Organize data depending of the profile
     let sequence = Array.from(Array(outfitParts.length).keys());
     sequence = shuffle(sequence);
+
+    switch(config.parameters.optimProfile) {
+        case Profile.mage:
+        case Profile.healer: {
+            // Require a left hand with at least one attach for a spell
+            let leftHandIdx = outfitParts.findIndex(value => value === "leftHand");
+            if (sequence[0] != leftHandIdx) {
+                let sequenceLeftHandIdx = sequence.findIndex(value => value === leftHandIdx);
+                let tmp = sequence[0];
+                sequence[0] = leftHandIdx;
+                sequence[sequenceLeftHandIdx] = tmp; 
+            }
+            
+            break;
+        }
+        case Profile.archer: {
+            // Require a right hand as an arc or a rifle
+            let rightHandIdx = outfitParts.findIndex(value => value === "rightHand");
+            if (sequence[0] != rightHandIdx) {
+                let sequencerightHandIdx = sequence.findIndex(value => value === rightHandIdx);
+                let tmp = sequence[0];
+                sequence[0] = rightHandIdx;
+                sequence[sequencerightHandIdx] = tmp; 
+            }
+            break;
+        }
+    }
+    
     for (let idx of sequence) {
         let part = outfitParts[idx];
         let partMasterData = masterData[part as keyof MasterDataOutfit];
         const maxAuthorizedWeight = allowedWeight - carriedWeight;
+
+        // Filter on weight
         let filtered = partMasterData.filter(value => {
-            let magicFilter = true;
-            if(part.toLowerCase() === Localization[Localization.Lefthand].toLowerCase()) {
-                magicFilter = value.attributes.nbSpellAttach > 0;
-            }
-            return value.weight <= maxAuthorizedWeight && magicFilter;
+            return value.weight <= maxAuthorizedWeight;
         });
+
+        // Filter on two hands right hand to avoid additional left hand (and other way around)
+        // TODO
+
+        switch(config.parameters.optimProfile) {
+            case Profile.mage:
+            case Profile.healer: {
+                // Require a left hand with at least one attach for a spell
+                filtered = partMasterData.filter(value => {
+                    let magicFilter = true;
+                    if(part.toLowerCase() === Localization[Localization.Lefthand].toLowerCase()) {
+                        magicFilter = value.attributes.nbSpellAttach > 0;
+                    }
+                    return magicFilter;
+                });
+                
+                break;
+            }
+            case Profile.archer: {
+                // Require a right hand as an arc or a rifle
+                filtered = partMasterData.filter(value => {
+                    let isArcOrRifle = true;
+                    if(part.toLowerCase() === Localization[Localization.RightHand].toLowerCase()) {
+                        isArcOrRifle = value.attributes.isBow === 1 || value.attributes.isRifle === 1;
+                    }
+                    return isArcOrRifle;
+                });
+                break;
+            }
+            case Profile.warrior: {
+                // Exclude distant weapon
+                filtered = partMasterData.filter(value => {
+                    let isNotDistantWeapon = true;
+                    if(part.toLowerCase() === Localization[Localization.RightHand].toLowerCase()) {
+                        isNotDistantWeapon = value.attributes.maxRange === 0;
+                    }
+                    return isNotDistantWeapon;
+                });
+                break;
+            }
+            case Profile.tank: {
+                // Exclude distant weapon
+                filtered = partMasterData.filter(value => {
+                    let isNotDistantWeapon = true;
+                    if(part.toLowerCase() === Localization[Localization.RightHand].toLowerCase()) {
+                        isNotDistantWeapon = value.attributes.maxRange === 0;
+                    }
+                    return isNotDistantWeapon;
+                });
+                break;
+            }
+        }
 
         let index = 0;
         let equipmentID = 0;

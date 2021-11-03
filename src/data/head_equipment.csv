@@ -1,28 +1,28 @@
-Ôªøid;nom;type;arm;pre;esq;mm;rm;int;dex;for;chance;dommage;pm;pv;poids;emplacement;capacite
-1;bandana;legere;;;6;;;;;;;;;;1;0;0
-2;bandana en soie;legere;;;10;;;;;;;;;;1;0;0
-3;capuche f√©line;legere;;;4;;;2;;;;;;;1;0;0
-4;capuche de r√¥deur;legere;;;4;;;;2;;;;;;1;0;0
-5;capuchon;legere;;2;;;;2;;;;;;;1;0;0
-6;capuchon en soie;legere;;6;;;;2;;;;;;;1;0;0
-7;coiffe;legere;1;;;;;;;;;;;;1;0;0
-8;cabasset;lourde;2;;;;;;;;;;;;1;0;0
-9;chapeau plume;combat;;4;6;;;;;;;;;;1;0;0
-10;cagoule de l'ombre;combat;;8;1;;;;;;;;;;1;0;0
-11;chapeau de nomade;voyage;;;4;;;;;;25;;;;1;0;0
-12;bonnet √©meraude;artefact;;;;;;3;;;;;;;1;0;0
-13;casque en mithril;artefact;3;;;;;;;;;;;;1;0;0
-14;diad√®me;lourde;1;;;;;1;1;1;;;;;1;0;0
-15;coiffe en soie;focus;;;;4;;2;;;;;;;1;0;0
-16;barrette en or;parure;;;;;4;2;;;;;;;1;0;0
-17;casque en bois;parure;1;;4;;;;;;;;;;1;0;0
-18;casque ail√©;legere;2;;;;;;;;;;;;2;0;0
-19;bassinet plume;lourde;2;6;;;;;;;;;;;2;0;0
-20;cabasset √† cornes;lourde;3;-4;;;;;;;;;;;2;0;0
-21;casque;lourde;3;;;;;;;;;;;;2;0;0
-22;casque noble;lourde;3;;-4;;;;;;;;;;2;0;0
-23;cr√¢ne rituel;lourde;1;;;;4;2;;;;2;2;;2;0;0
-24;casque astral;lourde;2;8;;;;;1;;;;;;3;0;0
-25;casque terrifiant;lourde;2;;;;;;;3;;;;;3;0;0
-26;heaume;lourde;5;-4;;;;;;;;;;;3;0;0
-27;masque fant√¥me;combat;2;4;4;;;;;;;;;;3;0;0
+id;nom;type;arm;pre;esq;mm;rm;int;dex;for;chance;dgt_min;dgt_max;pm;pv;poids;emplacement;capacite;mains;arc;fusil;brulure;poison;saignement;assome;faille;terreur;necrose;portee_min;portee_max
+1;bandana;legere;;;6;;;;;;;;;;;1;0;0;;;;;;;;;;;;
+2;bandana en soie;legere;;;10;;;;;;;;;;;1;0;0;;;;;;;;;;;;
+3;capuche fÈline;legere;;;4;;;2;;;;;;;;1;0;0;;;;;;;;;;;;
+4;capuche de rÙdeur;legere;;;4;;;;2;;;;;;;1;0;0;;;;;;;;;;;;
+5;capuchon;legere;;2;;;;2;;;;;;;;1;0;0;;;;;;;;;;;;
+6;capuchon en soie;legere;;6;;;;2;;;;;;;;1;0;0;;;;;;;;;;;;
+7;coiffe;legere;1;;;;;;;;;;;;;1;0;0;;;;;;;;;;;;
+8;cabasset;lourde;2;;;;;;;;;;;;;1;0;0;;;;;;;;;;;;
+9;chapeau plume;combat;;4;6;;;;;;;;;;;1;0;0;;;;;;;;;;;;
+10;cagoule de l'ombre;combat;;8;1;;;;;;;;;;;1;0;0;;;;;;;;;;;;
+11;chapeau de nomade;voyage;;;4;;;;;;25;;;;;1;0;0;;;;;;;;;;;;
+12;bonnet Èmeraude;artefact;;;;;;3;;;;;;;;1;0;0;;;;;;;;;;;;
+13;casque en mithril;artefact;3;;;;;;;;;;;;;1;0;0;;;;;;;;;;;;
+14;diadËme;lourde;1;;;;;1;1;1;;;;;;1;0;0;;;;;;;;;;;;
+15;coiffe en soie;focus;;;;4;;2;;;;;;;;1;0;0;;;;;;;;;;;;
+16;barrette en or;parure;;;;;4;2;;;;;;;;1;0;0;;;;;;;;;;;;
+17;casque en bois;parure;1;;;;;;;;;;;;;1;0;0;;;;;;;;;;;;
+18;casque ailÈ;legere;2;;4;;;;;;;;;;;2;0;0;;;;;;;;;;;;
+19;bassinet plume;lourde;2;6;;;;;;;;;;;;2;0;0;;;;;;;;;;;;
+20;cabasset ‡ cornes;lourde;3;-4;;;;;;;;0;2;;;2;0;0;;;;;;;;;;;;
+21;casque;lourde;3;;;;;;;;;;;;;2;0;0;;;;;;;;;;;;
+22;casque noble;lourde;3;;-4;;;2;;;;;;;;2;0;0;;;;;;;;;;;;
+23;cr‚ne rituel;lourde;1;;;;4;;;;;;;2;;2;0;0;;;;;;;;;;;;
+24;casque astral;lourde;2;8;;;;;1;;;;;;;3;0;0;;;;;;;;;;;;
+25;casque terrifiant;lourde;2;;;;;;;3;;;;;;3;0;0;;;;;;;;;;;;
+26;heaume;lourde;5;-4;;;;;;;;;;;;3;0;0;;;;;;;;;;;;
+27;masque fantÙme;combat;2;4;4;;;;;;;;;;;3;0;0;;;;;;;;;;;;
