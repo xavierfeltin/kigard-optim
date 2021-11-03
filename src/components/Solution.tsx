@@ -1,7 +1,7 @@
 import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/table";
 import { ReactElement } from "react";
 import { Individual } from "../common/ga";
-import { Attributes, defaultEquipment, MasterDataOutfit, outfitParts } from "../common/kigardModels";
+import { Attributes, defaultEquipment, Equipment, MasterDataOutfit, outfitParts } from "../common/kigardModels";
 
 export interface SolutionProps {
     ind: Individual;
@@ -27,7 +27,12 @@ export function Solution({ind, masterData, character}: SolutionProps) {
         });
 
         const thWeight = <Th key="th-solution-weight">Poids</Th>
+        const thHands = <Th key="th-solution-hands">Mains</Th>
+        const thInfo = <Th key="th-solution-info">Information</Th>
+
         row.push(thWeight);
+        row.push(thHands);
+        row.push(thInfo);
 
         return row;
     }
@@ -44,9 +49,29 @@ export function Solution({ind, masterData, character}: SolutionProps) {
                     <Td key={"td-solution-" + name}>{equipment.attributes[name as keyof Attributes]}</Td>
                 ))}
                 <Td key="td-solution-weight">{equipment.weight}</Td>
+                <Td key="td-solution-hands">{equipment.hands}</Td>
+                <Td key="td-solution-info">{generateInformation(equipment)}</Td>
             </Tr>
         )
     };
+
+    const generateInformation = function(equipment: Equipment): string {
+        const kigardAdditional: string[] = ["minDamage", "maxDamage", "minRange", "maxRange", "burning", "bleeding", "poison", "knockedout", "necrosis"];
+        const kigardAdditionalFR: string[] = ["Degâts", "-", "Portée", "-", "Brulûre", "Saignement", "Poison", "Assomé", "Nécrose"];
+
+        let infoList: string[] = [];
+        kigardAdditional.forEach((name: string, index: number) => {
+            const value: number = equipment.attributes[name as keyof Attributes];
+            if (value > 0 || (name === "minDamage" && equipment.attributes.maxDamage > 0)) {
+                let info: string = kigardAdditionalFR[index] + ": " + value;
+                infoList.push(info);
+            }            
+        });
+
+        let infoStr = infoList.join(', ');
+        infoStr = infoStr.replaceAll(", -:", " -"); 
+        return infoStr;
+    }
 
     return (
         <div>
