@@ -38,6 +38,12 @@ export interface Attributes {
 export interface KigardToken {
     burning: number;
     regeneration: number;
+    poison: number;
+    bleeding: number;
+    knockedOut: number;
+    breach: number;
+    terror: number;
+    necrosis: number;
 }
 
 export interface Equipment {
@@ -47,6 +53,7 @@ export interface Equipment {
     localization: Localization;
     weight: number;
     hands: number;
+    pa: number;
     attributes: Attributes;
     quality: Quality;
 }
@@ -181,6 +188,7 @@ export const defaultEquipment: Equipment = {
     localization: Localization.Head,
     weight: 0,
     hands: 0,
+    pa: 0,
     attributes: {...defaultAttributes},
     quality: Quality.Standard
 }
@@ -197,6 +205,7 @@ export function generateEquipmentFromJSON (data: any): Equipment[] {
             localization: getLocalizationFromString("tete"), //TODO : change with more equipment
             weight: d.poids || 0,
             hands: d.mains || 0,
+            pa: d.pa || 0,
             attributes: {
                 con: 0,
                 str: d.for || 0,
@@ -305,12 +314,14 @@ export function getFightingthreshold(acc: number, dodge: number): {dodge: number
 }
 
 // Healing magic is computed by removing health point as the agressive magic, but the threshold are computed differently
-export function buildTurns(nbTurns: number = 5, paByTurns: number[] = [10, 10, 10, 10, 10], attributes: Attributes, opponent: Attributes, action: Action): ProbaTree {
+export function buildTurns(paByTurns: number[], attributes: Attributes, opponent: Attributes, action: Action): ProbaTree {
+    const nbTurns = paByTurns.length;
     const probaTree = new ProbaTree(opponent.pv);
     let turnPossibilities: Branch[] = [probaTree.root];
     let pmForTurn = 25;
     let projectileForTurn = attributes.nbProjectiles;
     let attr = {...attributes};
+    let oppAttr = {...opponent};
 
     for (let turn = 0; turn < nbTurns; turn++) {
         let paForTurn = paByTurns[turn];
@@ -327,7 +338,7 @@ export function buildTurns(nbTurns: number = 5, paByTurns: number[] = [10, 10, 1
                     let remainingLife: number[] = [];
                     if (action.isMagic) {
                         // MM: 15, RM: 30 => threshold = 50 + 30 - 15 = 75 => hitting Proba = 25% / missing Proba = 75%
-                        const threshold: number = action.isHealing ? getHealingMagicThreshold(attr.mm, opponent.mr) : getHostileMagicThreshold(attr.mm, opponent.mr);
+                        const threshold: number = action.isHealing ? getHealingMagicThreshold(attr.mm, oppAttr.mr) : getHostileMagicThreshold(attr.mm, oppAttr.mr);
                         const hittingProba = (100 - threshold) / 100;
                         const missingProba = 1 - hittingProba;
                         probabilities = [hittingProba, missingProba];
@@ -335,7 +346,7 @@ export function buildTurns(nbTurns: number = 5, paByTurns: number[] = [10, 10, 1
                     }
                     else  {
                         // Acc: 35, dodge: 40 => critical threshold = 90 + 40 - 35 = 95, dodge threshold = 10 + 40 - 35 = 15 => critical Proba = 5% / hitting Proba = 80% / missing Proba: 15%
-                        const threshold: {dodge: number, critical: number} = getFightingthreshold(attr.acc, opponent.dodge);
+                        const threshold: {dodge: number, critical: number} = getFightingthreshold(attr.acc, oppAttr.dodge);
                         const criticalProba = 1 - (Math.min(100, threshold.critical) / 100);
                         const missingProba = Math.max(0, threshold.dodge / 100);
                         const hittingProba = 1 - (criticalProba + missingProba);
@@ -349,15 +360,40 @@ export function buildTurns(nbTurns: number = 5, paByTurns: number[] = [10, 10, 1
                         remainingLife.map(val => Math.max(0, val - regenToken));
                     }
                     else {
-                        //Burning can not kill in game
-                        const burningToken = currentBranch.token.burning;
-                        remainingLife.map(val => Math.max(0, val - burningToken));
+                        // Apply status effect before solving the turn
+                        const burning = currentBranch.token.burning;
+                        const poison = currentBranch.token.burning;
+                        const bleeding = currentBranch.token.burning;
+                        const knockedOut = currentBranch.token.burning;
+                        const breach = currentBranch.token.burning;
+                        const terror = currentBranch.token.burning;
+                        const necrosis = currentBranch.token.burning;
+
+                        //Burning and poison can not kill in game
+                        remainingLife.map(val => Math.max(0, val - burning));
+                        remainingLife.map(val => Math.max(0, val - poison));
+
+                        oppAttr.regeneration = Math.max(0, oppAttr.regeneration - bleeding);
+                        oppAttr.dodge = Math.max(0, oppAttr.dodge - (knockedOut * 5));
+                        oppAttr.armor = Math.max(0, oppAttr.armor - breach);
+                        oppAttr.mr = Math.max(0, oppAttr.mr - terror * 5);
+                        oppAttr.str = Math.max(0, oppAttr.str - Math.floor(necrosis / 2));
+                        oppAttr.dex = Math.max(0, oppAttr.dex - Math.floor(necrosis / 2));
+                        oppAttr.int = Math.max(0, oppAttr.int - Math.floor(necrosis / 2));
+                        oppAttr.acc = Math.max(0, oppAttr.acc - 2 * necrosis);
+                        oppAttr.mm = Math.max(0, oppAttr.mm - 2 * necrosis);
                     }
 
                     // Tokens are decrementing of 1 each turn after being applied
-                    let updatedToken = {
+                    let updatedToken: KigardToken = {
                         burning: Math.max(0, currentBranch.token.burning -1),
-                        regeneration: Math.max(0, currentBranch.token.regeneration -1)
+                        regeneration: Math.max(0, currentBranch.token.regeneration -1),
+                        poison: Math.max(0, currentBranch.token.poison -1),
+                        bleeding: Math.max(0, currentBranch.token.bleeding -1),
+                        knockedOut: Math.max(0, currentBranch.token.knockedOut -1),
+                        breach: Math.max(0, currentBranch.token.breach -1),
+                        terror: Math.max(0, currentBranch.token.terror -1),
+                        necrosis: Math.max(0, currentBranch.token.necrosis -1),
                     };
 
                     let tokens: KigardToken[] = [];
@@ -375,14 +411,15 @@ export function buildTurns(nbTurns: number = 5, paByTurns: number[] = [10, 10, 1
                                 tokens[0].regeneration += action.regeneration;
                             }
                             else {
+                                // Burning only since we considered the cast spell to be Fireball
                                 tokens[0].burning += action.burning;
                             }
                         }
                     }
                     else {
                         if ((action.isThrowing && projectileForTurn > 0) || !action.isThrowing) {
-                            remainingLife = [remainingLife[0] - (action.physicalDamageSuccess + action.criticalBonus) + opponent.armor,
-                            remainingLife[1] - action.physicalDamageSuccess + opponent.armor,
+                            remainingLife = [remainingLife[0] - (action.physicalDamageSuccess + action.criticalBonus) + oppAttr.armor,
+                            remainingLife[1] - action.physicalDamageSuccess + oppAttr.armor,
                             remainingLife[2]]; // no damage when dodging
 
                             projectileForTurn--;

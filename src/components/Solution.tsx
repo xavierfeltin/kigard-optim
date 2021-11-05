@@ -56,20 +56,26 @@ export function Solution({ind, masterData, character}: SolutionProps) {
     };
 
     const generateInformation = function(equipment: Equipment): string {
-        const kigardAdditional: string[] = ["minDamage", "maxDamage", "minRange", "maxRange", "burning", "bleeding", "poison", "knockedout", "necrosis"];
-        const kigardAdditionalFR: string[] = ["Degâts", "-", "Portée", "-", "Brulûre", "Saignement", "Poison", "Assomé", "Nécrose"];
+        const kigardAdditional: string[] = ["minDamage", "maxDamage", "minRange", "maxRange", "burning", "bleeding", "poison", "knockedout", "necrosis", "breach"];
+        const kigardAdditionalFR: string[] = ["Degâts", "-", "Portée", "-", "Brulûre", "Saignement", "Poison", "Assomé", "Nécrose", "Faille"];
 
         let infoList: string[] = [];
+        let info: string = "";
+        if (equipment.pa > 0) {
+            info = "PA: " + equipment.pa;
+            infoList.push(info);
+        }
+
         kigardAdditional.forEach((name: string, index: number) => {
             const value: number = equipment.attributes[name as keyof Attributes];
             if (value > 0 || (name === "minDamage" && equipment.attributes.maxDamage > 0)) {
-                let info: string = kigardAdditionalFR[index] + ": " + value;
+                info = kigardAdditionalFR[index] + ": " + value;
                 infoList.push(info);
-            }            
+            }
         });
 
         let infoStr = infoList.join(', ');
-        infoStr = infoStr.replaceAll(", -:", " -"); 
+        infoStr = infoStr.replaceAll(", -:", " -");
         return infoStr;
     }
 

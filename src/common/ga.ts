@@ -34,7 +34,7 @@ export interface Individual {
 
 export function createEmptyIndividual(): Individual {
     const ind: Individual = {
-        id: 0,
+        id: Date.now(),
         genes: [],
         fitness: 0,
         probability: 0,
@@ -217,9 +217,8 @@ export function createIndividual(id: number, config: Configuration, masterData: 
 
 export function generatePopulation(config: Configuration, masterData: MasterDataOutfit): Individual[] {
     let population: Individual[] = [];
-
     for(let i = 0; i < config.parameters.populationSize; i++) {
-        const ind = createIndividual(Date.now(), config, masterData);
+        const ind = createIndividual(i, config, masterData);
         population.push(ind);
     }
 
@@ -228,8 +227,9 @@ export function generatePopulation(config: Configuration, masterData: MasterData
 
 export function evaluatePopulation(population: Individual[], config: Configuration, masterData: MasterDataOutfit) {
     let evaluated: Individual[] = [];
+    console.log("eval pop");
     for(let indiv of population) {
-
+        console.log("eval indiv " + indiv.id + ", genes: " + JSON.stringify(indiv.genes));
         const evalInd = evaluateIndividual(indiv, config, masterData);
         evaluated.push(evalInd);
     }
@@ -249,11 +249,26 @@ export function getPhenotype(ind: Individual, config: Configuration, masterData:
     return modified;
 }
 
+export function getEquipment(ind: Individual, part: Localization, masterData: MasterDataOutfit): Equipment | undefined {
+    const masterWeapons = masterData[Localization[part].toLowerCase() as keyof MasterDataOutfit];
+    const idx = outfitParts.findIndex(val => val.toLowerCase() === Localization[part].toLowerCase());
+    const equipmentID = ind.genes[idx];
+    const equipment = masterWeapons.find(val => val.id === equipmentID);
+    return equipment;
+}
+
 export function evaluateIndividual(ind: Individual, config: Configuration, masterData: MasterDataOutfit): Individual {
     let evaluated = {...ind};
 
     // Update configuration with individual
     let modified: Attributes = getPhenotype(ind, config, masterData);
+    let defaultWeapon = {...defaultEquipment};
+    defaultWeapon.pa = 6;
+    let weapon: Equipment = getEquipment(ind, Localization.RightHand, masterData) || defaultWeapon;
+    let avgWeaponDamage = (weapon.attributes.minDamage + weapon.attributes.maxDamage) / 2;
+    if (weapon.hands === 2) {
+        avgWeaponDamage += 1;
+    }
 
     let otherCharacter: Attributes = {...defaultAttributes};
     otherCharacter.pv = 80;
@@ -274,6 +289,8 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
     let offensiveSimulation: ProbaTree | null = null;
     let defensePhysicalSimulation: ProbaTree | null = null;
     let defenseMagicalSimulation: ProbaTree | null = null;
+    const allowedPAForturns: number[] = [12,11,8,16];
+
     let action: Action;
     let coefficients = {
         offensive: 0,
@@ -327,11 +344,11 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
             //Based on sylvanus arc, 6-10
             action = {
                 name: "shoot",
-                pa: 6,
+                pa: weapon.pa,
                 pm: 0,
                 magicSuccess: 0,
                 magicResisted: 0,
-                physicalDamageSuccess: modified.dex + 8,
+                physicalDamageSuccess: modified.dex + avgWeaponDamage,
                 criticalBonus: Math.floor(modified.dex / 2),
                 isMagic: false,
                 isThrowing: true,
@@ -349,11 +366,11 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
             //Based on long sword, 5-7
             action = {
                 name: "hit",
-                pa: 6,
+                pa: weapon.pa,
                 pm: 0,
                 magicSuccess: 0,
                 magicResisted: 0,
-                physicalDamageSuccess: modified.str + 6,
+                physicalDamageSuccess: modified.str + avgWeaponDamage,
                 criticalBonus: modified.dex,
                 isMagic: false,
                 isThrowing: false,
@@ -371,11 +388,11 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
             //Based on long sword, 5-7
             action = {
                 name: "hit",
-                pa: 6,
+                pa: weapon.pa,
                 pm: 0,
                 magicSuccess: 0,
                 magicResisted: 0,
-                physicalDamageSuccess: modified.str + 6,
+                physicalDamageSuccess: modified.str + avgWeaponDamage,
                 criticalBonus: modified.dex,
                 isMagic: false,
                 isThrowing: false,
@@ -392,7 +409,8 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
         default: throw Error("optimization profile " + config.parameters.optimProfile + " not defined");
     }
 
-    offensiveSimulation = buildTurns(5, [10, 10, 10, 10, 10], modified, otherCharacter, action);
+    console.log("Build offensive simulation");
+    offensiveSimulation = buildTurns(allowedPAForturns, modified, otherCharacter, action);
 
     //Based on long sword, 5-7
     let physicalAction: Action = {
@@ -409,7 +427,9 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
         regeneration: 0,
         isHealing: false
     };
-    defensePhysicalSimulation = buildTurns(5, [10, 10, 10, 10, 10], otherCharacter, modified, physicalAction);
+
+    console.log("Build physical defense simulation");
+    defensePhysicalSimulation = buildTurns(allowedPAForturns, otherCharacter, modified, physicalAction);
 
     let magicAction: Action = {
         name: "fireball",
@@ -425,9 +445,12 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
         regeneration: 0,
         isHealing: false
     };
-    defenseMagicalSimulation = buildTurns(5, [10, 10, 10, 10, 10], otherCharacter, modified, magicAction);
+
+    console.log("Build magical defense simulation");
+    defenseMagicalSimulation = buildTurns(allowedPAForturns, otherCharacter, modified, magicAction);
 
     evaluated.fitness = 0;
+    console.log("Compute fitness");
     evaluated.fitness += coefficients.offensive * computeFitness(offensiveSimulation);
     evaluated.fitness += coefficients.defensivePhysical * (modified.pv - computeFitness(defensePhysicalSimulation));
     evaluated.fitness += coefficients.defensiveMagical * (modified.pv - computeFitness(defenseMagicalSimulation));
@@ -694,7 +717,7 @@ export function crossOver(a: Individual, b: Individual, config: Configuration, m
     const splitIndex = Math.floor(sequence.length * config.parameters.crossoverParentRatio);
     for (let i = 0; i < splitIndex; i++) {
         const idx = sequence[i];
-        child.genes[idx] = primaryGenes[idx];     
+        child.genes[idx] = primaryGenes[idx];
     }
 
     // Get carried weight for the current genes

@@ -42,7 +42,13 @@ export class ProbaTree {
             value: initialValue,
             token: {
                 burning: 0,
-                regeneration: 0
+                regeneration: 0,
+                poison: 0,
+                bleeding: 0,
+                knockedOut: 0,
+                breach: 0,
+                terror: 0,
+                necrosis: 0
             },
             parent: undefined,
             branches: []

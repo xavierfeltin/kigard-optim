@@ -64,6 +64,7 @@ function App() {
     const emptyRightHand = {...defaultEquipment};
     emptyRightHand.name = "Sans arme";
     emptyRightHand.localization = Localization.RightHand;
+    emptyRightHand.pa = 6;
 
     const emptyContainer = {...defaultEquipment};
     emptyContainer.name = "Pas de conteneur";

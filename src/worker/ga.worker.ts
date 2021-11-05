@@ -12,6 +12,8 @@ self.addEventListener("message", e => {
     const prevPopulation = msg.state.population;
     let population: Individual[] = [];
 
+    debugger;
+
     if (prevPopulation.length === 0) {
         population = generatePopulation(msg.configuration, msg.masterData);
         population = evaluatePopulation(population, msg.configuration, msg.masterData);
