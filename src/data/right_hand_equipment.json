@@ -261,7 +261,7 @@
     "mains": 1,
     "arc": null,
     "fusil": null,
-    "brulure": 2,
+    "brulure": 0,
     "poison": "",
     "saignement": null,
     "assome": null,

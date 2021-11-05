@@ -125,6 +125,14 @@ export function createIndividual(id: number, config: Configuration, masterData: 
                     return magicFilter;
                 });
 
+                // no container
+                filtered = filtered.filter(value => {
+                    if(part.toLowerCase() === Localization[Localization.Container].toLowerCase()) {
+                        return value.id === 0;
+                    }                    
+                    return true;                    
+                });
+
                 break;
             }
             case Profile.archer: {
@@ -167,6 +175,14 @@ export function createIndividual(id: number, config: Configuration, masterData: 
                     }
                     return isNotDistantWeapon;
                 });
+
+                filtered = filtered.filter(value => {
+                    if(part.toLowerCase() === Localization[Localization.Container].toLowerCase()) {
+                        return value.id === 0;
+                    }                    
+                    return true;                    
+                });
+
                 break;
             }
             case Profile.tank: {
@@ -177,6 +193,14 @@ export function createIndividual(id: number, config: Configuration, masterData: 
                         isNotDistantWeapon = value.attributes.maxRange === 0;
                     }
                     return isNotDistantWeapon;
+                });
+
+                // no container
+                filtered = filtered.filter(value => {
+                    if(part.toLowerCase() === Localization[Localization.Container].toLowerCase()) {
+                        return value.id === 0;
+                    }                    
+                    return true;                    
                 });
                 break;
             }
@@ -265,16 +289,16 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
     let defaultWeapon = {...defaultEquipment};
     defaultWeapon.pa = 6;
     let weapon: Equipment = getEquipment(ind, Localization.RightHand, masterData) || defaultWeapon;
-    let avgWeaponDamage = (weapon.attributes.minDamage + weapon.attributes.maxDamage) / 2;
+    let avgWeaponDamage = (modified.minDamage + modified.maxDamage) / 2; // some armor gives damage bonus
     if (weapon.hands === 2) {
         avgWeaponDamage += 1;
     }
 
     let otherCharacter: Attributes = {...defaultAttributes};
-    otherCharacter.pv = 80;
+    otherCharacter.pv = 100;
     otherCharacter.mr = 30;
     otherCharacter.dodge = 30;
-    otherCharacter.armor = 5;
+    otherCharacter.armor = 6;
 
     //Warrior offense profile
     otherCharacter.acc = 35;
@@ -289,6 +313,14 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
     let offensiveSimulation: ProbaTree | null = null;
     let defensePhysicalSimulation: ProbaTree | null = null;
     let defenseMagicalSimulation: ProbaTree | null = null;
+
+    const fights: number[][] = [];
+    fights.push([9, 10, 10, 14]);
+    fights.push([10, 11, 12, 6]);
+    fights.push([14, 5, 8, 10]);
+    fights.push([7, 11, 7, 17]);
+    fights.push([14, 15, 6, 9]);
+
     const allowedPAForturns: number[] = [12,11,8,16];
 
     let action: Action;
@@ -401,7 +433,7 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
                 isHealing: false
             };
 
-            coefficients.offensive = 3;
+            coefficients.offensive = 5;
             coefficients.defensiveMagical = 1;
             coefficients.defensivePhysical = 1;
             break;
@@ -409,8 +441,13 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
         default: throw Error("optimization profile " + config.parameters.optimProfile + " not defined");
     }
 
-    console.log("Build offensive simulation");
-    offensiveSimulation = buildTurns(allowedPAForturns, modified, otherCharacter, action);
+    console.log("Build offensive simulations");
+    let offensiveSimulations: ProbaTree[] = []; 
+    for (let fight of fights) {
+        offensiveSimulation = buildTurns(fight, modified, otherCharacter, action);
+        offensiveSimulations.push(offensiveSimulation);
+    }
+    
 
     //Based on long sword, 5-7
     let physicalAction: Action = {
@@ -451,7 +488,15 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
 
     evaluated.fitness = 0;
     console.log("Compute fitness");
-    evaluated.fitness += coefficients.offensive * computeFitness(offensiveSimulation);
+
+    let offensiveFitness = 0;
+    for (let simu of offensiveSimulations) {
+        offensiveFitness += computeFitness(simu);
+    }
+    offensiveFitness = offensiveFitness / offensiveSimulations.length;
+
+    evaluated.fitness += coefficients.offensive * offensiveFitness;
+
     evaluated.fitness += coefficients.defensivePhysical * (modified.pv - computeFitness(defensePhysicalSimulation));
     evaluated.fitness += coefficients.defensiveMagical * (modified.pv - computeFitness(defenseMagicalSimulation));
 
@@ -605,6 +650,14 @@ export function mutate(ind: Individual, config: Configuration, masterData: Maste
                     return magicFilter;
                 });
 
+                // no container
+                filtered = filtered.filter(value => {
+                    if(partOutfitToMutate.toLowerCase() === Localization[Localization.Container].toLowerCase()) {
+                        return value.id === 0;
+                    }                    
+                    return true;                    
+                });
+
                 break;
             }
             case Profile.archer: {
@@ -630,6 +683,7 @@ export function mutate(ind: Individual, config: Configuration, masterData: Maste
                     }
                     return isSelected;
                 });
+
                 break;
             }
             case Profile.warrior: {
@@ -641,6 +695,14 @@ export function mutate(ind: Individual, config: Configuration, masterData: Maste
                     }
                     return isNotDistantWeapon;
                 });
+
+                // no container
+                filtered = filtered.filter(value => {
+                    if(partOutfitToMutate.toLowerCase() === Localization[Localization.Container].toLowerCase()) {
+                        return value.id === 0;
+                    }                    
+                    return true;                    
+                });
                 break;
             }
             case Profile.tank: {
@@ -651,6 +713,14 @@ export function mutate(ind: Individual, config: Configuration, masterData: Maste
                         isNotDistantWeapon = value.attributes.maxRange === 0;
                     }
                     return isNotDistantWeapon;
+                });
+
+                // no container
+                filtered = filtered.filter(value => {
+                    if(partOutfitToMutate.toLowerCase() === Localization[Localization.Container].toLowerCase()) {
+                        return value.id === 0;
+                    }                    
+                    return true;                    
                 });
                 break;
             }
