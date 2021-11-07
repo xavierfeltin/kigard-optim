@@ -11,7 +11,7 @@ export interface GAConfigurationProps {
 export function GAConfiguration({onValueChange}: GAConfigurationProps) {
 
     const [configuration, setConfiguration] = useState<GAParameters>({
-        populationSize: 20,
+        populationSize: 50,
         selectCutoff: 0.1,
         keepPreviousRatio: 0.1,
         newIndividualRatio: 0.1,

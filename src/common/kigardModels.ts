@@ -375,16 +375,16 @@ export function buildTurns(paByTurns: number[], attributes: Attributes, opponent
                             //Burning and poison can not kill in game
                             remainingLife.map(val => Math.max(0, val - burning));
                             remainingLife.map(val => Math.max(0, val - poison));
-    
-                            oppAttr.regeneration = Math.max(0, oppAttr.regeneration - bleeding);
-                            oppAttr.dodge = Math.max(0, oppAttr.dodge - (knockedOut * 5));
-                            oppAttr.armor = Math.max(0, oppAttr.armor - breach);
-                            oppAttr.mr = Math.max(0, oppAttr.mr - terror * 5);
-                            oppAttr.str = Math.max(0, oppAttr.str - Math.floor(necrosis / 2));
-                            oppAttr.dex = Math.max(0, oppAttr.dex - Math.floor(necrosis / 2));
-                            oppAttr.int = Math.max(0, oppAttr.int - Math.floor(necrosis / 2));
-                            oppAttr.acc = Math.max(0, oppAttr.acc - 2 * necrosis);
-                            oppAttr.mm = Math.max(0, oppAttr.mm - 2 * necrosis);
+                            remainingLife.map(val => Math.min(opponent.pv, val + opponent.regeneration - bleeding));
+
+                            oppAttr.dodge = Math.max(0, opponent.dodge - (knockedOut * 5));
+                            oppAttr.armor = Math.max(0, opponent.armor - breach);
+                            oppAttr.mr = Math.max(0, opponent.mr - terror * 5);
+                            oppAttr.str = Math.max(0, opponent.str - Math.floor(necrosis / 2));
+                            oppAttr.dex = Math.max(0, opponent.dex - Math.floor(necrosis / 2));
+                            oppAttr.int = Math.max(0, opponent.int - Math.floor(necrosis / 2));
+                            oppAttr.acc = Math.max(0, opponent.acc - 2 * necrosis);
+                            oppAttr.mm = Math.max(0, opponent.mm - 2 * necrosis);
                         }
                             
                         let updatedToken: KigardToken = {
@@ -425,13 +425,13 @@ export function buildTurns(paByTurns: number[], attributes: Attributes, opponent
                             remainingLife[2]]; // no damage when dodging
 
                             //Add tokens after attacking if any
-                            tokens[0].burning += attributes.burning;
-                            tokens[0].poison += attributes.poison;
-                            tokens[0].bleeding += attributes.bleeding;
-                            tokens[0].knockedOut += attributes.knockedOut;
-                            tokens[0].breach += attributes.breach;
-                            tokens[0].terror += attributes.terror;
-                            tokens[0].necrosis += attributes.necrosis;
+                            tokens[0].burning += attributes.burning > 0 ? attributes.burning + 1 : 0;
+                            tokens[0].poison += attributes.poison > 0 ? attributes.poison + 1 : 0;
+                            tokens[0].bleeding += attributes.bleeding > 0 ? attributes.bleeding + 1 : 0;
+                            tokens[0].knockedOut += attributes.knockedOut > 0 ? attributes.knockedOut + 1 : 0;
+                            tokens[0].breach += attributes.breach > 0 ? attributes.breach + 1 : 0;
+                            tokens[0].terror += attributes.terror > 0 ? attributes.terror + 1 : 0;
+                            tokens[0].necrosis += attributes.necrosis > 0 ? attributes.necrosis + 1 : 0;
 
                             tokens[1].burning += attributes.burning;
                             tokens[1].poison += attributes.poison;
@@ -452,7 +452,14 @@ export function buildTurns(paByTurns: number[], attributes: Attributes, opponent
                     // TODO: Add specific branch transformation from parent context here (bleeding, burning, reducing armor, ...)
                     // May change pobabilities (if mm, pre, dodge, .... are concerned) or may change values (if token are concerned)
 
-                    const newPossibilities = probaTree.addLevel(currentBranch, probabilities, remainingLife, tokens);
+                    const isFinals: boolean[] = []
+                    for (let i = 0; i < probabilities.length; i++) {
+                        const remainingPA = paForTurn - action.pa;
+                        // The opponent is dead this action or it is the last action of the last turn
+                        const isFinal = remainingLife[i] <= 0 || ((turn === nbTurns -1) && (remainingPA - action.pa < 0))
+                        isFinals.push(isFinal); 
+                    }
+                    const newPossibilities = probaTree.addLevel(currentBranch, probabilities, remainingLife, tokens, isFinals);
                     turnPossibilities = turnPossibilities.concat(newPossibilities);
                 }
             }

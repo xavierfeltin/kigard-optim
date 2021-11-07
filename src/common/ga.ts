@@ -282,6 +282,8 @@ export function getEquipment(ind: Individual, part: Localization, masterData: Ma
 }
 
 export function evaluateIndividual(ind: Individual, config: Configuration, masterData: MasterDataOutfit): Individual {
+    let start = Date.now();
+
     let evaluated = {...ind};
 
     // Update configuration with individual
@@ -299,6 +301,7 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
     otherCharacter.mr = 30;
     otherCharacter.dodge = 30;
     otherCharacter.armor = 6;
+    otherCharacter.regeneration = 6;
 
     //Warrior offense profile
     otherCharacter.acc = 35;
@@ -315,11 +318,10 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
     let defenseMagicalSimulation: ProbaTree | null = null;
 
     const fights: number[][] = [];
-    fights.push([9, 10, 10, 14]);
-    fights.push([10, 11, 12, 6]);
-    fights.push([14, 5, 8, 10]);
-    fights.push([7, 11, 7, 17]);
-    fights.push([14, 15, 6, 9]);
+    fights.push([9, 9, 9, 9, 9, 9, 9]);
+    fights.push([12, 5, 11, 6]);
+    fights.push([14, 12, 8, 10]);
+    fights.push([18, 16, 12]);
 
     const allowedPAForturns: number[] = [12,11,8,16];
 
@@ -419,7 +421,7 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
         case Profile.warrior: {
             //Based on long sword, 5-7
             action = {
-                name: "hit",
+                name: weapon.name,
                 pa: weapon.pa,
                 pm: 0,
                 magicSuccess: 0,
@@ -441,7 +443,7 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
         default: throw Error("optimization profile " + config.parameters.optimProfile + " not defined");
     }
 
-    console.log("Build offensive simulations");
+    console.log("Build offensive simulations, action " + action.name + ", PA: " + action.pa);
     let offensiveSimulations: ProbaTree[] = []; 
     for (let fight of fights) {
         offensiveSimulation = buildTurns(fight, modified, otherCharacter, action);
@@ -500,18 +502,15 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
     evaluated.fitness += coefficients.defensivePhysical * (modified.pv - computeFitness(defensePhysicalSimulation));
     evaluated.fitness += coefficients.defensiveMagical * (modified.pv - computeFitness(defenseMagicalSimulation));
 
-    return evaluated;
+    let end = Date.now();
+    let delta = end - start;
+    console.log("eval time: " + delta + " ms");
+
+    return evaluated;    
 }
 
 function computeFitness(simulation: ProbaTree): number {
-    let finalBranches = simulation.getAllFinalBranches(simulation.root);
-
-    let expectedValue = 0;
-    finalBranches.forEach(branch => {
-        let finalSituation: Branch = simulation.computeGlobalWeightAndValueForBranch(branch);
-        expectedValue += finalSituation.weight * finalSituation.value;
-    });
-
+    const expectedValue = simulation.getTreeExpectedValue();
     return expectedValue;
 }
 

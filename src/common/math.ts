@@ -36,9 +36,13 @@ export function shuffle(sequence: number[]): number[] {
 
 export class ProbaTree {
     public root: Branch;
+    public expectedValue: number;
+
     public constructor(initialValue: number = 0) {
+        this.expectedValue = 0;
         this.root = {
             weight: 1,
+            depthWeight: 1,
             value: initialValue,
             token: {
                 burning: 0,
@@ -50,27 +54,36 @@ export class ProbaTree {
                 terror: 0,
                 necrosis: 0
             },
-            parent: undefined,
+            //parent: undefined,
             branches: []
         };
     }
 
-    public addLevel(currentBranch: Branch, weights: number[], values: number[], tokens: KigardToken[]): Branch[] {
+    public addLevel(currentBranch: Branch, weights: number[], values: number[], tokens: KigardToken[], isFinals: boolean[]): Branch[] {
         const newBranches: Branch[] = [];
         for(let i = 0; i < weights.length; i++) {
             const newBranch: Branch = {
                 weight: weights[i],
+                depthWeight: weights[i] * currentBranch.depthWeight,
                 value: values[i],
                 token: {...tokens[i]},
-                parent: currentBranch,
+                //parent: currentBranch,
                 branches: undefined
             }
-            newBranches.push(newBranch);
 
+            /*
             if (!currentBranch.branches) {
                 currentBranch.branches = [];
             }
             currentBranch.branches.push(newBranch);
+            */
+
+            if (isFinals[i]) {
+                this.expectedValue += newBranch.depthWeight * (this.root.value - newBranch.value); 
+            }  
+            else {
+                newBranches.push(newBranch);
+            }          
         }
 
         return newBranches;
@@ -92,25 +105,33 @@ export class ProbaTree {
     public computeGlobalWeightAndValueForBranch(branch: Branch): Branch {
         let pathWeight = 1;
         let current = branch;
+        /*
         while (current.parent) {
             pathWeight = pathWeight * current.weight;
             current = current.parent;
         }
+        */
 
         return {
             weight: pathWeight,
+            depthWeight: branch.depthWeight,
             value: this.root.value - branch.value,
             token: {...branch.token},
-            parent: undefined,
+            //parent: undefined,
             branches: undefined
         };
+    }
+
+    public getTreeExpectedValue(): number {
+        return this.expectedValue;
     }
 }
 
 export interface Branch {
     weight: number;
+    depthWeight: number;
     value: number;
     token: KigardToken;
-    parent: Branch | undefined;
+    //parent: Branch | undefined;
     branches: Branch[] | undefined; //undefined for final node
 }
