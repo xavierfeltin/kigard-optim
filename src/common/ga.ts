@@ -1,4 +1,5 @@
 import { Action, Attributes, buildTurns, defaultAttributes, defaultEquipment, Equipment, Localization, MasterDataOutfit, outfitParts, Profile } from "./kigardModels";
+import { profileAdvancedAssassin, profileAdvancedMage, profileAdvancedWarrior, profileBeginnerAssassin, profileBeginnerMage, profileBeginnerWarrior, profileIntermediateAssassin, profileIntermediateMage, profileIntermediateWarrior } from "./kigardProfiles";
 import { Branch, ProbaTree, shuffle } from "./math";
 
 export interface GAParameters {
@@ -26,17 +27,67 @@ export interface SimuState {
 export interface Individual {
     id: number;
     genes: number[];
-    fitness: number;
+    fitness: Fitness;
     probability: number;
     carriedWeight: number,
     hands: number;
+}
+
+export interface Fitness {
+    fitness: number;
+
+    offenseBeginnerWarrior: number;
+    offenseIntermediateWarrior: number;
+    offenseAdvancedWarrior: number;
+    offenseBeginnerAssassin: number;
+    offenseIntermediateAssassin: number;
+    offenseAdvancedAssassin: number;
+    offenseBeginnerMage: number;
+    offenseIntermediateMage: number;
+    offenseAdvancedMage: number;
+
+    defenseBeginnerWarrior: number;
+    defenseIntermediateWarrior: number;
+    defenseAdvancedWarrior: number;
+    defenseBeginnerAssassin: number;
+    defenseIntermediateAssassin: number;
+    defenseAdvancedAssassin: number;
+    defenseBeginnerMage: number;
+    defenseIntermediateMage: number;
+    defenseAdvancedMage: number;
+
+    /*
+    healingBeginnerMage: number;
+    healingIntermediateMage: number;
+    healingAdvancedMage: number;
+    */
 }
 
 export function createEmptyIndividual(): Individual {
     const ind: Individual = {
         id: Date.now(),
         genes: [],
-        fitness: 0,
+        fitness: {
+            fitness: 0,
+            offenseBeginnerWarrior: 0,
+            offenseIntermediateWarrior: 0,
+            offenseAdvancedWarrior: 0,
+            offenseBeginnerAssassin: 0,
+            offenseIntermediateAssassin: 0,
+            offenseAdvancedAssassin: 0,
+            offenseBeginnerMage: 0,
+            offenseIntermediateMage: 0,
+            offenseAdvancedMage: 0,
+            defenseBeginnerWarrior: 0,
+            defenseIntermediateWarrior: 0,
+            defenseAdvancedWarrior: 0,
+            defenseBeginnerAssassin: 0,
+            defenseIntermediateAssassin: 0,
+            defenseAdvancedAssassin: 0,
+            defenseBeginnerMage: 0,
+            defenseIntermediateMage: 0,
+            defenseAdvancedMage: 0
+        },
         probability: 0,
         carriedWeight: 0,
         hands: 0
@@ -129,8 +180,8 @@ export function createIndividual(id: number, config: Configuration, masterData: 
                 filtered = filtered.filter(value => {
                     if(part.toLowerCase() === Localization[Localization.Container].toLowerCase()) {
                         return value.id === 0;
-                    }                    
-                    return true;                    
+                    }
+                    return true;
                 });
 
                 break;
@@ -179,8 +230,8 @@ export function createIndividual(id: number, config: Configuration, masterData: 
                 filtered = filtered.filter(value => {
                     if(part.toLowerCase() === Localization[Localization.Container].toLowerCase()) {
                         return value.id === 0;
-                    }                    
-                    return true;                    
+                    }
+                    return true;
                 });
 
                 break;
@@ -199,8 +250,8 @@ export function createIndividual(id: number, config: Configuration, masterData: 
                 filtered = filtered.filter(value => {
                     if(part.toLowerCase() === Localization[Localization.Container].toLowerCase()) {
                         return value.id === 0;
-                    }                    
-                    return true;                    
+                    }
+                    return true;
                 });
                 break;
             }
@@ -230,7 +281,27 @@ export function createIndividual(id: number, config: Configuration, masterData: 
     const ind: Individual = {
         id: id,
         genes: genes,
-        fitness: 0,
+        fitness: {
+            fitness: 0,
+            offenseBeginnerWarrior: 0,
+            offenseIntermediateWarrior: 0,
+            offenseAdvancedWarrior: 0,
+            offenseBeginnerAssassin: 0,
+            offenseIntermediateAssassin: 0,
+            offenseAdvancedAssassin: 0,
+            offenseBeginnerMage: 0,
+            offenseIntermediateMage: 0,
+            offenseAdvancedMage: 0,
+            defenseBeginnerWarrior: 0,
+            defenseIntermediateWarrior: 0,
+            defenseAdvancedWarrior: 0,
+            defenseBeginnerAssassin: 0,
+            defenseIntermediateAssassin: 0,
+            defenseAdvancedAssassin: 0,
+            defenseBeginnerMage: 0,
+            defenseIntermediateMage: 0,
+            defenseAdvancedMage: 0
+        },
         probability: 0,
         carriedWeight: carriedWeight,
         hands: busyHands
@@ -296,40 +367,17 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
         avgWeaponDamage += 1;
     }
 
-    let otherCharacter: Attributes = {...defaultAttributes};
-    otherCharacter.pv = 100;
-    otherCharacter.mr = 30;
-    otherCharacter.dodge = 30;
-    otherCharacter.armor = 6;
-    otherCharacter.regeneration = 6;
-
-    //Warrior offense profile
-    otherCharacter.acc = 35;
-    otherCharacter.str = 12;
-    otherCharacter.dex = 6;
-
-    //Mage offense profile
-    otherCharacter.int = 18;
-    otherCharacter.rpm = 3;
-    otherCharacter.mm = 45;
-
-    let offensiveSimulation: ProbaTree | null = null;
-    let defensePhysicalSimulation: ProbaTree | null = null;
-    let defenseMagicalSimulation: ProbaTree | null = null;
-
     const fights: number[][] = [];
-    fights.push([9, 9, 9, 9, 9, 9, 9]);
-    fights.push([12, 5, 11, 6]);
-    fights.push([14, 12, 8, 10]);
-    fights.push([18, 16, 12]);
-
-    const allowedPAForturns: number[] = [12,11,8,16];
+    fights.push([9, 12, 6, 15, 13]);
 
     let action: Action;
     let coefficients = {
-        offensive: 0,
-        defensivePhysical: 0,
-        defensiveMagical: 0
+        offensiveWarrior: 0,
+        offensiveAssassin: 0,
+        offensiveMage: 0,
+        defensiveWarrior: 0,
+        defensiveAssassin: 0,
+        defensiveMage: 0
     };
     switch(config.parameters.optimProfile) {
         case Profile.mage: {
@@ -348,9 +396,12 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
                 isHealing: false
             };
 
-            coefficients.offensive = 3;
-            coefficients.defensiveMagical = 0;
-            coefficients.defensivePhysical = 0;
+            coefficients.offensiveWarrior = 3;
+            coefficients.offensiveAssassin = 3;
+            coefficients.offensiveMage = 3;
+            coefficients.defensiveWarrior = 1;
+            coefficients.defensiveAssassin = 1;
+            coefficients.defensiveMage = 0;
            break;
         }
         case Profile.healer: {
@@ -369,15 +420,17 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
                 isHealing: true
             };
 
-            coefficients.offensive = 3;
-            coefficients.defensiveMagical = 0;
-            coefficients.defensivePhysical = 0;
+            coefficients.offensiveWarrior = 3;
+            coefficients.offensiveAssassin = 3;
+            coefficients.offensiveMage = 3;
+            coefficients.defensiveWarrior = 1;
+            coefficients.defensiveAssassin = 1;
+            coefficients.defensiveMage = 0;
             break;
         }
         case Profile.archer: {
-            //Based on sylvanus arc, 6-10
             action = {
-                name: "shoot",
+                name: weapon.name,
                 pa: weapon.pa,
                 pm: 0,
                 magicSuccess: 0,
@@ -391,35 +444,15 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
                 isHealing: false
             };
 
-            coefficients.offensive = 3;
-            coefficients.defensiveMagical = 0;
-            coefficients.defensivePhysical = 0;
+            coefficients.offensiveWarrior = 3;
+            coefficients.offensiveAssassin = 3;
+            coefficients.offensiveMage = 3;
+            coefficients.defensiveWarrior = 1;
+            coefficients.defensiveAssassin = 1;
+            coefficients.defensiveMage = 0;
             break;
         }
         case Profile.tank: {
-            //Based on long sword, 5-7
-            action = {
-                name: "hit",
-                pa: weapon.pa,
-                pm: 0,
-                magicSuccess: 0,
-                magicResisted: 0,
-                physicalDamageSuccess: modified.str + avgWeaponDamage,
-                criticalBonus: modified.dex,
-                isMagic: false,
-                isThrowing: false,
-                burning: 0,
-                regeneration: 0,
-                isHealing: false
-            };
-
-            coefficients.offensive = 1;
-            coefficients.defensiveMagical = 1;
-            coefficients.defensivePhysical = 1;
-            break;
-        }
-        case Profile.warrior: {
-            //Based on long sword, 5-7
             action = {
                 name: weapon.name,
                 pa: weapon.pa,
@@ -435,30 +468,63 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
                 isHealing: false
             };
 
-            coefficients.offensive = 5;
-            coefficients.defensiveMagical = 1;
-            coefficients.defensivePhysical = 1;
+            coefficients.offensiveWarrior = 1;
+            coefficients.offensiveAssassin = 1;
+            coefficients.offensiveMage = 1;
+            coefficients.defensiveWarrior = 1;
+            coefficients.defensiveAssassin = 1;
+            coefficients.defensiveMage = 1;
+            break;
+        }
+        case Profile.warrior: {
+            action = {
+                name: weapon.name,
+                pa: weapon.pa,
+                pm: 0,
+                magicSuccess: 0,
+                magicResisted: 0,
+                physicalDamageSuccess: modified.str + avgWeaponDamage,
+                criticalBonus: modified.dex,
+                isMagic: false,
+                isThrowing: false,
+                burning: 0,
+                regeneration: 0,
+                isHealing: false
+            };
+
+            coefficients.offensiveWarrior = 3;
+            coefficients.offensiveAssassin = 3;
+            coefficients.offensiveMage = 1;
+            coefficients.defensiveWarrior = 1;
+            coefficients.defensiveAssassin = 1;
+            coefficients.defensiveMage = 0;
             break;
         }
         default: throw Error("optimization profile " + config.parameters.optimProfile + " not defined");
     }
 
     console.log("Build offensive simulations, action " + action.name + ", PA: " + action.pa);
-    let offensiveSimulations: ProbaTree[] = []; 
-    for (let fight of fights) {
-        offensiveSimulation = buildTurns(fight, modified, otherCharacter, action);
-        offensiveSimulations.push(offensiveSimulation);
-    }
-    
+    let beginnerWarriorOffenseSimulation = buildTurns(fights[0], modified, profileBeginnerWarrior, action);
+    let intermediateWarriorOffenseSimulation = buildTurns(fights[0], modified, profileIntermediateWarrior, action);
+    let advancedWarriorOffenseSimulation = buildTurns(fights[0], modified, profileAdvancedWarrior, action);
+
+    let beginnerAssassinOffenseSimulation = buildTurns(fights[0], modified, profileBeginnerAssassin, action);
+    let intermediateAssassinOffenseSimulation = buildTurns(fights[0], modified, profileIntermediateAssassin, action);
+    let advancedAssassinOffenseSimulation = buildTurns(fights[0], modified, profileAdvancedAssassin, action);
+
+    let beginnerMageOffenseSimulation = buildTurns(fights[0], modified, profileBeginnerMage, action);
+    let intermediateMageOffenseSimulation = buildTurns(fights[0], modified, profileIntermediateMage, action);
+    let advancedMageOffenseSimulation = buildTurns(fights[0], modified, profileAdvancedMage, action);
+
 
     //Based on long sword, 5-7
-    let physicalAction: Action = {
-        name: "hit",
-        pa: 6,
+    let opponentAction: Action = {
+        name: "agression",
+        pa: 0,
         pm: 0,
         magicSuccess: 0,
         magicResisted: 0,
-        physicalDamageSuccess: modified.str + 6,
+        physicalDamageSuccess: modified.str,
         criticalBonus: modified.dex,
         isMagic: false,
         isThrowing: false,
@@ -467,46 +533,92 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
         isHealing: false
     };
 
-    console.log("Build physical defense simulation");
-    defensePhysicalSimulation = buildTurns(allowedPAForturns, otherCharacter, modified, physicalAction);
+    console.log("Build defense simulation");
+    opponentAction.pa = 6; //short sword
+    opponentAction.physicalDamageSuccess = profileBeginnerWarrior.str + (profileBeginnerWarrior.minDamage + profileBeginnerWarrior.maxDamage) / 2;
+    opponentAction.criticalBonus = profileBeginnerWarrior.dex;
+    let beginnerWarriorDefenseSimulation = buildTurns(fights[0], profileBeginnerWarrior, modified, opponentAction);
 
-    let magicAction: Action = {
-        name: "fireball",
-        pa: 6,
-        pm: 6,
-        magicSuccess: modified.int,
-        magicResisted: Math.floor(modified.int / 2),
-        physicalDamageSuccess: 0,
-        criticalBonus: 0,
-        isMagic: true,
-        isThrowing: false,
-        burning: 2,
-        regeneration: 0,
-        isHealing: false
+    opponentAction.pa = 6; // fleau
+    opponentAction.physicalDamageSuccess = profileIntermediateWarrior.str + (profileIntermediateWarrior.minDamage + profileIntermediateWarrior.maxDamage) / 2;
+    opponentAction.criticalBonus = profileIntermediateWarrior.dex;
+    let intermediateWarriorDefenseSimulation = buildTurns(fights[0], profileIntermediateWarrior, modified, action);
+
+    opponentAction.pa = 8; // lance
+    opponentAction.physicalDamageSuccess = profileAdvancedWarrior.str + (profileAdvancedWarrior.minDamage + profileAdvancedWarrior.maxDamage) / 2;
+    opponentAction.criticalBonus = profileAdvancedWarrior.dex;
+    let advancedWarriorDefenseSimulation = buildTurns(fights[0], profileAdvancedWarrior, modified, action);
+
+    opponentAction.pa = 6; // poignard
+    opponentAction.physicalDamageSuccess = profileBeginnerAssassin.str + (profileBeginnerAssassin.minDamage + profileBeginnerAssassin.maxDamage) / 2;
+    opponentAction.criticalBonus = profileBeginnerAssassin.dex;
+    let beginnerAssassinDefenseSimulation = buildTurns(fights[0], profileBeginnerAssassin, modified, action);
+
+    opponentAction.pa = 6; // poignard
+    opponentAction.physicalDamageSuccess = profileIntermediateAssassin.str + (profileIntermediateAssassin.minDamage + profileIntermediateAssassin.maxDamage) / 2;
+    opponentAction.criticalBonus = profileIntermediateAssassin.dex;
+    let intermediateAssassinDefenseSimulation = buildTurns(fights[0], profileIntermediateAssassin, modified, action);
+
+    opponentAction.pa = 6; // poignard
+    opponentAction.physicalDamageSuccess = profileAdvancedAssassin.str + (profileAdvancedAssassin.minDamage + profileAdvancedAssassin.maxDamage) / 2;
+    opponentAction.criticalBonus = profileAdvancedAssassin.dex;
+    let advancedAssassinDefenseSimulation = buildTurns(fights[0], profileAdvancedAssassin, modified, action);
+
+    opponentAction.pa = 6; // fireball
+    opponentAction.pm = 6;
+    opponentAction.isMagic = true;
+    opponentAction.magicSuccess = profileBeginnerMage.int;
+    opponentAction.magicResisted = Math.floor(profileBeginnerMage.int / 2);
+    let beginnerMageDefenseSimulation = buildTurns(fights[0], profileBeginnerMage, modified, action);
+
+    opponentAction.magicSuccess = profileIntermediateMage.int;
+    opponentAction.magicResisted = Math.floor(profileIntermediateMage.int / 2);
+    let intermediateMageDefenseSimulation = buildTurns(fights[0], profileIntermediateMage, modified, action);
+
+    opponentAction.magicSuccess = profileAdvancedMage.int;
+    opponentAction.magicResisted = Math.floor(profileAdvancedMage.int / 2);
+    let advancedMageDefenseSimulation = buildTurns(fights[0], profileAdvancedMage, modified, action);
+
+
+    console.log("Compute fitness");
+    const f: Fitness = {
+        fitness: 0,
+        offenseBeginnerWarrior: computeFitness(beginnerWarriorOffenseSimulation),
+        offenseIntermediateWarrior: computeFitness(intermediateWarriorOffenseSimulation),
+        offenseAdvancedWarrior: computeFitness(advancedWarriorOffenseSimulation),
+        offenseBeginnerAssassin: computeFitness(beginnerAssassinOffenseSimulation),
+        offenseIntermediateAssassin: computeFitness(intermediateAssassinOffenseSimulation),
+        offenseAdvancedAssassin: computeFitness(advancedAssassinOffenseSimulation),
+        offenseBeginnerMage: computeFitness(beginnerMageOffenseSimulation),
+        offenseIntermediateMage: computeFitness(intermediateMageOffenseSimulation),
+        offenseAdvancedMage: computeFitness(advancedMageOffenseSimulation),
+
+        defenseBeginnerWarrior: computeFitness(beginnerWarriorDefenseSimulation),
+        defenseIntermediateWarrior: computeFitness(intermediateWarriorDefenseSimulation),
+        defenseAdvancedWarrior: computeFitness(advancedWarriorDefenseSimulation),
+        defenseBeginnerAssassin: computeFitness(beginnerAssassinDefenseSimulation),
+        defenseIntermediateAssassin: computeFitness(intermediateAssassinDefenseSimulation),
+        defenseAdvancedAssassin: computeFitness(advancedAssassinDefenseSimulation),
+        defenseBeginnerMage: computeFitness(beginnerMageDefenseSimulation),
+        defenseIntermediateMage: computeFitness(intermediateMageDefenseSimulation),
+        defenseAdvancedMage: computeFitness(advancedMageDefenseSimulation)
     };
 
-    console.log("Build magical defense simulation");
-    defenseMagicalSimulation = buildTurns(allowedPAForturns, otherCharacter, modified, magicAction);
+    f.fitness = coefficients.offensiveWarrior * (f.offenseBeginnerWarrior + f.offenseIntermediateWarrior + f.offenseAdvancedWarrior) / 3;
+    f.fitness += coefficients.offensiveAssassin * (f.offenseBeginnerAssassin + f.offenseIntermediateAssassin + f.offenseAdvancedAssassin) / 3;
+    f.fitness += coefficients.offensiveMage * (f.offenseBeginnerMage + f.offenseIntermediateMage + f.offenseAdvancedMage) / 3;
 
-    evaluated.fitness = 0;
-    console.log("Compute fitness");
+    f.fitness += coefficients.defensiveWarrior * (f.defenseBeginnerWarrior + f.defenseIntermediateWarrior + f.defenseAdvancedWarrior) / 3;
+    f.fitness += coefficients.defensiveAssassin * (f.defenseBeginnerAssassin + f.defenseIntermediateAssassin + f.defenseAdvancedAssassin) / 3;
+    f.fitness += coefficients.defensiveMage * (f.defenseBeginnerMage + f.defenseIntermediateMage + f.defenseAdvancedMage) / 3;
 
-    let offensiveFitness = 0;
-    for (let simu of offensiveSimulations) {
-        offensiveFitness += computeFitness(simu);
-    }
-    offensiveFitness = offensiveFitness / offensiveSimulations.length;
-
-    evaluated.fitness += coefficients.offensive * offensiveFitness;
-
-    evaluated.fitness += coefficients.defensivePhysical * (modified.pv - computeFitness(defensePhysicalSimulation));
-    evaluated.fitness += coefficients.defensiveMagical * (modified.pv - computeFitness(defenseMagicalSimulation));
+    evaluated.fitness = f;
 
     let end = Date.now();
     let delta = end - start;
     console.log("eval time: " + delta + " ms");
 
-    return evaluated;    
+    return evaluated;
 }
 
 function computeFitness(simulation: ProbaTree): number {
@@ -520,7 +632,7 @@ export function convertFitnessIntoProbabilities(population: Individual[]): Indiv
     let populationWithProba = [...population];
 
     for (let ind of population) {
-        const fitness = ind.fitness * ind.fitness;
+        const fitness = ind.fitness.fitness * ind.fitness.fitness;
         scores.push(fitness);
         sumFit += fitness;
     }
@@ -540,7 +652,7 @@ export function convertFitnessIntoProbabilities(population: Individual[]): Indiv
 
 export function sortDescByFitness(population: Individual[]): Individual[] {
     const sortFn = (a: Individual, b: Individual): number => {
-        return b.fitness - a.fitness;
+        return b.fitness.fitness - a.fitness.fitness;
     };
 
     return [...population].sort(sortFn);
@@ -606,7 +718,27 @@ export function mutate(ind: Individual, config: Configuration, masterData: Maste
     let mutant: Individual = {
         id: Date.now(),
         genes: [...ind.genes],
-        fitness: 0,
+        fitness: {
+            fitness: 0,
+            offenseBeginnerWarrior: 0,
+            offenseIntermediateWarrior: 0,
+            offenseAdvancedWarrior: 0,
+            offenseBeginnerAssassin: 0,
+            offenseIntermediateAssassin: 0,
+            offenseAdvancedAssassin: 0,
+            offenseBeginnerMage: 0,
+            offenseIntermediateMage: 0,
+            offenseAdvancedMage: 0,
+            defenseBeginnerWarrior: 0,
+            defenseIntermediateWarrior: 0,
+            defenseAdvancedWarrior: 0,
+            defenseBeginnerAssassin: 0,
+            defenseIntermediateAssassin: 0,
+            defenseAdvancedAssassin: 0,
+            defenseBeginnerMage: 0,
+            defenseIntermediateMage: 0,
+            defenseAdvancedMage: 0
+        },
         probability: 0,
         carriedWeight: ind.carriedWeight,
         hands: ind.hands
@@ -653,8 +785,8 @@ export function mutate(ind: Individual, config: Configuration, masterData: Maste
                 filtered = filtered.filter(value => {
                     if(partOutfitToMutate.toLowerCase() === Localization[Localization.Container].toLowerCase()) {
                         return value.id === 0;
-                    }                    
-                    return true;                    
+                    }
+                    return true;
                 });
 
                 break;
@@ -699,8 +831,8 @@ export function mutate(ind: Individual, config: Configuration, masterData: Maste
                 filtered = filtered.filter(value => {
                     if(partOutfitToMutate.toLowerCase() === Localization[Localization.Container].toLowerCase()) {
                         return value.id === 0;
-                    }                    
-                    return true;                    
+                    }
+                    return true;
                 });
                 break;
             }
@@ -718,8 +850,8 @@ export function mutate(ind: Individual, config: Configuration, masterData: Maste
                 filtered = filtered.filter(value => {
                     if(partOutfitToMutate.toLowerCase() === Localization[Localization.Container].toLowerCase()) {
                         return value.id === 0;
-                    }                    
-                    return true;                    
+                    }
+                    return true;
                 });
                 break;
             }
@@ -745,7 +877,27 @@ export function mutate(ind: Individual, config: Configuration, masterData: Maste
 export function crossOver(a: Individual, b: Individual, config: Configuration, masterData: MasterDataOutfit): Individual {
     const child: Individual = {
         genes: Array.from({length: outfitParts.length}, (_, i) => 0),
-        fitness: 0,
+        fitness: {
+            fitness: 0,
+            offenseBeginnerWarrior: 0,
+            offenseIntermediateWarrior: 0,
+            offenseAdvancedWarrior: 0,
+            offenseBeginnerAssassin: 0,
+            offenseIntermediateAssassin: 0,
+            offenseAdvancedAssassin: 0,
+            offenseBeginnerMage: 0,
+            offenseIntermediateMage: 0,
+            offenseAdvancedMage: 0,
+            defenseBeginnerWarrior: 0,
+            defenseIntermediateWarrior: 0,
+            defenseAdvancedWarrior: 0,
+            defenseBeginnerAssassin: 0,
+            defenseIntermediateAssassin: 0,
+            defenseAdvancedAssassin: 0,
+            defenseBeginnerMage: 0,
+            defenseIntermediateMage: 0,
+            defenseAdvancedMage: 0
+        },
         probability: 0,
         id: Date.now(),
         carriedWeight: 0,

@@ -82,7 +82,7 @@ export function Solution({ind, masterData, character}: SolutionProps) {
     return (
         <div>
             <span> Suggestions found (weight: {ind.carriedWeight} / {character.allowedWeight}): </span>
-            <span> Fitness: {ind.fitness.toFixed(4)}</span>
+            <span> Fitness: {ind.fitness.fitness.toFixed(4)}</span>
             <Table id="table-solution">
                 <Thead>
                     <Tr>{generateHeader()}</Tr>

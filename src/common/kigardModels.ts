@@ -355,7 +355,7 @@ export function buildTurns(paByTurns: number[], attributes: Attributes, opponent
                         remainingLife = [currentBranch.value, currentBranch.value, currentBranch.value];
                     }
 
-                    // Tokens are decrementing of 1 each turn after being applied                    
+                    // Tokens are decrementing of 1 each turn after being applied
                     if (actionDuringTurn === 1) {
                         if (action.isHealing) {
                             //Regeneration won't heal after max health
@@ -371,7 +371,7 @@ export function buildTurns(paByTurns: number[], attributes: Attributes, opponent
                             const breach = currentBranch.token.burning;
                             const terror = currentBranch.token.burning;
                             const necrosis = currentBranch.token.burning;
-    
+
                             //Burning and poison can not kill in game
                             remainingLife.map(val => Math.max(0, val - burning));
                             remainingLife.map(val => Math.max(0, val - poison));
@@ -386,7 +386,7 @@ export function buildTurns(paByTurns: number[], attributes: Attributes, opponent
                             oppAttr.acc = Math.max(0, opponent.acc - 2 * necrosis);
                             oppAttr.mm = Math.max(0, opponent.mm - 2 * necrosis);
                         }
-                            
+
                         let updatedToken: KigardToken = {
                             burning: Math.max(0, currentBranch.token.burning -1),
                             regeneration: Math.max(0, currentBranch.token.regeneration -1),
@@ -397,12 +397,12 @@ export function buildTurns(paByTurns: number[], attributes: Attributes, opponent
                             terror: Math.max(0, currentBranch.token.terror -1),
                             necrosis: Math.max(0, currentBranch.token.necrosis -1),
                         };
-                           
+
                         probabilities.forEach(val => {
                             tokens.push(updatedToken);
                         });
                     }
-                    
+
                     if (action.isMagic) {
                         if (pmForTurn >= action.pm) {
                             // It is ok to be in negative, it will just mean that we overkill or overheal, so the build is more efficient
@@ -457,7 +457,7 @@ export function buildTurns(paByTurns: number[], attributes: Attributes, opponent
                         const remainingPA = paForTurn - action.pa;
                         // The opponent is dead this action or it is the last action of the last turn
                         const isFinal = remainingLife[i] <= 0 || ((turn === nbTurns -1) && (remainingPA - action.pa < 0))
-                        isFinals.push(isFinal); 
+                        isFinals.push(isFinal);
                     }
                     const newPossibilities = probaTree.addLevel(currentBranch, probabilities, remainingLife, tokens, isFinals);
                     turnPossibilities = turnPossibilities.concat(newPossibilities);
