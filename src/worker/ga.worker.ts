@@ -20,12 +20,12 @@ self.addEventListener("message", e => {
     else {
         population = [...prevPopulation];
         // already evaluated in previous generation
-    }
 
-    let nextPopulation = generateNewGeneration(population, msg.configuration, msg.masterData);
-    nextPopulation = evaluatePopulation(nextPopulation, msg.configuration, msg.masterData);
-    nextPopulation = convertFitnessIntoProbabilities(nextPopulation);
-    nextPopulation = sortDescByFitness(nextPopulation);
+        population = generateNewGeneration(population, msg.configuration, msg.masterData);
+        population = evaluatePopulation(population, msg.configuration, msg.masterData);
+        population = convertFitnessIntoProbabilities(population);
+    }
+    population = sortDescByFitness(population);
 
     let bestSolution = msg.state.bestSolution;
 
@@ -37,10 +37,10 @@ self.addEventListener("message", e => {
         names = names + ", " + equipment.name;
     });
 
-    if (msg.state.bestSolution.fitness < nextPopulation[0].fitness) {
-        bestSolution = nextPopulation[0];
+    if (msg.state.bestSolution.fitness.fitness < population[0].fitness.fitness) {
+        bestSolution = population[0];
         console.log("change best solution: ");
-        console.log(nextPopulation[0]);
+        console.log(population[0]);
 
         let names = "";
         msg.state.bestSolution.genes.forEach((equipmentID, outfitPartID) => {
@@ -51,11 +51,12 @@ self.addEventListener("message", e => {
         });
     }
 
+    debugger;
     const response: MessageOut = {
         state: {
             isRunning: msg.state.isRunning,
             bestSolution: bestSolution,
-            population: nextPopulation,
+            population: population,
             generation: msg.state.generation + 1
         }
     };

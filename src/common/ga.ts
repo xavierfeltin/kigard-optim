@@ -307,6 +307,9 @@ export function createIndividual(id: number, config: Configuration, masterData: 
         hands: busyHands
     };
 
+    if (ind.genes.findIndex(val => val === null) != -1) {
+        throw "Contains null value when creating individual";
+    }
     return ind;
 }
 
@@ -356,6 +359,8 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
     let start = Date.now();
 
     let evaluated = {...ind};
+    evaluated.genes = [...ind.genes];
+    evaluated.fitness = {...ind.fitness};
 
     // Update configuration with individual
     let modified: Attributes = getPhenotype(ind, config, masterData);
@@ -368,7 +373,7 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
     }
 
     const fights: number[][] = [];
-    fights.push([9, 12, 6, 15, 13]);
+    fights.push([9, 12, 10]);
 
     let action: Action;
     let coefficients = {
@@ -471,9 +476,9 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
             coefficients.offensiveWarrior = 1;
             coefficients.offensiveAssassin = 1;
             coefficients.offensiveMage = 1;
-            coefficients.defensiveWarrior = 1;
-            coefficients.defensiveAssassin = 1;
-            coefficients.defensiveMage = 1;
+            coefficients.defensiveWarrior = 5;
+            coefficients.defensiveAssassin = 5;
+            coefficients.defensiveMage = 4;
             break;
         }
         case Profile.warrior: {
@@ -542,42 +547,42 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
     opponentAction.pa = 6; // fleau
     opponentAction.physicalDamageSuccess = profileIntermediateWarrior.str + (profileIntermediateWarrior.minDamage + profileIntermediateWarrior.maxDamage) / 2;
     opponentAction.criticalBonus = profileIntermediateWarrior.dex;
-    let intermediateWarriorDefenseSimulation = buildTurns(fights[0], profileIntermediateWarrior, modified, action);
+    let intermediateWarriorDefenseSimulation = buildTurns(fights[0], profileIntermediateWarrior, modified, opponentAction);
 
     opponentAction.pa = 8; // lance
     opponentAction.physicalDamageSuccess = profileAdvancedWarrior.str + (profileAdvancedWarrior.minDamage + profileAdvancedWarrior.maxDamage) / 2;
     opponentAction.criticalBonus = profileAdvancedWarrior.dex;
-    let advancedWarriorDefenseSimulation = buildTurns(fights[0], profileAdvancedWarrior, modified, action);
+    let advancedWarriorDefenseSimulation = buildTurns(fights[0], profileAdvancedWarrior, modified, opponentAction);
 
     opponentAction.pa = 6; // poignard
     opponentAction.physicalDamageSuccess = profileBeginnerAssassin.str + (profileBeginnerAssassin.minDamage + profileBeginnerAssassin.maxDamage) / 2;
     opponentAction.criticalBonus = profileBeginnerAssassin.dex;
-    let beginnerAssassinDefenseSimulation = buildTurns(fights[0], profileBeginnerAssassin, modified, action);
+    let beginnerAssassinDefenseSimulation = buildTurns(fights[0], profileBeginnerAssassin, modified, opponentAction);
 
     opponentAction.pa = 6; // poignard
     opponentAction.physicalDamageSuccess = profileIntermediateAssassin.str + (profileIntermediateAssassin.minDamage + profileIntermediateAssassin.maxDamage) / 2;
     opponentAction.criticalBonus = profileIntermediateAssassin.dex;
-    let intermediateAssassinDefenseSimulation = buildTurns(fights[0], profileIntermediateAssassin, modified, action);
+    let intermediateAssassinDefenseSimulation = buildTurns(fights[0], profileIntermediateAssassin, modified, opponentAction);
 
     opponentAction.pa = 6; // poignard
     opponentAction.physicalDamageSuccess = profileAdvancedAssassin.str + (profileAdvancedAssassin.minDamage + profileAdvancedAssassin.maxDamage) / 2;
     opponentAction.criticalBonus = profileAdvancedAssassin.dex;
-    let advancedAssassinDefenseSimulation = buildTurns(fights[0], profileAdvancedAssassin, modified, action);
+    let advancedAssassinDefenseSimulation = buildTurns(fights[0], profileAdvancedAssassin, modified, opponentAction);
 
     opponentAction.pa = 6; // fireball
     opponentAction.pm = 6;
     opponentAction.isMagic = true;
     opponentAction.magicSuccess = profileBeginnerMage.int;
     opponentAction.magicResisted = Math.floor(profileBeginnerMage.int / 2);
-    let beginnerMageDefenseSimulation = buildTurns(fights[0], profileBeginnerMage, modified, action);
+    let beginnerMageDefenseSimulation = buildTurns(fights[0], profileBeginnerMage, modified, opponentAction);
 
     opponentAction.magicSuccess = profileIntermediateMage.int;
     opponentAction.magicResisted = Math.floor(profileIntermediateMage.int / 2);
-    let intermediateMageDefenseSimulation = buildTurns(fights[0], profileIntermediateMage, modified, action);
+    let intermediateMageDefenseSimulation = buildTurns(fights[0], profileIntermediateMage, modified, opponentAction);
 
     opponentAction.magicSuccess = profileAdvancedMage.int;
     opponentAction.magicResisted = Math.floor(profileAdvancedMage.int / 2);
-    let advancedMageDefenseSimulation = buildTurns(fights[0], profileAdvancedMage, modified, action);
+    let advancedMageDefenseSimulation = buildTurns(fights[0], profileAdvancedMage, modified, opponentAction);
 
 
     console.log("Compute fitness");
@@ -592,7 +597,7 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
         offenseBeginnerMage: computeFitness(beginnerMageOffenseSimulation),
         offenseIntermediateMage: computeFitness(intermediateMageOffenseSimulation),
         offenseAdvancedMage: computeFitness(advancedMageOffenseSimulation),
-
+        
         defenseBeginnerWarrior: computeFitness(beginnerWarriorDefenseSimulation),
         defenseIntermediateWarrior: computeFitness(intermediateWarriorDefenseSimulation),
         defenseAdvancedWarrior: computeFitness(advancedWarriorDefenseSimulation),
@@ -603,6 +608,8 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
         defenseIntermediateMage: computeFitness(intermediateMageDefenseSimulation),
         defenseAdvancedMage: computeFitness(advancedMageDefenseSimulation)
     };
+
+    debugger;
 
     f.fitness = coefficients.offensiveWarrior * (f.offenseBeginnerWarrior + f.offenseIntermediateWarrior + f.offenseAdvancedWarrior) / 3;
     f.fitness += coefficients.offensiveAssassin * (f.offenseBeginnerAssassin + f.offenseIntermediateAssassin + f.offenseAdvancedAssassin) / 3;
@@ -681,20 +688,23 @@ export function pickParent(population: Individual[]): Individual {
 }
 
 export function generateTournamentPool(population: Individual[], poolSize: number): Individual[] {
-    const pool: Individual[] = [];
+    let pool: Individual[] = [];
     for (let i = 0; i < poolSize; i++) {
-        const candidate = pickParent(population);
+        const candidate = pickParentForTournament(population, poolSize);
         pool.push(candidate);
     }
+
+    pool = convertFitnessIntoProbabilities(pool);
+    pool = sortDescByProbability(pool);
     return pool;
 }
 
-export function pickParentFromTournament(population: Individual[], tournamentSize: number): Individual {
+export function pickParentForTournament(population: Individual[], tournamentSize: number): Individual {
     let best: Individual = createEmptyIndividual();
     for (let i = 0; i < tournamentSize; i++) {
         const index = Math.floor(Math.random() * population.length);
         const candidate = population[index];
-        if (best.id === 0 || candidate.fitness > best.fitness) {
+        if (best.fitness.fitness === 0 || candidate.fitness.fitness > best.fitness.fitness) {
             best = candidate;
         }
     }
@@ -871,6 +881,10 @@ export function mutate(ind: Individual, config: Configuration, masterData: Maste
     }
     // else do not modify the individual
 
+    if (mutant.genes.findIndex(val => val === null) != -1) {
+        throw "Contains null value when mutating";
+    }
+
     return mutant;
 }
 
@@ -904,8 +918,8 @@ export function crossOver(a: Individual, b: Individual, config: Configuration, m
         hands: 0
     };
 
-    const primaryGenes = a.fitness > b.fitness ? a.genes : b.genes;
-    const secondaryGenes = a.fitness > b.fitness ? b.genes : a.genes;
+    const primaryGenes = a.fitness.fitness > b.fitness.fitness ? a.genes : b.genes;
+    const secondaryGenes = a.fitness.fitness > b.fitness.fitness ? b.genes : a.genes;
 
     // Organize data depending of the profile
     let sequence = Array.from(Array(outfitParts.length).keys());
@@ -982,6 +996,11 @@ export function crossOver(a: Individual, b: Individual, config: Configuration, m
     }
     child.carriedWeight = carriedWeight;
     child.hands = busyHands;
+
+    if (child.genes.findIndex(val => val === null) != -1) {
+        throw "Contains null value when crossing over";
+    }
+
     return child;
 }
 
@@ -1009,8 +1028,8 @@ export function generateNewGeneration(population: Individual[], config: Configur
             let parentB;
 
             if (config.parameters.parentSelectionStrategy === "tournament") {
-                parentA = pickParentFromTournament(tournamentPool, config.parameters.tournamentSize);
-                parentB = pickParentFromTournament(tournamentPool, config.parameters.tournamentSize);
+                parentA = pickParent(tournamentPool);
+                parentB = pickParent(tournamentPool);
             }
             else {
                 parentA = pickParent(population);

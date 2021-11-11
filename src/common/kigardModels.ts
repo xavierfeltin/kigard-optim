@@ -329,7 +329,10 @@ export function buildTurns(paByTurns: number[], attributes: Attributes, opponent
         let actionDuringTurn = 1;
         let tokens: KigardToken[] = [];
 
-        while (paForTurn - action.pa >= 0) {
+        let actionPerformedCost = action.pa;
+
+        while (paForTurn - action.pa >= 0 
+            || (action.isThrowing && projectileForTurn === 0 && paForTurn - 1 >= 0)) {
             const nbPossibilitiesToProcess = turnPossibilities.length;
             for (let i = 0; i < nbPossibilitiesToProcess; i++) {
                 let currentBranch: Branch | undefined = turnPossibilities.shift();
@@ -446,25 +449,25 @@ export function buildTurns(paByTurns: number[], attributes: Attributes, opponent
                         else if (action.isThrowing && projectileForTurn === 0) {
                             //Reload for shooting next turn
                             projectileForTurn = attributes.nbProjectiles;
+                            actionPerformedCost = 1;
                         }
                     }
 
-                    // TODO: Add specific branch transformation from parent context here (bleeding, burning, reducing armor, ...)
-                    // May change pobabilities (if mm, pre, dodge, .... are concerned) or may change values (if token are concerned)
-
-                    const isFinals: boolean[] = []
-                    for (let i = 0; i < probabilities.length; i++) {
-                        const remainingPA = paForTurn - action.pa;
-                        // The opponent is dead this action or it is the last action of the last turn
-                        const isFinal = remainingLife[i] <= 0 || ((turn === nbTurns -1) && (remainingPA - action.pa < 0))
-                        isFinals.push(isFinal);
-                    }
-                    const newPossibilities = probaTree.addLevel(currentBranch, probabilities, remainingLife, tokens, isFinals);
-                    turnPossibilities = turnPossibilities.concat(newPossibilities);
+                    if (actionPerformedCost > 1) {
+                        const isFinals: boolean[] = []
+                        for (let i = 0; i < probabilities.length; i++) {
+                            const remainingPA = paForTurn - actionPerformedCost;
+                            // The opponent is dead this action or it is the last action of the last turn
+                            const isFinal = remainingLife[i] <= 0 || ((turn === nbTurns -1) && (remainingPA - actionPerformedCost < 0))
+                            isFinals.push(isFinal);
+                        }
+                        const newPossibilities = probaTree.addLevel(currentBranch, probabilities, remainingLife, tokens, isFinals);
+                        turnPossibilities = turnPossibilities.concat(newPossibilities);
+                    }                    
                 }
             }
 
-            paForTurn -= action.pa;
+            paForTurn -= actionPerformedCost;
             pmForTurn = pmForTurn - action.pm >= 0 ? Math.max(0, pmForTurn - action.pm) : pmForTurn;
             actionDuringTurn ++;
         }
