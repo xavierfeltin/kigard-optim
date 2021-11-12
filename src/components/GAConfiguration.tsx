@@ -19,7 +19,7 @@ export function GAConfiguration({onValueChange}: GAConfigurationProps) {
         crossoverStrategy: "",
         crossoverParentRatio: 0.5,
         tournamentSize: 5,
-        optimProfile: Profile.mage        
+        optimProfile: Profile.mage
     });
 
     useEffect(() => {
@@ -29,13 +29,14 @@ export function GAConfiguration({onValueChange}: GAConfigurationProps) {
     return (
         <div className="select-wrapper">
             <label className="select-one"> Profil </label>
+
             <Select className="select-two" onChange={v => setConfiguration({...configuration, optimProfile: Profile[v.target.value as keyof typeof Profile]})}>
                 <option value="mage">Mage</option>
                 <option value="healer">Soigneur</option>
                 <option value="tank">Tank</option>
                 <option value="warrior">Guerrier</option>
                 <option value="archer">Archer</option>
-            </Select>        
+            </Select>
         </div>
     )
 }

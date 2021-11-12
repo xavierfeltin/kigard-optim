@@ -1,4 +1,3 @@
-import { others } from "@chakra-ui/styled-system";
 import { Branch, ProbaTree } from "./math";
 
 export interface Attributes {
@@ -195,6 +194,90 @@ export const defaultEquipment: Equipment = {
 
 export const outfitParts: string[] = ["head", "body", "leftHand", "rightHand", "feet", "container"];
 
+export const emptyHead = {...defaultEquipment};
+emptyHead.name = "Casque non porté";
+
+export const emptyFeet = {...defaultEquipment};
+emptyFeet.name = "Chaussures non portées";
+emptyFeet.localization = Localization.Feet;
+
+export const emptyBody = {...defaultEquipment};
+emptyBody.name = "Armure non portée";
+emptyBody.localization = Localization.Body;
+
+export const emptyLeftHand = {...defaultEquipment};
+emptyLeftHand.name = "Main gauche vide";
+emptyLeftHand.localization = Localization.Lefthand;
+
+export const emptyRightHand = {...defaultEquipment};
+emptyRightHand.name = "Sans arme";
+emptyRightHand.localization = Localization.RightHand;
+emptyRightHand.pa = 6;
+
+export const emptyContainer = {...defaultEquipment};
+emptyContainer.name = "Pas de conteneur";
+emptyContainer.localization = Localization.Container;
+emptyContainer.kind = EquipmentClass.Container;
+emptyContainer.attributes.nbProjectiles = 1;
+
+export function getEmptyEquipment(localisation: Localization) {
+    const empty = {...defaultEquipment};
+
+    switch(localisation) {
+        case Localization.Head: {
+            empty.name = "Casque non porté";
+            empty.localization = Localization.Head;
+            break;
+        }
+        case Localization.Body: {
+            emptyBody.name = "Armure non portée";
+            emptyBody.localization = Localization.Body;
+            break;
+        }
+        case Localization.Lefthand: {
+            emptyLeftHand.name = "Main gauche vide";
+            emptyLeftHand.localization = Localization.Lefthand;
+            break;
+        }
+        case Localization.RightHand: {
+            emptyRightHand.name = "Sans arme";
+            emptyRightHand.localization = Localization.RightHand;
+            break;
+        }
+        case Localization.Feet: {
+            emptyFeet.name = "Chaussures non portées";
+            emptyFeet.localization = Localization.Feet;
+            break;
+        }
+        case Localization.Container : {
+            emptyContainer.name = "Pas de conteneur";
+            emptyContainer.localization = Localization.Container;
+            emptyContainer.kind = EquipmentClass.Container;
+            emptyContainer.attributes.nbProjectiles = 1;
+            break;
+        }
+        case Localization.Fetish: {
+            emptyContainer.name = "Pas de fétiche";
+            emptyContainer.localization = Localization.Fetish;
+            break;
+        }
+    }
+
+    return empty;
+}
+
+export function getDefaultOutfit(): Outfit {
+    return {
+        head: getEmptyEquipment(Localization.Head),
+        body: getEmptyEquipment(Localization.Body),
+        feet: getEmptyEquipment(Localization.Feet),
+        rightHand: getEmptyEquipment(Localization.RightHand),
+        leftHand: getEmptyEquipment(Localization.Lefthand),
+        fetish: getEmptyEquipment(Localization.Fetish),
+        container: getEmptyEquipment(Localization.Container),
+    };
+}
+
 export function generateEquipmentFromJSON (data: any): Equipment[] {
     let equipments: Equipment[] = [];
     for (const d of data) {
@@ -331,7 +414,7 @@ export function buildTurns(paByTurns: number[], attributes: Attributes, opponent
 
         let actionPerformedCost = action.pa;
 
-        while (paForTurn - action.pa >= 0 
+        while (paForTurn - action.pa >= 0
             || (action.isThrowing && projectileForTurn === 0 && paForTurn - 1 >= 0)) {
             const nbPossibilitiesToProcess = turnPossibilities.length;
             for (let i = 0; i < nbPossibilitiesToProcess; i++) {
@@ -463,7 +546,7 @@ export function buildTurns(paByTurns: number[], attributes: Attributes, opponent
                         }
                         const newPossibilities = probaTree.addLevel(currentBranch, probabilities, remainingLife, tokens, isFinals);
                         turnPossibilities = turnPossibilities.concat(newPossibilities);
-                    }                    
+                    }
                 }
             }
 

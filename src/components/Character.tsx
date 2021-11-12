@@ -48,8 +48,8 @@ export function Character({onValueChange}: CharacterProps) {
     }, [character, onValueChange]);
 
     return (
-        <div className="sheet">
-            <p> Personnage </p>
+        <div>
+            <p> Personnage actuel </p>
             <InputRangeButtons id="ch-con" label="Con" min={5} max={30} defaultVal={character.con} step={1} onChange={v => setCharacter({...character, con: v, allowedWeight: Math.floor((v + character.str) / 2), pv: v * 10})}/>
             <InputRangeButtons id="ch-str" label="For" min={5} max={30} defaultVal={character.str} step={1} onChange={v => setCharacter({...character, str: v, allowedWeight: Math.floor((v + character.con) / 2), maxDamage: v})}/>
             <InputRangeButtons id="ch-dex" label="Dex" min={5} max={30} defaultVal={character.dex} step={1} onChange={v => setCharacter({...character, dex: v})}/>
@@ -59,9 +59,6 @@ export function Character({onValueChange}: CharacterProps) {
             <InputRangeButtons id="ch-dodge" label="Esq" min={5} max={100} defaultVal={character.dodge} step={5} onChange={v => setCharacter({...character, dodge: v})}/>
             <InputRangeButtons id="ch-mm" label="MM" min={5} max={100} defaultVal={character.mm} step={5} onChange={v => setCharacter({...character, mm: v})}/>
             <InputRangeButtons id="ch-mr" label="RM" min={5} max={100} defaultVal={character.mr} step={5} onChange={v => setCharacter({...character, mr: v})}/>
-            <InputRangeButtons id="ch-rpm" label="PM/tr" min={1} max={30} defaultVal={character.rpm} step={1} onChange={v => setCharacter({...character, rpm: v})}/>
-            <InputRangeButtons id="ch-rpv" label="PV/tr" min={0} max={30} defaultVal={character.rpv} step={1} onChange={v => setCharacter({...character, rpv: v})}/>
-            <InputRangeButtons id="ch-armor" label="Armure" min={0} max={30} defaultVal={character.armor} step={1} onChange={v => setCharacter({...character, armor: v})}/>
         </div>
     )
 }

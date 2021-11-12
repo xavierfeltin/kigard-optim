@@ -1,11 +1,10 @@
 .inputrange-wrapper {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 50px 75px;
     grid-gap: 5px;
     grid-auto-rows: minmax(5px, auto);
-    width: 100%;    
 }
-  
+
 .inputrange-one {
     grid-column: 1;
     grid-row: 1;

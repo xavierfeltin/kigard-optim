@@ -31,6 +31,7 @@ export interface Individual {
     probability: number;
     carriedWeight: number,
     hands: number;
+    phenotype: Attributes;
 }
 
 export interface Fitness {
@@ -90,7 +91,8 @@ export function createEmptyIndividual(): Individual {
         },
         probability: 0,
         carriedWeight: 0,
-        hands: 0
+        hands: 0,
+        phenotype: {...defaultAttributes}
     }
 
     return ind;
@@ -304,7 +306,8 @@ export function createIndividual(id: number, config: Configuration, masterData: 
         },
         probability: 0,
         carriedWeight: carriedWeight,
-        hands: busyHands
+        hands: busyHands,
+        phenotype: {...defaultAttributes}
     };
 
     if (ind.genes.findIndex(val => val === null) != -1) {
@@ -597,7 +600,7 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
         offenseBeginnerMage: computeFitness(beginnerMageOffenseSimulation),
         offenseIntermediateMage: computeFitness(intermediateMageOffenseSimulation),
         offenseAdvancedMage: computeFitness(advancedMageOffenseSimulation),
-        
+
         defenseBeginnerWarrior: computeFitness(beginnerWarriorDefenseSimulation),
         defenseIntermediateWarrior: computeFitness(intermediateWarriorDefenseSimulation),
         defenseAdvancedWarrior: computeFitness(advancedWarriorDefenseSimulation),
@@ -620,6 +623,7 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
     f.fitness += coefficients.defensiveMage * (f.defenseBeginnerMage + f.defenseIntermediateMage + f.defenseAdvancedMage) / 3;
 
     evaluated.fitness = f;
+    evaluated.phenotype = modified;
 
     let end = Date.now();
     let delta = end - start;
@@ -751,7 +755,8 @@ export function mutate(ind: Individual, config: Configuration, masterData: Maste
         },
         probability: 0,
         carriedWeight: ind.carriedWeight,
-        hands: ind.hands
+        hands: ind.hands,
+        phenotype: {...defaultAttributes}
     };
 
     const phenotype: Attributes = getPhenotype(ind, config, masterData);
@@ -915,7 +920,8 @@ export function crossOver(a: Individual, b: Individual, config: Configuration, m
         probability: 0,
         id: Date.now(),
         carriedWeight: 0,
-        hands: 0
+        hands: 0,
+        phenotype: {...defaultAttributes}
     };
 
     const primaryGenes = a.fitness.fitness > b.fitness.fitness ? a.genes : b.genes;
