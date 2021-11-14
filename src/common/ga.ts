@@ -1,6 +1,6 @@
-import { Action, Attributes, buildTurns, defaultAttributes, defaultEquipment, Equipment, Localization, MasterDataOutfit, outfitParts, Profile } from "./kigardModels";
+import { Action, Attributes, buildTurns, defaultAttributes, defaultEquipment, Equipment, Localization, MasterDataOutfit, Outfit, outfitParts, Profile } from "./kigardModels";
 import { profileAdvancedAssassin, profileAdvancedMage, profileAdvancedWarrior, profileBeginnerAssassin, profileBeginnerMage, profileBeginnerWarrior, profileIntermediateAssassin, profileIntermediateMage, profileIntermediateWarrior } from "./kigardProfiles";
-import { Branch, ProbaTree, shuffle } from "./math";
+import { ProbaTree, shuffle } from "./math";
 
 export interface GAParameters {
     optimProfile: Profile;
@@ -15,6 +15,7 @@ export interface GAParameters {
 }
 export interface Configuration {
     data: Attributes;
+    currentOutfit: Outfit;
     parameters: GAParameters;
 }
 
@@ -310,7 +311,7 @@ export function createIndividual(id: number, config: Configuration, masterData: 
         phenotype: {...defaultAttributes}
     };
 
-    if (ind.genes.findIndex(val => val === null) != -1) {
+    if (ind.genes.findIndex(val => val === null) !== -1) {
         throw "Contains null value when creating individual";
     }
     return ind;
@@ -886,7 +887,7 @@ export function mutate(ind: Individual, config: Configuration, masterData: Maste
     }
     // else do not modify the individual
 
-    if (mutant.genes.findIndex(val => val === null) != -1) {
+    if (mutant.genes.findIndex(val => val === null) !== -1) {
         throw "Contains null value when mutating";
     }
 
@@ -1003,7 +1004,7 @@ export function crossOver(a: Individual, b: Individual, config: Configuration, m
     child.carriedWeight = carriedWeight;
     child.hands = busyHands;
 
-    if (child.genes.findIndex(val => val === null) != -1) {
+    if (child.genes.findIndex(val => val === null) !== -1) {
         throw "Contains null value when crossing over";
     }
 

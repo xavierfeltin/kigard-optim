@@ -230,35 +230,35 @@ export function getEmptyEquipment(localisation: Localization) {
             break;
         }
         case Localization.Body: {
-            emptyBody.name = "Armure non portée";
-            emptyBody.localization = Localization.Body;
+            empty.name = "Armure non portée";
+            empty.localization = Localization.Body;
             break;
         }
         case Localization.Lefthand: {
-            emptyLeftHand.name = "Main gauche vide";
-            emptyLeftHand.localization = Localization.Lefthand;
+            empty.name = "Main gauche vide";
+            empty.localization = Localization.Lefthand;
             break;
         }
         case Localization.RightHand: {
-            emptyRightHand.name = "Sans arme";
-            emptyRightHand.localization = Localization.RightHand;
+            empty.name = "Sans arme";
+            empty.localization = Localization.RightHand;
             break;
         }
         case Localization.Feet: {
-            emptyFeet.name = "Chaussures non portées";
-            emptyFeet.localization = Localization.Feet;
+            empty.name = "Chaussures non portées";
+            empty.localization = Localization.Feet;
             break;
         }
         case Localization.Container : {
-            emptyContainer.name = "Pas de conteneur";
-            emptyContainer.localization = Localization.Container;
-            emptyContainer.kind = EquipmentClass.Container;
-            emptyContainer.attributes.nbProjectiles = 1;
+            empty.name = "Pas de conteneur";
+            empty.localization = Localization.Container;
+            empty.kind = EquipmentClass.Container;
+            empty.attributes.nbProjectiles = 1;
             break;
         }
         case Localization.Fetish: {
-            emptyContainer.name = "Pas de fétiche";
-            emptyContainer.localization = Localization.Fetish;
+            empty.name = "Pas de fétiche";
+            empty.localization = Localization.Fetish;
             break;
         }
     }

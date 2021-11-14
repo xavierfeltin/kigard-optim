@@ -120,7 +120,7 @@ function App() {
       <Character onValueChange={handleCharacterChange}/>
       <COutfit  masterData={masterData} onValueChange={handleOutfitChange}/>
       <GAConfiguration onValueChange={handleGAConfigurationChange}/>
-      <Simulation character={character} parameters={simuParameters} masterData={masterData} onHasStarted={handleSimulationStart} onHasStopped={handleSimulationStop} onHasNewIteration={handleSimulationNewIteration}/>
+      <Simulation character={character} outfit={outfit} parameters={simuParameters} masterData={masterData} onHasStarted={handleSimulationStart} onHasStopped={handleSimulationStop} onHasNewIteration={handleSimulationNewIteration}/>
       {suggestion &&
         <Solution ind={suggestion} masterData={masterData} character={character}/>
       }

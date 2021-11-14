@@ -104,8 +104,9 @@ export class ProbaTree {
 
     public computeGlobalWeightAndValueForBranch(branch: Branch): Branch {
         let pathWeight = 1;
-        let current = branch;
+        
         /*
+        let current = branch;
         while (current.parent) {
             pathWeight = pathWeight * current.weight;
             current = current.parent;

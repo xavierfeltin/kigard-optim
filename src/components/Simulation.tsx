@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { createEmptyIndividual, GAParameters, Individual, SimuState } from "../common/ga";
-import { Attributes, MasterDataOutfit } from "../common/kigardModels";
+import { Attributes, MasterDataOutfit, Outfit } from "../common/kigardModels";
 import { MessageIn, MessageOut } from "../common/workerCommunication";
 import MyWorker from '../worker/ga.worker';
 
 export interface SimulationProps {
   character: Attributes,
+  outfit: Outfit,
   parameters: GAParameters,
   masterData: MasterDataOutfit;
   onHasStarted: () => void,
@@ -13,7 +14,7 @@ export interface SimulationProps {
   onHasNewIteration: (ind: Individual) => void;
 }
 
-export function Simulation({character, parameters, masterData, onHasStarted, onHasStopped, onHasNewIteration}: SimulationProps) {
+export function Simulation({character, outfit, parameters, masterData, onHasStarted, onHasStopped, onHasNewIteration}: SimulationProps) {
   const [worker, setWorker] = useState<Worker | null>(null);
   const [state, setState] = useState<SimuState>({
     isRunning: false,
@@ -71,6 +72,7 @@ export function Simulation({character, parameters, masterData, onHasStarted, onH
     const message: MessageIn = {
         configuration: {
           data: character,
+          currentOutfit: outfit,
           parameters: parameters
         },
         masterData: masterData,
@@ -78,7 +80,7 @@ export function Simulation({character, parameters, masterData, onHasStarted, onH
     };
 
     worker.postMessage(message);
-  }, [worker, state, character, parameters, masterData])
+  }, [worker, state, character, outfit, parameters, masterData])
 
   return (
     <div>
