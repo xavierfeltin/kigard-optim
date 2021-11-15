@@ -314,7 +314,7 @@ export function generateEquipmentFromJSON (data: any, localization: Localization
                 isBow: d.arc || 0,
                 isRifle: d.fusile || 0,
                 burning: d.brulure || 0,
-                regeneration: 0,
+                regeneration: d.pv, // pv/tr is equivalent to regeneration
                 poison: d.poison || 0,
                 bleeding: d.saignement || 0,
                 knockedOut: d.assome || 0,
@@ -463,7 +463,7 @@ export function buildTurns(paByTurns: number[], attributes: Attributes, opponent
                             //Burning and poison can not kill in game
                             remainingLife.map(val => Math.max(0, val - burning));
                             remainingLife.map(val => Math.max(0, val - poison));
-                            remainingLife.map(val => Math.min(opponent.pv, val + opponent.regeneration - bleeding));
+                            remainingLife.map(val => Math.min(opponent.pv, val + Math.max(0, opponent.regeneration - bleeding)));
 
                             oppAttr.dodge = Math.max(0, opponent.dodge - (knockedOut * 5));
                             oppAttr.armor = Math.max(0, opponent.armor - breach);
