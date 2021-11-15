@@ -51,7 +51,6 @@ self.addEventListener("message", e => {
         });
     }
 
-    debugger;
     const response: MessageOut = {
         state: {
             isRunning: msg.state.isRunning,
