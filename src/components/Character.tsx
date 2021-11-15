@@ -4,10 +4,11 @@ import { Attributes } from '../common/kigardModels';
 import { InputRangeButtons } from "./InputRangeButtons";
 
 export interface CharacterProps {
-    onValueChange: (attributes: Attributes) => void
+    onValueChange: (attributes: Attributes) => void;
+    className: string;
 }
 
-export function Character({onValueChange}: CharacterProps) {
+export function Character({onValueChange, className}: CharacterProps) {
 
     const [character, setCharacter] = useState<Attributes>({
         con: 5,
@@ -48,7 +49,7 @@ export function Character({onValueChange}: CharacterProps) {
     }, [character, onValueChange]);
 
     return (
-        <div>
+        <div className={className}>
             <p> Personnage actuel </p>
             <InputRangeButtons id="ch-con" label="Con" min={5} max={30} defaultVal={character.con} step={1} onChange={v => setCharacter({...character, con: v, allowedWeight: Math.floor((v + character.str) / 2), pv: v * 10})}/>
             <InputRangeButtons id="ch-str" label="For" min={5} max={30} defaultVal={character.str} step={1} onChange={v => setCharacter({...character, str: v, allowedWeight: Math.floor((v + character.con) / 2), maxDamage: v})}/>

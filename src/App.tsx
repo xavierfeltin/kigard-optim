@@ -46,12 +46,12 @@ function App() {
   const [suggestion, setSuggestion] = useState<Individual | undefined>(undefined);
 
   useEffect(() => {
-    const headEquipments = generateEquipmentFromJSON(headEquipmentJSON);
-    const feetEquipments = generateEquipmentFromJSON(feetEquipmentJSON);
-    const bodyEquipments = generateEquipmentFromJSON(bodyEquipmentJSON);
-    const leftHandEquipments = generateEquipmentFromJSON(leftHandEquipmentJSON);
-    const rightHandEquipments = generateEquipmentFromJSON(rightHandEquipmentJSON);
-    const containerEquipments = generateEquipmentFromJSON(containerEquipmentJSON);
+    const headEquipments = generateEquipmentFromJSON(headEquipmentJSON, Localization.Head);
+    const feetEquipments = generateEquipmentFromJSON(feetEquipmentJSON, Localization.Feet);
+    const bodyEquipments = generateEquipmentFromJSON(bodyEquipmentJSON, Localization.Body);
+    const leftHandEquipments = generateEquipmentFromJSON(leftHandEquipmentJSON, Localization.Lefthand);
+    const rightHandEquipments = generateEquipmentFromJSON(rightHandEquipmentJSON, Localization.RightHand);
+    const containerEquipments = generateEquipmentFromJSON(containerEquipmentJSON, Localization.Container);
 
     const emptyHead = {...defaultEquipment};
     emptyHead.name = "Casque non porté";
@@ -117,8 +117,10 @@ function App() {
 
   return (
     <div>
-      <Character onValueChange={handleCharacterChange}/>
-      <COutfit  masterData={masterData} onValueChange={handleOutfitChange}/>
+      <div className="app-wrapper">
+        <Character className="app-character" onValueChange={handleCharacterChange}/>
+        <COutfit className="app-equipment" masterData={masterData} onValueChange={handleOutfitChange}/>
+      </div>
       <GAConfiguration onValueChange={handleGAConfigurationChange}/>
       <Simulation character={character} outfit={outfit} parameters={simuParameters} masterData={masterData} onHasStarted={handleSimulationStart} onHasStopped={handleSimulationStop} onHasNewIteration={handleSimulationNewIteration}/>
       {suggestion &&

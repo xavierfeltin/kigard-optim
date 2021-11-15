@@ -7,9 +7,10 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/table';
 export interface OutfitProps {
     masterData: MasterDataOutfit;
     onValueChange: (attributes: Outfit) => void;
+    className: string;
 }
 
-export function COutfit({masterData, onValueChange}: OutfitProps) {
+export function COutfit({masterData, onValueChange, className}: OutfitProps) {
     const [outfit, setOutfit] = useState<Outfit>(getDefaultOutfit());
 
     useEffect(() => {
@@ -23,7 +24,7 @@ export function COutfit({masterData, onValueChange}: OutfitProps) {
         const equipment = partMasterData.find(equipment => equipment.id === parseInt(equipmentID));
 
         switch(localization) {
-            case Localization.Head: {                
+            case Localization.Head: {
                 setOutfit({...outfit, head: equipment || getEmptyEquipment(localization)});
                 break;
             }
@@ -51,7 +52,7 @@ export function COutfit({masterData, onValueChange}: OutfitProps) {
                 setOutfit({...outfit, fetish: equipment || getEmptyEquipment(localization)});
                 break;
             }
-        }        
+        }
     }
 
     const generateEquipment = function(localization: Localization, masterData: MasterDataOutfit, onChangeEquipment: (equipmentID: string, localization: Localization, masterData: MasterDataOutfit) => void): ReactElement {
@@ -59,8 +60,12 @@ export function COutfit({masterData, onValueChange}: OutfitProps) {
         const partName = outfitParts[idx].toLowerCase();
         let partMasterData = masterData[partName as keyof MasterDataOutfit];
         const selectKey = "select-" + partName;
+
+        console.log("generateEquipment: " + localization + " - key: " + selectKey);
+
         return (
-            <Select onChange={(event: React.ChangeEvent<HTMLSelectElement>) => onChangeEquipment(event.target.value,  localization, masterData)} value={outfit[outfitParts[idx] as keyof Outfit].id}>
+            <Select onChange={(event: React.ChangeEvent<HTMLSelectElement>) => onChangeEquipment(event.target.value,  localization, masterData)}
+                    value={outfit[outfitParts[idx] as keyof Outfit].id}>
                 {partMasterData.map((equipment: Equipment) => (
                     <option key={selectKey + "-" + equipment.id} value={equipment.id}> {equipment.name} </option>
                 ))}
@@ -95,6 +100,7 @@ export function COutfit({masterData, onValueChange}: OutfitProps) {
     }
 
     const generateRow = function(equipment: Equipment, onChangeEquipment: (equipmentID: string, localization: Localization, masterData: MasterDataOutfit) => void): ReactElement {
+        console.log(equipment);
         return (
             <Tr key={"tr-initial-" + equipment.localization + "-" + equipment.id}>
                 <Td key={"td-initial-" + equipment.localization + "-name"}>
@@ -135,31 +141,13 @@ export function COutfit({masterData, onValueChange}: OutfitProps) {
     }
 
     return (
-        /*
-        <div>
-            <div>
-                <label className="select-one"> Tête </label>
-                {generateEquipment(Localization.Head, masterData, onChangeEquipment)}
-                <label className="select-one"> Buste </label>
-                {generateEquipment(Localization.Body, masterData, onChangeEquipment)}
-                <label className="select-one"> Main gauche </label>
-                {generateEquipment(Localization.Lefthand, masterData, onChangeEquipment)}
-                <label className="select-one"> Arme </label>
-                {generateEquipment(Localization.RightHand, masterData, onChangeEquipment)}
-                <label className="select-one"> Pieds </label>
-                {generateEquipment(Localization.Feet, masterData, onChangeEquipment)}
-            </div>
-        </div>
-        */
-
-        <div className="initial-equipment">
+        <div className={className}>
         <Table id="table-initial">
             <Thead>
                 <Tr>{generateHeader()}</Tr>
             </Thead>
             <Tbody>
                 {outfitParts.map((part) => {
-                    console.log(outfit[part as keyof Outfit]);
                     return generateRow(outfit[part as keyof Outfit], onChangeEquipment);
                 })}
             </Tbody>

@@ -278,14 +278,14 @@ export function getDefaultOutfit(): Outfit {
     };
 }
 
-export function generateEquipmentFromJSON (data: any): Equipment[] {
+export function generateEquipmentFromJSON (data: any, localization: Localization): Equipment[] {
     let equipments: Equipment[] = [];
     for (const d of data) {
         const equipment: Equipment = {
             id: d.id,
             name: d.nom,
             kind: getEquipmentClassFromString(d.type),
-            localization: getLocalizationFromString("tete"), //TODO : change with more equipment
+            localization: localization, //getLocalizationFromString("tete"), //TODO : change with more equipment
             weight: d.poids || 0,
             hands: d.mains || 0,
             pa: d.pa || 0,
@@ -354,6 +354,7 @@ function getEquipmentClassFromString(name: string): EquipmentClass {
     }
 }
 
+/*
 function getLocalizationFromString(name: string): Localization {
     switch (name) {
         case "tete": return Localization.Head;
@@ -365,6 +366,7 @@ function getLocalizationFromString(name: string): Localization {
         default: throw Error("localization " + name + " not defined");
     }
 }
+*/
 
 function getQualiyFromString(name: string): Quality {
     switch (name) {
