@@ -116,7 +116,7 @@ export function Solution({ind, masterData, character}: SolutionProps) {
                     <span>Dégâts espérés infligés par profil de l'opposant:</span>
                     <Table id="table-fitness-offense">
                         <Thead>
-                            <Tr><Td>Profils</Td> <Td>Débutant</Td> <Td>Intermédiaire</Td> <Td>Avancé</Td> </Tr>
+                            <Tr><Td>Profils</Td><Td>Débutant</Td><Td>Intermédiaire</Td><Td>Avancé</Td></Tr>
                         </Thead>
                         <Tbody>
                             <Tr>
@@ -145,7 +145,7 @@ export function Solution({ind, masterData, character}: SolutionProps) {
                     <span>PV perdus après attaques par profil de l'opposant:</span>
                     <Table id="table-fitness-defense">
                         <Thead>
-                            <Tr><Td>Profils</Td> <Td>Débutant</Td> <Td>Intermédiaire</Td> <Td>Avancé</Td> </Tr>
+                            <Tr><Td>Profils</Td><Td>Débutant</Td><Td>Intermédiaire</Td><Td>Avancé</Td></Tr>
                         </Thead>
                         <Tbody>
                             <Tr>

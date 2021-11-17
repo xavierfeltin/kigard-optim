@@ -343,9 +343,7 @@ export function generatePopulation(config: Configuration, masterData: MasterData
 
 export function evaluatePopulation(population: Individual[], config: Configuration, masterData: MasterDataOutfit) {
     let evaluated: Individual[] = [];
-    console.log("eval pop");
     for(let indiv of population) {
-        console.log("eval indiv " + indiv.id + ", genes: " + JSON.stringify(indiv.genes));
         const evalInd = evaluateIndividual(indiv, config, masterData);
         evaluated.push(evalInd);
     }
@@ -526,7 +524,6 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
         default: throw Error("optimization profile " + config.parameters.optimProfile + " not defined");
     }
 
-    console.log("Build offensive simulations, action " + action.name + ", PA: " + action.pa);
     let beginnerWarriorOffenseSimulation = buildTurns(fights[0], modified, profileBeginnerWarrior, action);
     let intermediateWarriorOffenseSimulation = buildTurns(fights[0], modified, profileIntermediateWarrior, action);
     let advancedWarriorOffenseSimulation = buildTurns(fights[0], modified, profileAdvancedWarrior, action);
@@ -556,7 +553,6 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
         isHealing: false
     };
 
-    console.log("Build defense simulation");
     opponentAction.pa = 6; //short sword
     opponentAction.physicalDamageSuccess = profileBeginnerWarrior.str + (profileBeginnerWarrior.minDamage + profileBeginnerWarrior.maxDamage) / 2;
     opponentAction.criticalBonus = profileBeginnerWarrior.dex;
@@ -602,51 +598,69 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
     opponentAction.magicResisted = Math.floor(profileAdvancedMage.int / 2);
     let advancedMageDefenseSimulation = buildTurns(fights[0], profileAdvancedMage, modified, opponentAction);
 
-
-    console.log("Compute fitness");
     const f: Fitness = {
         fitness: 0,
-        offenseBeginnerWarrior: computeFitness(beginnerWarriorOffenseSimulation),
-        offenseIntermediateWarrior: computeFitness(intermediateWarriorOffenseSimulation),
-        offenseAdvancedWarrior: computeFitness(advancedWarriorOffenseSimulation),
-        offenseBeginnerAssassin: computeFitness(beginnerAssassinOffenseSimulation),
-        offenseIntermediateAssassin: computeFitness(intermediateAssassinOffenseSimulation),
-        offenseAdvancedAssassin: computeFitness(advancedAssassinOffenseSimulation),
-        offenseBeginnerMage: computeFitness(beginnerMageOffenseSimulation),
-        offenseIntermediateMage: computeFitness(intermediateMageOffenseSimulation),
-        offenseAdvancedMage: computeFitness(advancedMageOffenseSimulation),
+        offenseBeginnerWarrior: computeExpectedValue(beginnerWarriorOffenseSimulation),
+        offenseIntermediateWarrior: computeExpectedValue(intermediateWarriorOffenseSimulation),
+        offenseAdvancedWarrior: computeExpectedValue(advancedWarriorOffenseSimulation),
+        offenseBeginnerAssassin: computeExpectedValue(beginnerAssassinOffenseSimulation),
+        offenseIntermediateAssassin: computeExpectedValue(intermediateAssassinOffenseSimulation),
+        offenseAdvancedAssassin: computeExpectedValue(advancedAssassinOffenseSimulation),
+        offenseBeginnerMage: computeExpectedValue(beginnerMageOffenseSimulation),
+        offenseIntermediateMage: computeExpectedValue(intermediateMageOffenseSimulation),
+        offenseAdvancedMage: computeExpectedValue(advancedMageOffenseSimulation),
 
-        defenseBeginnerWarrior: computeFitness(beginnerWarriorDefenseSimulation),
-        defenseIntermediateWarrior: computeFitness(intermediateWarriorDefenseSimulation),
-        defenseAdvancedWarrior: computeFitness(advancedWarriorDefenseSimulation),
-        defenseBeginnerAssassin: computeFitness(beginnerAssassinDefenseSimulation),
-        defenseIntermediateAssassin: computeFitness(intermediateAssassinDefenseSimulation),
-        defenseAdvancedAssassin: computeFitness(advancedAssassinDefenseSimulation),
-        defenseBeginnerMage: computeFitness(beginnerMageDefenseSimulation),
-        defenseIntermediateMage: computeFitness(intermediateMageDefenseSimulation),
-        defenseAdvancedMage: computeFitness(advancedMageDefenseSimulation)
+        defenseBeginnerWarrior: computeExpectedValue(beginnerWarriorDefenseSimulation),
+        defenseIntermediateWarrior: computeExpectedValue(intermediateWarriorDefenseSimulation),
+        defenseAdvancedWarrior: computeExpectedValue(advancedWarriorDefenseSimulation),
+        defenseBeginnerAssassin: computeExpectedValue(beginnerAssassinDefenseSimulation),
+        defenseIntermediateAssassin: computeExpectedValue(intermediateAssassinDefenseSimulation),
+        defenseAdvancedAssassin: computeExpectedValue(advancedAssassinDefenseSimulation),
+        defenseBeginnerMage: computeExpectedValue(beginnerMageDefenseSimulation),
+        defenseIntermediateMage: computeExpectedValue(intermediateMageDefenseSimulation),
+        defenseAdvancedMage: computeExpectedValue(advancedMageDefenseSimulation)
     };
 
-    f.fitness = coefficients.offensiveWarrior * (f.offenseBeginnerWarrior + f.offenseIntermediateWarrior + f.offenseAdvancedWarrior) / 3;
-    f.fitness += coefficients.offensiveAssassin * (f.offenseBeginnerAssassin + f.offenseIntermediateAssassin + f.offenseAdvancedAssassin) / 3;
-    f.fitness += coefficients.offensiveMage * (f.offenseBeginnerMage + f.offenseIntermediateMage + f.offenseAdvancedMage) / 3;
+    f.fitness = coefficients.offensiveWarrior * (
+        computeFitness(beginnerWarriorOffenseSimulation, false)
+        + 2 * computeFitness(intermediateWarriorOffenseSimulation, false)
+        + 3 * computeFitness(advancedWarriorOffenseSimulation, false)) / 3;
+    f.fitness += coefficients.offensiveAssassin * (
+        computeFitness(beginnerAssassinOffenseSimulation, false)
+        + 2 * computeFitness(intermediateAssassinOffenseSimulation, false)
+        + 3 * computeFitness(advancedAssassinOffenseSimulation, false)) / 3;
+    f.fitness += coefficients.offensiveMage * (
+        computeFitness(beginnerMageOffenseSimulation, false)
+        + 2 * computeFitness(intermediateMageOffenseSimulation, false)
+        + 3 * computeFitness(advancedMageOffenseSimulation, false)) / 3;
 
-    f.fitness += coefficients.defensiveWarrior * (f.defenseBeginnerWarrior + f.defenseIntermediateWarrior + f.defenseAdvancedWarrior) / 3;
-    f.fitness += coefficients.defensiveAssassin * (f.defenseBeginnerAssassin + f.defenseIntermediateAssassin + f.defenseAdvancedAssassin) / 3;
-    f.fitness += coefficients.defensiveMage * (f.defenseBeginnerMage + f.defenseIntermediateMage + f.defenseAdvancedMage) / 3;
+    f.fitness += coefficients.defensiveWarrior * (
+        computeFitness(beginnerWarriorDefenseSimulation, true)
+        + 2 * computeFitness(intermediateWarriorDefenseSimulation, true)
+        + 3 * computeFitness(advancedWarriorDefenseSimulation, true)) / 3;
+    f.fitness += coefficients.defensiveAssassin * (
+        computeFitness(beginnerAssassinDefenseSimulation, true)
+        + 2 * computeFitness(intermediateAssassinDefenseSimulation, true)
+        + 3 * computeFitness(advancedAssassinDefenseSimulation, true)) / 3;
+    f.fitness += coefficients.defensiveMage * (
+        computeFitness(beginnerMageDefenseSimulation, true)
+        + 2 * computeFitness(intermediateMageDefenseSimulation, true)
+        + 3 * computeFitness(advancedMageDefenseSimulation, true)) / 3;
 
     evaluated.fitness = f;
     evaluated.phenotype = modified;
 
-    let end = Date.now();
-    let delta = end - start;
-    console.log("eval time: " + delta + " ms");
-
     return evaluated;
 }
 
-function computeFitness(simulation: ProbaTree): number {
+function computeExpectedValue(simulation: ProbaTree): number {
     const expectedValue = simulation.getTreeExpectedValue();
+    return expectedValue;
+}
+
+function computeFitness(simulation: ProbaTree, isDefense: boolean): number {
+    const depthCoefficient = isDefense ? (Math.pow(2,8) - simulation.getNbBranches()) : simulation.getNbBranches();
+    const expectedValue = simulation.getTreeExpectedValue() / depthCoefficient;
     return expectedValue;
 }
 

@@ -20,11 +20,11 @@ export const profileBeginnerWarrior: Attributes = {
     allowedWeight: 0,
     pv: 70,
     mp: 25,
-    nbSpellAttach: 1,
+    nbSpellAttach: 0,
     nbProjectiles: 0,
     isBow: 0,
     isRifle: 0,
-    burning: 2, //fireball
+    burning: 0, //fireball
     regeneration: 0,
     poison: 0,
     bleeding: 0,
@@ -58,7 +58,7 @@ export const profileIntermediateWarrior: Attributes = {
     nbProjectiles: 0,
     isBow: 0,
     isRifle: 0,
-    burning: 2, //fireball
+    burning: 0, //fireball
     regeneration: 0,
     poison: 0,
     bleeding: 0,
@@ -88,16 +88,16 @@ export const profileAdvancedWarrior: Attributes = {
     allowedWeight: 0,
     pv: 110,
     mp: 25,
-    nbSpellAttach: 1,
+    nbSpellAttach: 0,
     nbProjectiles: 0,
     isBow: 0,
     isRifle: 0,
-    burning: 2, //fireball
+    burning: 0, //fireball
     regeneration: 0,
     poison: 0,
     bleeding: 0,
     knockedOut: 0,
-    breach: 1,
+    breach: 0,
     terror: 0,
     necrosis: 0
 };
@@ -122,11 +122,11 @@ export const profileBeginnerAssassin: Attributes = {
     allowedWeight: 0,
     pv: 70,
     mp: 25,
-    nbSpellAttach: 1,
+    nbSpellAttach: 0,
     nbProjectiles: 0,
     isBow: 0,
     isRifle: 0,
-    burning: 2, //fireball
+    burning: 0, //fireball
     regeneration: 0,
     poison: 0,
     bleeding: 0,
@@ -156,11 +156,11 @@ export const profileIntermediateAssassin: Attributes = {
     allowedWeight: 0,
     pv: 80,
     mp: 25,
-    nbSpellAttach: 1,
+    nbSpellAttach: 0,
     nbProjectiles: 0,
     isBow: 0,
     isRifle: 0,
-    burning: 2, //fireball
+    burning: 0, //fireball
     regeneration: 0,
     poison: 0,
     bleeding: 0,
@@ -190,11 +190,11 @@ export const profileAdvancedAssassin: Attributes = {
     allowedWeight: 0,
     pv: 90,
     mp: 25,
-    nbSpellAttach: 1,
+    nbSpellAttach: 0,
     nbProjectiles: 0,
     isBow: 0,
     isRifle: 0,
-    burning: 2, //fireball
+    burning: 0, //fireball
     regeneration: 0,
     poison: 0,
     bleeding: 0,

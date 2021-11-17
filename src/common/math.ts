@@ -37,9 +37,11 @@ export function shuffle(sequence: number[]): number[] {
 export class ProbaTree {
     public root: Branch;
     public expectedValue: number;
+    public nbBranches: number;
 
     public constructor(initialValue: number = 0) {
         this.expectedValue = 0;
+        this.nbBranches = 0;
         this.root = {
             weight: 1,
             depthWeight: 1,
@@ -71,19 +73,13 @@ export class ProbaTree {
                 branches: undefined
             }
 
-            /*
-            if (!currentBranch.branches) {
-                currentBranch.branches = [];
-            }
-            currentBranch.branches.push(newBranch);
-            */
-
             if (isFinals[i]) {
-                this.expectedValue += newBranch.depthWeight * (this.root.value - newBranch.value); 
-            }  
+                this.expectedValue += newBranch.depthWeight * (this.root.value - newBranch.value);
+            }
             else {
                 newBranches.push(newBranch);
-            }          
+                this.nbBranches++;
+            }
         }
 
         return newBranches;
@@ -104,14 +100,6 @@ export class ProbaTree {
 
     public computeGlobalWeightAndValueForBranch(branch: Branch): Branch {
         let pathWeight = 1;
-        
-        /*
-        let current = branch;
-        while (current.parent) {
-            pathWeight = pathWeight * current.weight;
-            current = current.parent;
-        }
-        */
 
         return {
             weight: pathWeight,
@@ -125,6 +113,10 @@ export class ProbaTree {
 
     public getTreeExpectedValue(): number {
         return this.expectedValue;
+    }
+
+    public getNbBranches(): number {
+        return this.nbBranches;
     }
 }
 

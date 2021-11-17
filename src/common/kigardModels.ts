@@ -406,7 +406,6 @@ export function buildTurns(paByTurns: number[], attributes: Attributes, opponent
     let pmForTurn = 25;
     let projectileForTurn = attributes.nbProjectiles;
     let attr = {...attributes};
-    let oppAttr = {...opponent};
 
     for (let turn = 0; turn < nbTurns; turn++) {
         let paForTurn = paByTurns[turn];
@@ -418,13 +417,15 @@ export function buildTurns(paByTurns: number[], attributes: Attributes, opponent
 
         while (paForTurn - action.pa >= 0
             || (action.isThrowing && projectileForTurn === 0 && paForTurn - 1 >= 0)) {
+
             const nbPossibilitiesToProcess = turnPossibilities.length;
             for (let i = 0; i < nbPossibilitiesToProcess; i++) {
                 let currentBranch: Branch | undefined = turnPossibilities.shift();
                 if (currentBranch && currentBranch.value > 0) {
-
+                    let oppAttr = {...opponent};
                     let probabilities: number[] = [];
                     let remainingLife: number[] = [];
+
                     if (action.isMagic) {
                         // MM: 15, RM: 30 => threshold = 50 + 30 - 15 = 75 => hitting Proba = 25% / missing Proba = 75%
                         const threshold: number = action.isHealing ? getHealingMagicThreshold(attr.mm, oppAttr.mr) : getHostileMagicThreshold(attr.mm, oppAttr.mr);
@@ -453,12 +454,12 @@ export function buildTurns(paByTurns: number[], attributes: Attributes, opponent
                         else {
                             // Apply status effect before solving the turn
                             const burning = currentBranch.token.burning;
-                            const poison = currentBranch.token.burning;
-                            const bleeding = currentBranch.token.burning;
-                            const knockedOut = currentBranch.token.burning;
-                            const breach = currentBranch.token.burning;
-                            const terror = currentBranch.token.burning;
-                            const necrosis = currentBranch.token.burning;
+                            const poison = currentBranch.token.poison;
+                            const bleeding = currentBranch.token.bleeding;
+                            const knockedOut = currentBranch.token.knockedOut;
+                            const breach = currentBranch.token.breach;
+                            const terror = currentBranch.token.terror;
+                            const necrosis = currentBranch.token.necrosis;
 
                             //Burning and poison can not kill in game
                             remainingLife.map(val => Math.max(0, val - burning));
@@ -487,13 +488,12 @@ export function buildTurns(paByTurns: number[], attributes: Attributes, opponent
                         };
 
                         probabilities.forEach(val => {
-                            tokens.push(updatedToken);
+                            tokens.push({...updatedToken});
                         });
                     }
 
                     if (action.isMagic) {
                         if (pmForTurn >= action.pm) {
-                            // It is ok to be in negative, it will just mean that we overkill or overheal, so the build is more efficient
                             remainingLife = [remainingLife[0] - action.magicSuccess, remainingLife[1] - action.magicResisted];
 
                             // Tokens are increased only if the spell is a success
@@ -508,8 +508,8 @@ export function buildTurns(paByTurns: number[], attributes: Attributes, opponent
                     }
                     else {
                         if ((action.isThrowing && projectileForTurn > 0) || !action.isThrowing) {
-                            remainingLife = [remainingLife[0] - (action.physicalDamageSuccess + action.criticalBonus) + oppAttr.armor,
-                            remainingLife[1] - action.physicalDamageSuccess + oppAttr.armor,
+                            remainingLife = [remainingLife[0] - Math.max(0, (action.physicalDamageSuccess + action.criticalBonus) - oppAttr.armor),
+                            remainingLife[1] - Math.max(0, action.physicalDamageSuccess - oppAttr.armor),
                             remainingLife[2]]; // no damage when dodging
 
                             //Add tokens after attacking if any
@@ -542,10 +542,15 @@ export function buildTurns(paByTurns: number[], attributes: Attributes, opponent
                         const isFinals: boolean[] = []
                         for (let i = 0; i < probabilities.length; i++) {
                             const remainingPA = paForTurn - actionPerformedCost;
-                            // The opponent is dead this action or it is the last action of the last turn
-                            const isFinal = remainingLife[i] <= 0 || ((turn === nbTurns -1) && (remainingPA - actionPerformedCost < 0))
+                            // final step if :
+                            // The opponent is dead this action
+                            // or it is the last action of the last turn
+                            // or the probability to make the action is 0
+                            const isFinal = probabilities[i] === 0 || remainingLife[i] <= 0 || ((turn === nbTurns -1) && (remainingPA - actionPerformedCost < 0))
                             isFinals.push(isFinal);
                         }
+
+                        remainingLife = remainingLife.map((value: number) => Math.max(0, value)); // could not lost more than PV
                         const newPossibilities = probaTree.addLevel(currentBranch, probabilities, remainingLife, tokens, isFinals);
                         turnPossibilities = turnPossibilities.concat(newPossibilities);
                     }

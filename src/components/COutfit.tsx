@@ -61,8 +61,6 @@ export function COutfit({masterData, onValueChange, className}: OutfitProps) {
         let partMasterData = masterData[partName as keyof MasterDataOutfit];
         const selectKey = "select-" + partName;
 
-        console.log("generateEquipment: " + localization + " - key: " + selectKey);
-
         return (
             <Select onChange={(event: React.ChangeEvent<HTMLSelectElement>) => onChangeEquipment(event.target.value,  localization, masterData)}
                     value={outfit[outfitParts[idx] as keyof Outfit].id}>
@@ -100,7 +98,6 @@ export function COutfit({masterData, onValueChange, className}: OutfitProps) {
     }
 
     const generateRow = function(equipment: Equipment, onChangeEquipment: (equipmentID: string, localization: Localization, masterData: MasterDataOutfit) => void): ReactElement {
-        console.log(equipment);
         return (
             <Tr key={"tr-initial-" + equipment.localization + "-" + equipment.id}>
                 <Td key={"td-initial-" + equipment.localization + "-name"}>
