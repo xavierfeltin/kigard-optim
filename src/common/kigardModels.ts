@@ -411,13 +411,11 @@ export function buildTurns(paByTurns: number[], attributes: Attributes, opponent
         let paForTurn = paByTurns[turn];
         pmForTurn = Math.min(25, pmForTurn + attributes.rpm);
         let actionDuringTurn = 1;
-        let tokens: KigardToken[] = [];
-
         let actionPerformedCost = action.pa;
+        let tokens: KigardToken[] = [];
 
         while (paForTurn - action.pa >= 0
             || (action.isThrowing && projectileForTurn === 0 && paForTurn - 1 >= 0)) {
-
             const nbPossibilitiesToProcess = turnPossibilities.length;
             for (let i = 0; i < nbPossibilitiesToProcess; i++) {
                 let currentBranch: Branch | undefined = turnPossibilities.shift();
@@ -546,7 +544,7 @@ export function buildTurns(paByTurns: number[], attributes: Attributes, opponent
                             // The opponent is dead this action
                             // or it is the last action of the last turn
                             // or the probability to make the action is 0
-                            const isFinal = probabilities[i] === 0 || remainingLife[i] <= 0 || ((turn === nbTurns -1) && (remainingPA - actionPerformedCost < 0))
+                            const isFinal = isFinalMoveOnSimulationBranch(probabilities[i], remainingLife[i], turn, paByTurns, (remainingPA - actionPerformedCost), action.pa);
                             isFinals.push(isFinal);
                         }
 
@@ -564,4 +562,20 @@ export function buildTurns(paByTurns: number[], attributes: Attributes, opponent
     }
 
     return probaTree;
+}
+
+function isFinalMoveOnSimulationBranch(probability: number, remainingLife: number, turn: number, turns: number[], remainingPAForTurn: number, actionPA: number): boolean {
+    let couldActNextTurns = false;
+    let i = turn + 1;
+    while(!couldActNextTurns && i < turns.length) {
+        couldActNextTurns = (actionPA <= turns[i]);
+        i++;
+    }
+
+    const isFinal = (probability === 0)
+        || (remainingLife <= 0)
+        || (turn === (turns.length - 1) && remainingPAForTurn < 0)
+        || (!couldActNextTurns && remainingPAForTurn < 0);
+
+    return isFinal;
 }

@@ -56,7 +56,7 @@ export class ProbaTree {
                 terror: 0,
                 necrosis: 0
             },
-            //parent: undefined,
+            parent: undefined,
             branches: []
         };
     }
@@ -69,17 +69,24 @@ export class ProbaTree {
                 depthWeight: weights[i] * currentBranch.depthWeight,
                 value: values[i],
                 token: {...tokens[i]},
-                //parent: currentBranch,
+                parent: currentBranch,
                 branches: undefined
             }
 
             if (isFinals[i]) {
-                this.expectedValue += newBranch.depthWeight * (this.root.value - newBranch.value);
+                this.expectedValue = this.expectedValue + (newBranch.depthWeight * (this.root.value - newBranch.value));
             }
             else {
                 newBranches.push(newBranch);
                 this.nbBranches++;
             }
+
+            /*
+            if (!currentBranch.branches) {
+                currentBranch.branches = [];
+            }
+            currentBranch.branches.push(newBranch);
+            */
         }
 
         return newBranches;
@@ -106,7 +113,7 @@ export class ProbaTree {
             depthWeight: branch.depthWeight,
             value: this.root.value - branch.value,
             token: {...branch.token},
-            //parent: undefined,
+            parent: undefined,
             branches: undefined
         };
     }
@@ -125,6 +132,6 @@ export interface Branch {
     depthWeight: number;
     value: number;
     token: KigardToken;
-    //parent: Branch | undefined;
+    parent: Branch | undefined;
     branches: Branch[] | undefined; //undefined for final node
 }

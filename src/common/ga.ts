@@ -372,8 +372,6 @@ export function getEquipment(ind: Individual, part: Localization, masterData: Ma
 }
 
 export function evaluateIndividual(ind: Individual, config: Configuration, masterData: MasterDataOutfit): Individual {
-    let start = Date.now();
-
     let evaluated = {...ind};
     evaluated.genes = [...ind.genes];
     evaluated.fitness = {...ind.fitness};
@@ -1008,6 +1006,9 @@ export function crossOver(a: Individual, b: Individual, config: Configuration, m
         busyHands += equipment.hands;
     }
 
+    let phenotype = getPhenotype(child, config, masterData);
+    let maxAllowedWeight = Math.floor((phenotype.con + phenotype.str) / 2);
+
     //Get genes from the first parent
     const splitIndex = Math.floor(sequence.length * config.parameters.crossoverParentRatio);
     for (let i = 0; i < splitIndex; i++) {
@@ -1016,11 +1017,14 @@ export function crossOver(a: Individual, b: Individual, config: Configuration, m
         let partMasterData = masterData[part as keyof MasterDataOutfit];
         const primaryEquipment: Equipment =  partMasterData.find(value => value.id === primaryGenes[idx]) || defaultEquipment;
 
-        if (child.genes[idx] === 0 && primaryEquipment.weight + carriedWeight <= config.data.allowedWeight
+        if (child.genes[idx] === 0 && primaryEquipment.weight + carriedWeight <= maxAllowedWeight
             && primaryEquipment.hands + busyHands <= 2) {
             child.genes[idx] = primaryGenes[idx];
             carriedWeight += primaryEquipment.weight;
             busyHands += primaryEquipment.hands;
+
+            phenotype = getPhenotype(child, config, masterData);
+            maxAllowedWeight = Math.floor((phenotype.con + phenotype.str) / 2);
         }
     }
 
@@ -1032,14 +1036,14 @@ export function crossOver(a: Individual, b: Individual, config: Configuration, m
         const primaryEquipment: Equipment =  partMasterData.find(value => value.id === primaryGenes[idx]) || defaultEquipment;
         const secondaryEquipment: Equipment =  partMasterData.find(value => value.id === secondaryGenes[idx]) || defaultEquipment;
 
-        if (child.genes[idx] === 0 && secondaryEquipment.weight + carriedWeight <= config.data.allowedWeight
+        if (child.genes[idx] === 0 && secondaryEquipment.weight + carriedWeight <= maxAllowedWeight
             && secondaryEquipment.hands + busyHands <= 2) {
             // Get secondary equipment if possible
             child.genes[idx] = secondaryGenes[idx];
             carriedWeight += secondaryEquipment.weight;
             busyHands += secondaryEquipment.hands;
         }
-        else if (child.genes[idx] === 0 && primaryEquipment.weight + carriedWeight <= config.data.allowedWeight
+        else if (child.genes[idx] === 0 && primaryEquipment.weight + carriedWeight <= maxAllowedWeight
             && primaryEquipment.hands + busyHands <= 2) {
             // Get primary parent otherwise if possible
             child.genes[idx] = primaryGenes[idx];
@@ -1050,6 +1054,9 @@ export function crossOver(a: Individual, b: Individual, config: Configuration, m
             // No equipment for this localization
             child.genes[idx] = 0;
         }
+
+        phenotype = getPhenotype(child, config, masterData);
+        maxAllowedWeight = Math.floor((phenotype.con + phenotype.str) / 2);
     }
     child.carriedWeight = carriedWeight;
     child.hands = busyHands;
