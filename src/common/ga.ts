@@ -12,6 +12,7 @@ export interface GAParameters {
     crossoverStrategy: string;
     crossoverParentRatio: number;
     tournamentSize: number;
+    optimSimuTurns: number[];
 }
 export interface Configuration {
     data: Attributes;
@@ -387,7 +388,7 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
     }
 
     const fights: number[][] = [];
-    fights.push([9, 12, 10, 14, 6]);
+    fights.push(config.parameters.optimSimuTurns);
 
     let action: Action;
     let coefficients = {
@@ -487,12 +488,12 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
                 isHealing: false
             };
 
-            coefficients.offensiveWarrior = 1;
-            coefficients.offensiveAssassin = 1;
-            coefficients.offensiveMage = 1;
+            coefficients.offensiveWarrior = 0;
+            coefficients.offensiveAssassin = 0;
+            coefficients.offensiveMage = 0;
             coefficients.defensiveWarrior = 5;
             coefficients.defensiveAssassin = 5;
-            coefficients.defensiveMage = 4;
+            coefficients.defensiveMage = 2;
             break;
         }
         case Profile.warrior: {
@@ -511,12 +512,12 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
                 isHealing: false
             };
 
-            coefficients.offensiveWarrior = 3;
-            coefficients.offensiveAssassin = 3;
-            coefficients.offensiveMage = 1;
+            coefficients.offensiveWarrior = 5;
+            coefficients.offensiveAssassin = 5;
+            coefficients.offensiveMage = 2;
             coefficients.defensiveWarrior = 1;
             coefficients.defensiveAssassin = 1;
-            coefficients.defensiveMage = 0;
+            coefficients.defensiveMage = 1;
             break;
         }
         default: throw Error("optimization profile " + config.parameters.optimProfile + " not defined");
@@ -644,6 +645,9 @@ export function evaluateIndividual(ind: Individual, config: Configuration, maste
         computeFitness(beginnerMageDefenseSimulation, true)
         + 2 * computeFitness(intermediateMageDefenseSimulation, true)
         + 3 * computeFitness(advancedMageDefenseSimulation, true)) / 3;
+
+    f.fitness /=  (coefficients.offensiveWarrior + coefficients.offensiveAssassin + coefficients.offensiveMage
+        + coefficients.defensiveWarrior + coefficients.defensiveAssassin + coefficients.defensiveMage);
 
     evaluated.fitness = f;
     evaluated.phenotype = modified;

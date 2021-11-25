@@ -100,7 +100,7 @@ export function COutfit({masterData, onValueChange, className}: OutfitProps) {
     const generateRow = function(equipment: Equipment, onChangeEquipment: (equipmentID: string, localization: Localization, masterData: MasterDataOutfit) => void): ReactElement {
         return (
             <Tr key={"tr-initial-" + equipment.localization + "-" + equipment.id}>
-                <Td key={"td-initial-" + equipment.localization + "-name"}>
+                <Td className="td-title" key={"td-initial-" + equipment.localization + "-name"}>
                     {generateEquipment(equipment.localization, masterData, onChangeEquipment)}
                 </Td>
                 {kigardHeader.map((name: string) => (
@@ -139,7 +139,7 @@ export function COutfit({masterData, onValueChange, className}: OutfitProps) {
 
     return (
         <div className={className}>
-        <Table id="table-initial">
+        <Table id="table-initial" className="table-outfit">
             <Thead>
                 <Tr>{generateHeader()}</Tr>
             </Thead>

@@ -145,7 +145,6 @@ export enum Quality {
     Master
 }
 
-
 export const defaultAttributes: Attributes = {
     con: 0,
     str: 0,
@@ -330,6 +329,154 @@ export function generateEquipmentFromJSON (data: any, localization: Localization
     return equipments;
 }
 
+export function generateQualityEquipments(equipments: Equipment[], requiredQuality: Quality, offsetId: number): Equipment[] {
+    let qualityEquipments: Equipment[] = [];
+
+    let coefficient: number;
+    switch(requiredQuality) {
+        case Quality.Standard: {
+            coefficient = 0;
+            break;
+        }
+        case Quality.Great: {
+            coefficient = 1;
+            break;
+        }
+        case Quality.Master: {
+            coefficient = 2;
+            break;
+        }
+        default:
+            coefficient = 0;
+    }
+
+    let id = 1;
+    for (let equipment of equipments) {
+        const qualityEquipment = {...equipment};
+        qualityEquipment.id = id + offsetId;
+
+        switch(requiredQuality) {
+            case Quality.Great:
+                qualityEquipment.name = qualityEquipment.name + " de qualité";
+                break;
+            case Quality.Master:
+                qualityEquipment.name = qualityEquipment.name + " de maître";
+        }
+
+        qualityEquipment.attributes = {...equipment.attributes};
+        qualityEquipment.quality = requiredQuality;
+
+        if (qualityEquipment.localization === Localization.RightHand){
+            upgradeWeapon(qualityEquipment, coefficient);
+        }
+        else {
+            upgradeArmor(qualityEquipment, coefficient);
+        }
+        qualityEquipments.push(qualityEquipment);
+        id++;
+    }
+    return qualityEquipments;
+}
+
+function upgradeArmor(equiment: Equipment, coefficient: number): void {
+
+    switch(equiment.kind) {
+        case EquipmentClass.LightArmor: {
+            equiment.attributes.dodge += 4 * coefficient;
+            break;
+        }
+        case EquipmentClass.HeavyArmor: {
+            equiment.attributes.armor += 1 * coefficient;
+            break;
+        }
+        case EquipmentClass.FightingOutfit: {
+            equiment.attributes.acc += 2 * coefficient;
+            equiment.attributes.dodge += 2 * coefficient;
+            break;
+        }
+        case EquipmentClass.TravelingOutfit: {
+            equiment.attributes.lck += 25 * coefficient;
+            break;
+        }
+        case EquipmentClass.Artifact: {
+            equiment.attributes.dodge += 2 * coefficient;
+            equiment.attributes.mr += 2 * coefficient;
+            break;
+        }
+        case EquipmentClass.Fetish: {
+            equiment.attributes.dodge += 1 * coefficient;
+            equiment.attributes.mr += 1 * coefficient;
+            equiment.attributes.acc += 1 * coefficient;
+            equiment.attributes.mm += 1 * coefficient;
+            break;
+        }
+        case EquipmentClass.MagicFocus: {
+            equiment.attributes.mm += 2 * coefficient;
+            equiment.attributes.mr += 2 * coefficient;
+            break;
+        }
+        case EquipmentClass.Set: {
+            equiment.attributes.mr += 4 * coefficient;
+            break;
+        }
+        case EquipmentClass.SecondaryWeapon: {
+            equiment.attributes.minDamage += 1 * coefficient;
+            equiment.attributes.maxDamage += 1 * coefficient;
+            break;
+        }
+        case EquipmentClass.Container: {
+            equiment.attributes.nbProjectiles += 2 * coefficient;
+            break;
+        }
+    }
+}
+
+function upgradeWeapon(equiment: Equipment, coefficient: number): void {
+    switch(equiment.kind) {
+        case EquipmentClass.LightWeapon: {
+            equiment.attributes.acc += 8 * coefficient;
+            break;
+        }
+        case EquipmentClass.IntermediaryWeapon: {
+            equiment.attributes.acc += 4 * coefficient;
+            equiment.attributes.minDamage += 1 * coefficient;
+            equiment.attributes.maxDamage += 1 * coefficient;
+            break;
+        }
+        case EquipmentClass.HeavyWeapon: {
+            equiment.attributes.minDamage += 2 * coefficient;
+            equiment.attributes.maxDamage += 2 * coefficient;
+            break;
+        }
+        case EquipmentClass.MagicalWeapon: {
+            equiment.attributes.mm += 8 * coefficient;
+            break;
+        }
+        case EquipmentClass.ExoticWeapon: {
+            equiment.attributes.acc += 4 * coefficient;
+            equiment.attributes.dodge += 4 * coefficient;
+            break;
+        }
+        case EquipmentClass.ParadeWeapon: {
+            equiment.attributes.dodge += 8 * coefficient;
+            equiment.attributes.minDamage += 1 * coefficient;
+            equiment.attributes.maxDamage += 1 * coefficient;
+            break;
+        }
+        case EquipmentClass.RunicWeapon: {
+            equiment.attributes.mm += 4 * coefficient;
+            equiment.attributes.minDamage += 1 * coefficient;
+            equiment.attributes.maxDamage += 1 * coefficient;
+            break;
+        }
+        case EquipmentClass.SecondaryWeapon: {
+            equiment.attributes.minDamage += 1 * coefficient;
+            equiment.attributes.maxDamage += 1 * coefficient;
+            break;
+        }
+    }
+}
+
 function getEquipmentClassFromString(name: string): EquipmentClass {
     switch (name) {
         case "legere": return EquipmentClass.LightArmor;
@@ -410,12 +557,14 @@ export function buildTurns(paByTurns: number[], attributes: Attributes, opponent
     for (let turn = 0; turn < nbTurns; turn++) {
         let paForTurn = paByTurns[turn];
         pmForTurn = Math.min(25, pmForTurn + attributes.rpm);
-        let actionDuringTurn = 1;
+        let actionDuringTurn = paForTurn - action.pa < 0 ? 0 : 1;
         let actionPerformedCost = action.pa;
         let tokens: KigardToken[] = [];
 
         while (paForTurn - action.pa >= 0
-            || (action.isThrowing && projectileForTurn === 0 && paForTurn - 1 >= 0)) {
+            || (action.isThrowing && projectileForTurn === 0 && paForTurn - 1 >= 0)
+            || actionDuringTurn === 0) // no action possible this turn but need to apply the tokens once (burning, ...)
+        {
             const nbPossibilitiesToProcess = turnPossibilities.length;
             for (let i = 0; i < nbPossibilitiesToProcess; i++) {
                 let currentBranch: Branch | undefined = turnPossibilities.shift();
@@ -424,26 +573,39 @@ export function buildTurns(paByTurns: number[], attributes: Attributes, opponent
                     let probabilities: number[] = [];
                     let remainingLife: number[] = [];
 
-                    if (action.isMagic) {
-                        // MM: 15, RM: 30 => threshold = 50 + 30 - 15 = 75 => hitting Proba = 25% / missing Proba = 75%
-                        const threshold: number = action.isHealing ? getHealingMagicThreshold(attr.mm, oppAttr.mr) : getHostileMagicThreshold(attr.mm, oppAttr.mr);
-                        const hittingProba = (100 - threshold) / 100;
-                        const missingProba = 1 - hittingProba;
-                        probabilities = [hittingProba, missingProba];
-                        remainingLife = [currentBranch.value, currentBranch.value];
+                    if (actionDuringTurn === 0) {
+                        probabilities = [1]; // keep the branch open and apply only the tokens
+                        remainingLife = [currentBranch.value];
                     }
-                    else  {
-                        // Acc: 35, dodge: 40 => critical threshold = 90 + 40 - 35 = 95, dodge threshold = 10 + 40 - 35 = 15 => critical Proba = 5% / hitting Proba = 80% / missing Proba: 15%
-                        const threshold: {dodge: number, critical: number} = getFightingthreshold(attr.acc, oppAttr.dodge);
-                        const criticalProba = 1 - (Math.min(100, threshold.critical) / 100);
-                        const missingProba = Math.max(0, threshold.dodge / 100);
-                        const hittingProba = 1 - (criticalProba + missingProba);
-                        probabilities = [criticalProba, hittingProba, missingProba];
-                        remainingLife = [currentBranch.value, currentBranch.value, currentBranch.value];
+                    else {
+                        if (action.isMagic) {
+                            // MM: 15, RM: 30 => threshold = 50 + 30 - 15 = 75 => hitting Proba = 25% / missing Proba = 75%
+                            const threshold: number = action.isHealing ? getHealingMagicThreshold(attr.mm, oppAttr.mr) : getHostileMagicThreshold(attr.mm, oppAttr.mr);
+                            const hittingProba = (100 - threshold) / 100;
+                            const missingProba = 1 - hittingProba;
+                            probabilities = [hittingProba, missingProba];
+                            remainingLife = [currentBranch.value, currentBranch.value];
+                        }
+                        else  {
+                            // Acc: 35, dodge: 40 => critical threshold = 90 + 40 - 35 = 95, dodge threshold = 10 + 40 - 35 = 15 => critical Proba = 5% / hitting Proba = 80% / missing Proba: 15%
+                            const threshold: {dodge: number, critical: number} = getFightingthreshold(attr.acc, oppAttr.dodge);
+
+                            const critical = Math.max(0,
+                                (100 - (Math.max(0, threshold.critical)))
+                                );
+                            const missing = Math.max(0, threshold.dodge);
+
+                            const criticalProba = 1 - (critical / 100);
+                            const missingProba = missing / 100;
+                            const hittingProba = 1 - (criticalProba + missingProba);
+
+                            probabilities = [criticalProba, hittingProba, missingProba];
+                            remainingLife = [currentBranch.value, currentBranch.value, currentBranch.value];
+                        }
                     }
 
                     // Tokens are decrementing of 1 each turn after being applied
-                    if (actionDuringTurn === 1) {
+                    if (actionDuringTurn === 0 || actionDuringTurn === 1) {
                         if (action.isHealing) {
                             //Regeneration won't heal after max health
                             const regenToken = currentBranch.token.regeneration;
@@ -490,53 +652,55 @@ export function buildTurns(paByTurns: number[], attributes: Attributes, opponent
                         });
                     }
 
-                    if (action.isMagic) {
-                        if (pmForTurn >= action.pm) {
-                            remainingLife = [remainingLife[0] - action.magicSuccess, remainingLife[1] - action.magicResisted];
+                    if (actionDuringTurn > 0) {
+                        if (action.isMagic) {
+                            if (pmForTurn >= action.pm) {
+                                remainingLife = [remainingLife[0] - action.magicSuccess, remainingLife[1] - action.magicResisted];
 
-                            // Tokens are increased only if the spell is a success
-                            if (action.isHealing) {
-                                tokens[0].regeneration += action.regeneration;
+                                // Tokens are increased only if the spell is a success
+                                if (action.isHealing) {
+                                    tokens[0].regeneration += action.regeneration;
+                                }
+                                else {
+                                    // Burning only since we considered the cast spell to be Fireball
+                                    tokens[0].burning += action.burning;
+                                }
                             }
-                            else {
-                                // Burning only since we considered the cast spell to be Fireball
-                                tokens[0].burning += action.burning;
+                        }
+                        else {
+                            if ((action.isThrowing && projectileForTurn > 0) || !action.isThrowing) {
+                                remainingLife = [remainingLife[0] - Math.max(0, (action.physicalDamageSuccess + action.criticalBonus) - oppAttr.armor),
+                                remainingLife[1] - Math.max(0, action.physicalDamageSuccess - oppAttr.armor),
+                                remainingLife[2]]; // no damage when dodging
+
+                                //Add tokens after attacking if any
+                                tokens[0].burning += attributes.burning > 0 ? attributes.burning + 1 : 0;
+                                tokens[0].poison += attributes.poison > 0 ? attributes.poison + 1 : 0;
+                                tokens[0].bleeding += attributes.bleeding > 0 ? attributes.bleeding + 1 : 0;
+                                tokens[0].knockedOut += attributes.knockedOut > 0 ? attributes.knockedOut + 1 : 0;
+                                tokens[0].breach += attributes.breach > 0 ? attributes.breach + 1 : 0;
+                                tokens[0].terror += attributes.terror > 0 ? attributes.terror + 1 : 0;
+                                tokens[0].necrosis += attributes.necrosis > 0 ? attributes.necrosis + 1 : 0;
+
+                                tokens[1].burning += attributes.burning;
+                                tokens[1].poison += attributes.poison;
+                                tokens[1].bleeding += attributes.bleeding;
+                                tokens[1].knockedOut += attributes.knockedOut;
+                                tokens[1].breach += attributes.breach;
+                                tokens[1].terror += attributes.terror;
+                                tokens[1].necrosis += attributes.necrosis;
+
+                                projectileForTurn--;
+                            }
+                            else if (action.isThrowing && projectileForTurn === 0) {
+                                //Reload for shooting next turn
+                                projectileForTurn = attributes.nbProjectiles;
+                                actionPerformedCost = 1;
                             }
                         }
                     }
-                    else {
-                        if ((action.isThrowing && projectileForTurn > 0) || !action.isThrowing) {
-                            remainingLife = [remainingLife[0] - Math.max(0, (action.physicalDamageSuccess + action.criticalBonus) - oppAttr.armor),
-                            remainingLife[1] - Math.max(0, action.physicalDamageSuccess - oppAttr.armor),
-                            remainingLife[2]]; // no damage when dodging
 
-                            //Add tokens after attacking if any
-                            tokens[0].burning += attributes.burning > 0 ? attributes.burning + 1 : 0;
-                            tokens[0].poison += attributes.poison > 0 ? attributes.poison + 1 : 0;
-                            tokens[0].bleeding += attributes.bleeding > 0 ? attributes.bleeding + 1 : 0;
-                            tokens[0].knockedOut += attributes.knockedOut > 0 ? attributes.knockedOut + 1 : 0;
-                            tokens[0].breach += attributes.breach > 0 ? attributes.breach + 1 : 0;
-                            tokens[0].terror += attributes.terror > 0 ? attributes.terror + 1 : 0;
-                            tokens[0].necrosis += attributes.necrosis > 0 ? attributes.necrosis + 1 : 0;
-
-                            tokens[1].burning += attributes.burning;
-                            tokens[1].poison += attributes.poison;
-                            tokens[1].bleeding += attributes.bleeding;
-                            tokens[1].knockedOut += attributes.knockedOut;
-                            tokens[1].breach += attributes.breach;
-                            tokens[1].terror += attributes.terror;
-                            tokens[1].necrosis += attributes.necrosis;
-
-                            projectileForTurn--;
-                        }
-                        else if (action.isThrowing && projectileForTurn === 0) {
-                            //Reload for shooting next turn
-                            projectileForTurn = attributes.nbProjectiles;
-                            actionPerformedCost = 1;
-                        }
-                    }
-
-                    if (actionPerformedCost > 1) {
+                    if (actionDuringTurn === 0 || actionPerformedCost > 1) {
                         const isFinals: boolean[] = []
                         for (let i = 0; i < probabilities.length; i++) {
                             const remainingPA = paForTurn - actionPerformedCost;
@@ -557,7 +721,7 @@ export function buildTurns(paByTurns: number[], attributes: Attributes, opponent
 
             paForTurn -= actionPerformedCost;
             pmForTurn = pmForTurn - action.pm >= 0 ? Math.max(0, pmForTurn - action.pm) : pmForTurn;
-            actionDuringTurn ++;
+            actionDuringTurn++; // if 0 (not action possible that turn at all, it will become 1 and exit the loop)
         }
     }
 
@@ -565,17 +729,19 @@ export function buildTurns(paByTurns: number[], attributes: Attributes, opponent
 }
 
 function isFinalMoveOnSimulationBranch(probability: number, remainingLife: number, turn: number, turns: number[], remainingPAForTurn: number, actionPA: number): boolean {
+    /*
     let couldActNextTurns = false;
     let i = turn + 1;
     while(!couldActNextTurns && i < turns.length) {
         couldActNextTurns = (actionPA <= turns[i]);
         i++;
     }
+    */
 
     const isFinal = (probability === 0)
         || (remainingLife <= 0)
-        || (turn === (turns.length - 1) && remainingPAForTurn < 0)
-        || (!couldActNextTurns && remainingPAForTurn < 0);
+        || (turn === (turns.length - 1) && remainingPAForTurn < 0);
+        //|| (!couldActNextTurns && remainingPAForTurn < 0);
 
     return isFinal;
 }

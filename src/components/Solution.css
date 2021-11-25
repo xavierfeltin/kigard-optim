@@ -29,3 +29,33 @@
     border: solid 1px;
     border-color: black;
 }
+
+td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.td-title {
+    text-align: left;
+}
+
+.table-solution {
+    width: 100%;
+}
+
+.table-simulation {
+    width: 100%;
+}
+
+.table-simulation-header {
+    font-weight: bold;
+}
+
+.table-simulation-profile {
+    font-weight: bold;
+    color: rgb(77, 77, 77)
+}
+
+.table-simulation-section {
+    font-style: italic;
+}

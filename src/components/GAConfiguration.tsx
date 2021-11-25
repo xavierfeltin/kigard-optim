@@ -11,7 +11,7 @@ export interface GAConfigurationProps {
 export function GAConfiguration({onValueChange}: GAConfigurationProps) {
 
     const [configuration, setConfiguration] = useState<GAParameters>({
-        populationSize: 50,
+        populationSize: 100,
         selectCutoff: 0.1,
         keepPreviousRatio: 0.1,
         newIndividualRatio: 0.1,
@@ -19,7 +19,8 @@ export function GAConfiguration({onValueChange}: GAConfigurationProps) {
         crossoverStrategy: "",
         crossoverParentRatio: 0.5,
         tournamentSize: 5,
-        optimProfile: Profile.mage
+        optimProfile: Profile.mage,
+        optimSimuTurns: [9, 12, 5, 14, 10]
     });
 
     useEffect(() => {
@@ -27,16 +28,21 @@ export function GAConfiguration({onValueChange}: GAConfigurationProps) {
     }, [configuration, onValueChange]);
 
     return (
-        <div className="select-wrapper">
-            <label className="select-one"> Profil </label>
-
-            <Select className="select-two" onChange={v => setConfiguration({...configuration, optimProfile: Profile[v.target.value as keyof typeof Profile]})}>
-                <option value="mage">Mage</option>
-                <option value="healer">Soigneur</option>
-                <option value="tank">Tank</option>
-                <option value="warrior">Guerrier</option>
-                <option value="archer">Archer</option>
-            </Select>
+        <div>
+            <div className="select-wrapper">
+                <label className="select-one"> Profil </label>
+                <Select className="select-two" onChange={v => setConfiguration({...configuration, optimProfile: Profile[v.target.value as keyof typeof Profile]})}>
+                    <option value="mage">Mage</option>
+                    <option value="healer">Soigneur</option>
+                    <option value="tank">Tank</option>
+                    <option value="warrior">Guerrier</option>
+                    <option value="archer">Archer</option>
+                </Select>
+            </div>
+            <div className="select-wrapper">
+                <label className="select-one"> Tours simulés (PA) </label>
+                <input className="select-two" value={configuration.optimSimuTurns.map((turn: number) => turn.toString()).join(',')} onChange={v => setConfiguration({...configuration, optimSimuTurns: v.target.value.split(',').map((val: string) => parseInt(val))})}/>
+            </div>
         </div>
     )
 }

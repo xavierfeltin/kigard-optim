@@ -2,7 +2,7 @@ import './App.css';
 import { useCallback, useEffect, useState } from 'react';
 
 import { GAParameters, Individual } from './common/ga';
-import { Attributes, defaultAttributes, defaultEquipment, EquipmentClass, generateEquipmentFromJSON, getDefaultOutfit, Localization, MasterDataOutfit, Outfit, Profile } from './common/kigardModels';
+import { Attributes, defaultAttributes, defaultEquipment, Equipment, EquipmentClass, generateEquipmentFromJSON, generateQualityEquipments, getDefaultOutfit, Localization, MasterDataOutfit, Outfit, Profile, Quality } from './common/kigardModels';
 import { Character } from './components/Character';
 import { Simulation } from './components/Simulation';
 import { Solution } from './components/Solution';
@@ -41,7 +41,8 @@ function App() {
     crossoverStrategy: "",
     crossoverParentRatio: 0.5,
     tournamentSize: 5,
-    optimProfile: Profile.mage
+    optimProfile: Profile.mage,
+    optimSimuTurns: [9, 12, 5, 14, 10]
   });
   const [suggestion, setSuggestion] = useState<Individual | undefined>(undefined);
 
@@ -79,14 +80,40 @@ function App() {
     emptyContainer.kind = EquipmentClass.Container;
     emptyContainer.attributes.nbProjectiles = 1;
 
+    let qualityEquipment = generateQualityEquipments(headEquipments, Quality.Great, headEquipments.length);
+    let masterEquipment = generateQualityEquipments(headEquipments, Quality.Master, headEquipments.length + qualityEquipment.length);
+    let headMasterData = [emptyBody, ...headEquipments, ...qualityEquipment, ...masterEquipment];
+
+    qualityEquipment = generateQualityEquipments(bodyEquipments, Quality.Great, bodyEquipments.length);
+    masterEquipment = generateQualityEquipments(bodyEquipments, Quality.Master, bodyEquipments.length + qualityEquipment.length);
+    let bodyMasterData = [emptyBody, ...bodyEquipments, ...qualityEquipment, ...masterEquipment];
+
+    qualityEquipment = generateQualityEquipments(leftHandEquipments, Quality.Great, leftHandEquipments.length);
+    masterEquipment = generateQualityEquipments(leftHandEquipments, Quality.Master, leftHandEquipments.length + qualityEquipment.length);
+    let leftHandMasterData = [emptyBody, ...leftHandEquipments, ...qualityEquipment, ...masterEquipment];
+
+    qualityEquipment = generateQualityEquipments(rightHandEquipments, Quality.Great, rightHandEquipments.length);
+    masterEquipment = generateQualityEquipments(rightHandEquipments, Quality.Master, rightHandEquipments.length + qualityEquipment.length);
+    let rightHandMasterData = [emptyBody, ...rightHandEquipments, ...qualityEquipment, ...masterEquipment];
+
+    qualityEquipment = generateQualityEquipments(feetEquipments, Quality.Great, feetEquipments.length);
+    masterEquipment = generateQualityEquipments(feetEquipments, Quality.Master, feetEquipments.length + qualityEquipment.length);
+    let feetMasterData = [emptyBody, ...feetEquipments, ...qualityEquipment, ...masterEquipment];
+
+    let fetishMasterData: Equipment[] = [];
+
+    qualityEquipment = generateQualityEquipments(containerEquipments, Quality.Great, containerEquipments.length);
+    masterEquipment = generateQualityEquipments(containerEquipments, Quality.Master, containerEquipments.length + qualityEquipment.length);
+    let containerMasterData = [emptyBody, ...containerEquipments, ...qualityEquipment, ...masterEquipment];
+
     const masterData: MasterDataOutfit = {
-      head: [emptyHead, ...headEquipments],
-      body: [emptyBody, ...bodyEquipments],
-      lefthand: [emptyLeftHand, ...leftHandEquipments],
-      righthand: [emptyRightHand, ...rightHandEquipments],
-      feet: [emptyFeet, ...feetEquipments],
-      fetish: [],
-      container: [emptyContainer, ...containerEquipments]
+      head: headMasterData,
+      body: bodyMasterData,
+      lefthand: leftHandMasterData,
+      righthand: rightHandMasterData,
+      feet: feetMasterData,
+      fetish: fetishMasterData,
+      container: containerMasterData
     }
     setMasterData(masterData);
   }, []);
@@ -124,7 +151,7 @@ function App() {
       <GAConfiguration onValueChange={handleGAConfigurationChange}/>
       <Simulation character={character} outfit={outfit} parameters={simuParameters} masterData={masterData} onHasStarted={handleSimulationStart} onHasStopped={handleSimulationStop} onHasNewIteration={handleSimulationNewIteration}/>
       {suggestion &&
-        <Solution ind={suggestion} masterData={masterData} character={character}/>
+        <Solution ind={suggestion} masterData={masterData} character={character} parameters={simuParameters}/>
       }
     </div>
   );
