@@ -1,6 +1,6 @@
 import './Character.css';
 import { ReactElement, useEffect, useState } from "react";
-import { Equipment, getDefaultOutfit, getEmptyEquipment, Localization, MasterDataOutfit, Outfit, outfitParts, Attributes } from '../common/kigardModels';
+import { Equipment, getDefaultOutfit, getEmptyEquipment, Localization, MasterDataOutfit, Outfit, outfitParts, Attributes, Quality } from '../common/kigardModels';
 import { Select } from '@chakra-ui/select';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/table';
 
@@ -18,10 +18,90 @@ export function COutfit({masterData, onValueChange, className}: OutfitProps) {
     }, [outfit, onValueChange]);
 
     const onChangeEquipment = function(equipmentID: string,  localization: Localization, masterData: MasterDataOutfit): void {
+
+        const selectedEquipment = outfit[Localization[localization].toLowerCase() as keyof Outfit];
+
         const idx = outfitParts.findIndex((value) => value.toLowerCase() === Localization[localization].toLowerCase());
         const partName = outfitParts[idx].toLowerCase();
         const partMasterData = masterData[partName as keyof MasterDataOutfit];
-        const equipment = partMasterData.find(equipment => equipment.id === parseInt(equipmentID));
+        const standardPartMasterData = partMasterData.filter((equipment: Equipment) => {
+            return equipment.quality === Quality.Standard;
+        });
+
+        let newEquipmentID = getQualityIdOfEquipment(parseInt(equipmentID), selectedEquipment.quality, standardPartMasterData.length);
+        setEquipmentFromId(newEquipmentID, localization, standardPartMasterData);
+    }
+
+    const onChangeQuality = function(qualityID: string,  localization: Localization, masterData: MasterDataOutfit): void {
+
+        const selectedEquipment = outfit[Localization[localization].toLowerCase() as keyof Outfit];
+
+        const idx = outfitParts.findIndex((value) => value.toLowerCase() === Localization[localization].toLowerCase());
+        const localizationName = outfitParts[idx].toLowerCase();
+        const localizationMasterData = masterData[localizationName as keyof MasterDataOutfit]
+
+        const standardLocalizationMasterData = localizationMasterData.filter((equipment: Equipment) => {
+            return equipment.quality === Quality.Standard;
+        });
+
+        let standardMatchingId = getStandardIdOfEquipment(selectedEquipment.id, selectedEquipment.quality, standardLocalizationMasterData.length);
+        let newEquipmentID = getQualityIdOfEquipment(standardMatchingId, parseInt(qualityID), standardLocalizationMasterData.length);
+        setEquipmentFromId(newEquipmentID, localization, localizationMasterData);
+    }
+
+    const generateEquipment = function(localization: Localization, masterData: MasterDataOutfit,
+        onChangeEquipment: (equipmentID: string, localization: Localization, masterData: MasterDataOutfit) => void): ReactElement {
+        const idx = outfitParts.findIndex((value) => value.toLowerCase() === Localization[localization].toLowerCase());
+        const partName = outfitParts[idx].toLowerCase();
+        let partMasterData = masterData[partName as keyof MasterDataOutfit];
+        let standardMasterData = partMasterData.filter((equipment: Equipment) => equipment.quality === Quality.Standard);
+
+        let selectedEquipment = outfit[outfitParts[idx] as keyof Outfit];
+        let standardMatchingId = getStandardIdOfEquipment(selectedEquipment.id, selectedEquipment.quality, standardMasterData.length);
+
+        const selectKey = "select-" + partName;
+        return (
+            <Select onChange={(event: React.ChangeEvent<HTMLSelectElement>) => onChangeEquipment(event.target.value, localization, masterData)}
+                    value={standardMatchingId}>
+                {partMasterData.filter((equipment: Equipment) => { return equipment.quality === Quality.Standard;})
+                               .sort((a: Equipment, b: Equipment) => {
+                                    if(a.name < b.name) { return -1; }
+                                    if(a.name > b.name) { return 1; }
+                                    return 0;
+                                })
+                                .map((equipment: Equipment) => (
+                    <option key={selectKey + "-" + equipment.id} value={equipment.id}> {equipment.name} </option>
+                ))}
+            </Select>
+        )
+    }
+
+    const getStandardIdOfEquipment = function(equipmentId: number, equipmentQuality: number, nbEquipmentsForLocalization: number): number {
+        let standardMatchingId = equipmentId;
+        if (equipmentQuality !== Quality.Standard) {
+            const equipmentQualityID = equipmentId - nbEquipmentsForLocalization + 1;
+            const equipmentMasterID = equipmentId - 2 * nbEquipmentsForLocalization + 2;
+            standardMatchingId = equipmentQuality === Quality.Great ? equipmentQualityID : equipmentMasterID;
+        }
+
+        return standardMatchingId
+    }
+
+    const getQualityIdOfEquipment = function(standardEquipmentId: number, equipmentQuality: number, nbEquipmentsForLocalization: number): number {
+        let newEquipmentID = standardEquipmentId;
+        if (newEquipmentID !== 0) {
+            if (equipmentQuality !== Quality.Standard) {
+                const equipmentQualityID = standardEquipmentId + nbEquipmentsForLocalization - 1;
+                const equipmentMasterID = standardEquipmentId + 2 * nbEquipmentsForLocalization - 2;
+                newEquipmentID = equipmentQuality === Quality.Great ? equipmentQualityID : equipmentMasterID;
+            }
+        }
+
+        return newEquipmentID;
+    }
+
+    const setEquipmentFromId = function(equipmentID: number, localization: Localization, masterDataForLocalization: Equipment[]): void {
+        const equipment = masterDataForLocalization.find(equipment => equipment.id === equipmentID);
 
         switch(localization) {
             case Localization.Head: {
@@ -55,18 +135,17 @@ export function COutfit({masterData, onValueChange, className}: OutfitProps) {
         }
     }
 
-    const generateEquipment = function(localization: Localization, masterData: MasterDataOutfit, onChangeEquipment: (equipmentID: string, localization: Localization, masterData: MasterDataOutfit) => void): ReactElement {
+    const generateQuality = function(localization: Localization, masterData: MasterDataOutfit,
+        onChangeQuality: (qualityID: string, localization: Localization, masterData: MasterDataOutfit) => void): ReactElement {
         const idx = outfitParts.findIndex((value) => value.toLowerCase() === Localization[localization].toLowerCase());
-        const partName = outfitParts[idx].toLowerCase();
-        let partMasterData = masterData[partName as keyof MasterDataOutfit];
-        const selectKey = "select-" + partName;
+        let selectedEquipment = outfit[outfitParts[idx] as keyof Outfit];
 
         return (
-            <Select onChange={(event: React.ChangeEvent<HTMLSelectElement>) => onChangeEquipment(event.target.value,  localization, masterData)}
-                    value={outfit[outfitParts[idx] as keyof Outfit].id}>
-                {partMasterData.map((equipment: Equipment) => (
-                    <option key={selectKey + "-" + equipment.id} value={equipment.id}> {equipment.name} </option>
-                ))}
+            <Select onChange={(event: React.ChangeEvent<HTMLSelectElement>) => onChangeQuality(event.target.value, localization, masterData)}
+                    value={selectedEquipment.quality}>
+                <option key="select-standard" value={Quality.Standard}> </option>
+                <option key="select-quality" value={Quality.Great}> de Qualité </option>
+                <option key="select-master" value={Quality.Master}> de Maître </option>
             </Select>
         )
     }
@@ -97,11 +176,14 @@ export function COutfit({masterData, onValueChange, className}: OutfitProps) {
         return row;
     }
 
-    const generateRow = function(equipment: Equipment, onChangeEquipment: (equipmentID: string, localization: Localization, masterData: MasterDataOutfit) => void): ReactElement {
+    const generateRow = function(equipment: Equipment,
+        onChangeEquipment: (equipmentID: string, localization: Localization, masterData: MasterDataOutfit) => void,
+        onChangeQuality: (qualityID: string, localization: Localization, masterData: MasterDataOutfit) => void): ReactElement {
         return (
             <Tr key={"tr-initial-" + equipment.localization + "-" + equipment.id}>
                 <Td className="td-title" key={"td-initial-" + equipment.localization + "-name"}>
                     {generateEquipment(equipment.localization, masterData, onChangeEquipment)}
+                    {generateQuality(equipment.localization, masterData, onChangeQuality)}
                 </Td>
                 {kigardHeader.map((name: string) => (
                     <Td key={"td-initial-" + equipment.localization + "-" + name}>{equipment.attributes[name as keyof Attributes]}</Td>
@@ -145,7 +227,7 @@ export function COutfit({masterData, onValueChange, className}: OutfitProps) {
             </Thead>
             <Tbody>
                 {outfitParts.map((part) => {
-                    return generateRow(outfit[part as keyof Outfit], onChangeEquipment);
+                    return generateRow(outfit[part as keyof Outfit], onChangeEquipment, onChangeQuality);
                 })}
             </Tbody>
         </Table>

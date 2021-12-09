@@ -82,7 +82,7 @@ function App() {
 
     let qualityEquipment = generateQualityEquipments(headEquipments, Quality.Great, headEquipments.length);
     let masterEquipment = generateQualityEquipments(headEquipments, Quality.Master, headEquipments.length + qualityEquipment.length);
-    let headMasterData = [emptyBody, ...headEquipments, ...qualityEquipment, ...masterEquipment];
+    let headMasterData = [emptyHead, ...headEquipments, ...qualityEquipment, ...masterEquipment];
 
     qualityEquipment = generateQualityEquipments(bodyEquipments, Quality.Great, bodyEquipments.length);
     masterEquipment = generateQualityEquipments(bodyEquipments, Quality.Master, bodyEquipments.length + qualityEquipment.length);
@@ -90,21 +90,21 @@ function App() {
 
     qualityEquipment = generateQualityEquipments(leftHandEquipments, Quality.Great, leftHandEquipments.length);
     masterEquipment = generateQualityEquipments(leftHandEquipments, Quality.Master, leftHandEquipments.length + qualityEquipment.length);
-    let leftHandMasterData = [emptyBody, ...leftHandEquipments, ...qualityEquipment, ...masterEquipment];
+    let leftHandMasterData = [emptyLeftHand, ...leftHandEquipments, ...qualityEquipment, ...masterEquipment];
 
     qualityEquipment = generateQualityEquipments(rightHandEquipments, Quality.Great, rightHandEquipments.length);
     masterEquipment = generateQualityEquipments(rightHandEquipments, Quality.Master, rightHandEquipments.length + qualityEquipment.length);
-    let rightHandMasterData = [emptyBody, ...rightHandEquipments, ...qualityEquipment, ...masterEquipment];
+    let rightHandMasterData = [emptyRightHand, ...rightHandEquipments, ...qualityEquipment, ...masterEquipment];
 
     qualityEquipment = generateQualityEquipments(feetEquipments, Quality.Great, feetEquipments.length);
     masterEquipment = generateQualityEquipments(feetEquipments, Quality.Master, feetEquipments.length + qualityEquipment.length);
-    let feetMasterData = [emptyBody, ...feetEquipments, ...qualityEquipment, ...masterEquipment];
+    let feetMasterData = [emptyFeet, ...feetEquipments, ...qualityEquipment, ...masterEquipment];
 
     let fetishMasterData: Equipment[] = [];
 
     qualityEquipment = generateQualityEquipments(containerEquipments, Quality.Great, containerEquipments.length);
     masterEquipment = generateQualityEquipments(containerEquipments, Quality.Master, containerEquipments.length + qualityEquipment.length);
-    let containerMasterData = [emptyBody, ...containerEquipments, ...qualityEquipment, ...masterEquipment];
+    let containerMasterData = [emptyContainer, ...containerEquipments, ...qualityEquipment, ...masterEquipment];
 
     const masterData: MasterDataOutfit = {
       head: headMasterData,

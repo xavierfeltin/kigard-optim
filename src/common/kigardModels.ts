@@ -1,3 +1,5 @@
+import { count } from "console";
+import { act } from "react-dom/test-utils";
 import { Branch, ProbaTree } from "./math";
 
 export interface Attributes {
@@ -567,6 +569,7 @@ export function buildTurns(paByTurns: number[], attributes: Attributes, opponent
         {
             const nbPossibilitiesToProcess = turnPossibilities.length;
             for (let i = 0; i < nbPossibilitiesToProcess; i++) {
+
                 let currentBranch: Branch | undefined = turnPossibilities.shift();
                 if (currentBranch && currentBranch.value > 0) {
                     let oppAttr = {...opponent};
@@ -724,7 +727,6 @@ export function buildTurns(paByTurns: number[], attributes: Attributes, opponent
             actionDuringTurn++; // if 0 (not action possible that turn at all, it will become 1 and exit the loop)
         }
     }
-
     return probaTree;
 }
 
