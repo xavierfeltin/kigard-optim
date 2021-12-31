@@ -73,8 +73,8 @@ export interface Outfit {
     head: Equipment;
     body: Equipment;
     feet: Equipment;
-    rightHand: Equipment;
-    leftHand: Equipment;
+    righthand: Equipment;
+    lefthand: Equipment;
     fetish: Equipment;
     container: Equipment;
 }
@@ -193,7 +193,7 @@ export const defaultEquipment: Equipment = {
     quality: Quality.Standard
 }
 
-export const outfitParts: string[] = ["head", "body", "leftHand", "rightHand", "feet", "container"];
+export const outfitParts: string[] = ["head", "body", "lefthand", "righthand", "feet", "container"];
 
 export const emptyHead = {...defaultEquipment};
 emptyHead.name = "Casque non porté";
@@ -272,8 +272,8 @@ export function getDefaultOutfit(): Outfit {
         head: getEmptyEquipment(Localization.Head),
         body: getEmptyEquipment(Localization.Body),
         feet: getEmptyEquipment(Localization.Feet),
-        rightHand: getEmptyEquipment(Localization.RightHand),
-        leftHand: getEmptyEquipment(Localization.Lefthand),
+        righthand: getEmptyEquipment(Localization.RightHand),
+        lefthand: getEmptyEquipment(Localization.Lefthand),
         fetish: getEmptyEquipment(Localization.Fetish),
         container: getEmptyEquipment(Localization.Container),
     };

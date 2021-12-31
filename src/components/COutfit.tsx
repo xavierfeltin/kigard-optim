@@ -44,6 +44,7 @@ export function COutfit({masterData, onValueChange, className}: OutfitProps) {
             return equipment.quality === Quality.Standard;
         });
 
+        debugger;
         let standardMatchingId = getStandardIdOfEquipment(selectedEquipment.id, selectedEquipment.quality, standardLocalizationMasterData.length);
         let newEquipmentID = getQualityIdOfEquipment(standardMatchingId, parseInt(qualityID), standardLocalizationMasterData.length);
         setEquipmentFromId(newEquipmentID, localization, localizationMasterData);
@@ -92,7 +93,7 @@ export function COutfit({masterData, onValueChange, className}: OutfitProps) {
         if (newEquipmentID !== 0) {
             if (equipmentQuality !== Quality.Standard) {
                 const equipmentQualityID = standardEquipmentId + nbEquipmentsForLocalization - 1;
-                const equipmentMasterID = standardEquipmentId + 2 * nbEquipmentsForLocalization - 2;
+                const equipmentMasterID = standardEquipmentId + (2 * nbEquipmentsForLocalization) - 2;
                 newEquipmentID = equipmentQuality === Quality.Great ? equipmentQualityID : equipmentMasterID;
             }
         }
@@ -113,11 +114,11 @@ export function COutfit({masterData, onValueChange, className}: OutfitProps) {
                 break;
             }
             case Localization.Lefthand: {
-                setOutfit({...outfit, leftHand: equipment || getEmptyEquipment(localization)});
+                setOutfit({...outfit, lefthand: equipment || getEmptyEquipment(localization)});
                 break;
             }
             case Localization.RightHand: {
-                setOutfit({...outfit, rightHand: equipment || getEmptyEquipment(localization)});
+                setOutfit({...outfit, righthand: equipment || getEmptyEquipment(localization)});
                 break;
             }
             case Localization.Feet: {
